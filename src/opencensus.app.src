@@ -1,0 +1,16 @@
+{application, opencensus,
+ [{description, "Erlang stats collection and distributed tracing framework"},
+  {vsn, git},
+  {registered, []},
+  {mod, {opencensus_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["Tristan Sloughter"]},
+  {licenses, ["Apache 2.0"]},
+  {links, [{"GitHub", "https://github.com/census-instrumentation/opencensus-erlang"}]}
+ ]}.
