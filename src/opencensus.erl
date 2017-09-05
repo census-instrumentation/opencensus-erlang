@@ -37,10 +37,6 @@
 
 -type maybe(T)        :: T | undefined.
 
-%% label keys must be less than 128 bytes.
-%% label values must be less than 16 kilobytes.
--type labels()        :: maps:map().
-
 %% timestamp in microseconds
 -type time_us() :: non_neg_integer().
 
