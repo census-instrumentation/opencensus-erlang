@@ -5,6 +5,7 @@
 -module(opencensus).
 
 -export([start_span/3,
+         finish_span/1,
          child_span/2,
 
          timestamp/0,
@@ -32,8 +33,14 @@
 %% Can be used, for example, in batching operations, where a single batch handler
 %% processes multiple requests from different traces.
 -type link() :: #link{}.
--type link_type() :: child_linked_span | parent_linked_span.
+-type link_type() :: child_linked_span | parent_linked_span | unspecified.
 -type links() :: [link()].
+
+-type time_event() :: #time_event{}.
+-type time_events() :: #time_events{}.
+-type annotation() :: {unicode:chardata(), opencensus:attributes()}.
+-type network_event() :: #network_event{}.
+-type network_event_type() :: recv | sent | unspecified.
 
 -type maybe(T)        :: T | undefined.
 
@@ -51,11 +58,22 @@ start_span(_Name, undefined, undefined) ->
 start_span(Name, TraceId, ParentId) when is_integer(TraceId)
                                        , (is_integer(ParentId)
                                          orelse ParentId =:= undefined) ->
-    #span{timestamp = timestamp(),
+    #span{start_time = timestamp(),
           trace_id = TraceId,
-          id = generate_span_id(),
-          parent_id = ParentId,
+          span_id = generate_span_id(),
+          parent_span_id = ParentId,
           name = Name}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Finish a span, setting the end_time.
+%% @end
+%%--------------------------------------------------------------------
+-spec finish_span(maybe(span())) -> maybe(span()).
+finish_span(undefined) ->
+    undefined;
+finish_span(Span) ->
+    Span#span{end_time = timestamp()}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -64,13 +82,10 @@ start_span(Name, TraceId, ParentId) when is_integer(TraceId)
 %% parent to the parents Span ID
 %% @end
 %%--------------------------------------------------------------------
--spec child_span(unicode:chardata(), maybe(span()) |
-                {TraceID::trace_id(), SpanID::span_id()}) -> maybe(span()).
+-spec child_span(unicode:chardata(), maybe(span())) -> maybe(span()).
 child_span(_Name, undefined) ->
     undefined;
-child_span(Name, #span{trace_id = TraceId, parent_id = ParentId}) ->
-    start_span(Name, TraceId, ParentId);
-child_span(Name, {TraceId, ParentId}) ->
+child_span(Name, #span{trace_id = TraceId, span_id = ParentId}) ->
     start_span(Name, TraceId, ParentId).
 
 %%--------------------------------------------------------------------

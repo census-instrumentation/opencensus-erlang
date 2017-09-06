@@ -18,7 +18,7 @@
           %% 64 bit int span id
           span_id    :: opencensus:span_id() | undefined,
           %% 64 bit int parent span
-          parent_id  :: opencensus:span_id() | undefined,
+          parent_span_id  :: opencensus:span_id() | undefined,
           %% microseconds between span start/end
           duration   :: opencensus:time_us(),
 
