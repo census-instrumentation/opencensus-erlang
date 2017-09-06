@@ -1,7 +1,7 @@
-%%%-------------------------------------------------------------------
-%% @doc opencensus
+%%%-----------------------------------------------------------------------
+%% @doc Functions to support the binary format trace context serialization
 %% @end
-%%%-------------------------------------------------------------------
+%%%-----------------------------------------------------------------------
 -module(oc_trace_context_binary).
 
 -export([encode/1,
@@ -10,6 +10,10 @@
 -include("opencensus.hrl").
 
 -define(VERSION, 0).
+
+-define(TRACE_ID_FIELD_NUM, 0).
+-define(SPAN_ID_FIELD_NUM, 1).
+-define(TRACE_OPTIONS_FIELD_NUM, 2).
 
 -spec encode(opencensus:trace_context()) -> binary().
 encode(#trace_context{trace_id=TraceId,
@@ -24,11 +28,11 @@ decode(<<0:8/integer, VersionFormat/binary>>) ->
 
 decode_0(<<>>, TraceContext) ->
     TraceContext;
-decode_0(<<0:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
+decode_0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{trace_id=TraceId});
-decode_0(<<1:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
+decode_0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{span_id=SpanId});
-decode_0(<<2:8/signed-integer, _TraceOptions:7, Enabled:1, Rest/binary>>, TraceContext) ->
+decode_0(<<?TRACE_OPTIONS_FIELD_NUM:8/signed-integer, _TraceOptions:7, Enabled:1, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{enabled=case Enabled of 1 -> true; _ -> false end});
 decode_0(_, TraceContext) ->
     TraceContext.

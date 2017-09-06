@@ -78,8 +78,7 @@ finish_span(Span) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new span as a child of a existing span, using the parents
-%% Trace ID or a `{trace_id, parent_id}` tuple and setting the childs
-%% parent to the parents Span ID
+%% Trace ID and setting the childs parent to the parents Span ID
 %% @end
 %%--------------------------------------------------------------------
 -spec child_span(unicode:chardata(), maybe(span())) -> maybe(span()).
