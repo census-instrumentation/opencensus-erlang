@@ -12,18 +12,10 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc opencensus application
+%% @doc Sampler
 %% @end
 %%%------------------------------------------------------------------------
 
--module(opencensus_app).
+-module(oc_sampler).
 
--behaviour(application).
-
--export([start/2, stop/1]).
-
-start(_StartType, _StartArgs) ->
-    opencensus_sup:start_link().
-
-stop(_State) ->
-    ok.
+-export([]).
