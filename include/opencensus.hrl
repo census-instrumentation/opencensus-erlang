@@ -24,8 +24,8 @@
          }).
 
 -record(span, {
-          start_time  :: opencensus:time_us(),
-          end_time  :: opencensus:time_us() | undefined,
+          start_time  :: wts:timestamp(),
+          end_time  :: wts:timestamp() | undefined,
           %% 128 bit int trace id
           trace_id   :: opencensus:trace_id() | undefined,
           %% name of the span

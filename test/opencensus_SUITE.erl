@@ -30,7 +30,8 @@ end_per_testcase(_, _Config) ->
 start_finish(_Config) ->
     SpanName1 = <<"span-1">>,
     Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
-    ?assert(is_integer(Span1#span.start_time)),
+    ?assertMatch({T, O} when is_integer(T)
+                           andalso is_integer(O), Span1#span.start_time),
 
     Span2 = opencensus:finish_span(Span1),
 

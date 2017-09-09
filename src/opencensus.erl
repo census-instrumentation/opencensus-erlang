@@ -21,7 +21,6 @@
          finish_span/1,
          child_span/2,
 
-         timestamp/0,
          generate_trace_id/0,
          generate_span_id/0]).
 
@@ -71,7 +70,7 @@ start_span(_Name, undefined, undefined) ->
 start_span(Name, TraceId, ParentId) when is_integer(TraceId)
                                        , (is_integer(ParentId)
                                          orelse ParentId =:= undefined) ->
-    #span{start_time = timestamp(),
+    #span{start_time = wts:timestamp(),
           trace_id = TraceId,
           span_id = generate_span_id(),
           parent_span_id = ParentId,
@@ -85,8 +84,10 @@ start_span(Name, TraceId, ParentId) when is_integer(TraceId)
 -spec finish_span(maybe(span())) -> maybe(span()).
 finish_span(undefined) ->
     undefined;
-finish_span(Span) ->
-    Span#span{end_time = timestamp()}.
+finish_span(Span=#span{start_time=StartTime}) ->
+    EndTime = wts:timestamp(),
+    Span#span{end_time = EndTime,
+              duration = wts:duration(StartTime, EndTime)}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -99,15 +100,6 @@ child_span(_Name, undefined) ->
     undefined;
 child_span(Name, #span{trace_id = TraceId, span_id = ParentId}) ->
     start_span(Name, TraceId, ParentId).
-
-%%--------------------------------------------------------------------
-%% @doc
-%% Returns the current system time in microseconds.
-%% @end
-%%--------------------------------------------------------------------
--spec timestamp() -> time_us().
-timestamp() ->
-    erlang:system_time(microsecond).
 
 %%--------------------------------------------------------------------
 %% @doc
