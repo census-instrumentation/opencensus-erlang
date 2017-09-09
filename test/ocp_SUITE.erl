@@ -15,9 +15,11 @@ all() ->
     [multiple_child_spans].
 
 init_per_suite(Config) ->
+    {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
 end_per_suite(_Config) ->
+    ok = application:stop(opencensus),
     ok.
 
 init_per_testcase(_, Config) ->
@@ -30,11 +32,12 @@ multiple_child_spans(_Config) ->
     SpanName1 = <<"span-1">>,
     SpanName2 = <<"span-2">>,
     SpanName3 = <<"span-3">>,
+    ocp:start_trace(),
     ocp:start_span(SpanName1),
     ?assertMatch(#span{name=SpanName1}, ocp:finish_span()),
     ocp:start_span(SpanName1),
-    ocp:child_span(SpanName2),
-    ocp:child_span(SpanName3),
+    ocp:start_span(SpanName2),
+    ocp:start_span(SpanName3),
     ?assertMatch(#span{name=SpanName3}, ocp:finish_span()),
     ?assertMatch(#span{name=SpanName2}, ocp:finish_span()),
     ocp:finish_span(),

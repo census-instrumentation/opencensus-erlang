@@ -17,25 +17,60 @@
 %%%-----------------------------------------------------------------------
 -module(ocp).
 
--export([start_span/1,
+-export([start_trace/0,
+         start_trace/1,
+         start_span/1,
          finish_span/0,
-         child_span/1]).
+         context/0,
+         put_attribute/2,
+         put_attributes/1]).
 
 -include("opencensus.hrl").
 
+-define(CONTEXT, current_context).
 -define(KEY, current_span).
 -define(SKEY, current_spans).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts a new trace with span stored in the process dictionary.
+%% Creates a new trace context.
+%% @end
+%%--------------------------------------------------------------------
+-spec start_trace() -> ok.
+start_trace() ->
+    put(?CONTEXT, opencensus:start_trace()),
+    put(?SKEY, []).
+
+-spec start_trace(opencensus:trace_context()) -> ok.
+start_trace(TraceContext) ->
+    put(?CONTEXT, TraceContext),
+    put(?SKEY, []).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new span as a child of the current span, if one exists,
+%% and pushes the parent on the span stack in the process dictionary.
 %% @end
 %%--------------------------------------------------------------------
 -spec start_span(unicode:chardata()) -> opencensus:maybe(opencensus:span()).
 start_span(Name) ->
-    Span = opencensus:start_span(Name, opencensus:generate_trace_id(), undefined),
-    put(?KEY, Span),
-    Span.
+    Ctx = case get(?KEY) of
+              undefined ->
+                  get(?CONTEXT);
+              Span ->
+                  case get(?SKEY) of
+                      undefined ->
+                          put(?SKEY, [Span]);
+                      Spans ->
+                          put(?SKEY, [Span | Spans])
+                  end,
+                  Span
+          end,
+    NewSpan = opencensus:start_span(Name, Ctx),
+    put(?KEY, NewSpan),
+
+    NewSpan.
+
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -60,19 +95,30 @@ finish_span() ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts a new span as a child of the current span and pushes the
-%% parent to the open span stack in the process dictionary.
+%% Return the current trace context for the process.
 %% @end
 %%--------------------------------------------------------------------
--spec child_span(unicode:chardata()) -> opencensus:maybe(opencensus:span()).
-child_span(Name) ->
+-spec context() -> opencensus:maybe(opencensus:span()).
+context() ->
     Span = get(?KEY),
-    NewSpan = opencensus:child_span(Name, Span),
-    put(?KEY, NewSpan),
-    case get(?SKEY) of
-        undefined ->
-            put(?SKEY, [Span]);
-        Spans ->
-            put(?SKEY, [Span | Spans])
-    end,
-    NewSpan.
+    opencensus:context(Span).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Put an attribute (a key/value pair) in the attribute map of a span.
+%% If the attribute already exists it is overwritten with the new value.
+%% @end
+%%--------------------------------------------------------------------
+-spec put_attribute(unicode:chardata(), opencensus:attribute_value()) -> ok.
+put_attribute(Key, Value) ->
+    put(?KEY, opencensus:put_attribute(Key, Value, get(?KEY))).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Merge a map of attributes with the current attributes of a span.
+%% The new values overwrite the old if any keys are the same.
+%% @end
+%%--------------------------------------------------------------------
+-spec put_attributes(#{unicode:chardata() => opencensus:attribute_value()}) -> ok.
+put_attributes(NewAttributes) ->
+    put(?KEY, opencensus:put_attributes(NewAttributes, get(?KEY))).

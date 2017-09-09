@@ -43,7 +43,7 @@ child_spans(_Config) ->
     Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
 
     ChildSpanName1 = <<"child-span-1">>,
-    ChildSpan1 = opencensus:child_span(ChildSpanName1, Span1),
+    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
     ?assertEqual(ChildSpanName1, ChildSpan1#span.name),
     ?assertEqual(Span1#span.span_id, ChildSpan1#span.parent_span_id),
     ChildSpan2 = opencensus:finish_span(ChildSpan1),
@@ -58,7 +58,7 @@ noops(_Config) ->
     Span1 = opencensus:start_span(SpanName1, undefined, undefined),
 
     ChildSpanName1 = <<"child-span-1">>,
-    ChildSpan1 = opencensus:child_span(ChildSpanName1, Span1),
+    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
     ChildSpan2 = opencensus:finish_span(ChildSpan1),
     Span2 = opencensus:finish_span(Span1),
 
