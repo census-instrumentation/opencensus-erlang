@@ -2,7 +2,7 @@
 %%% @doc
 %%% @end
 %%% ---------------------------------------------------------------------------
--module(oc_trace_context_binary_SUITE).
+-module(oc_trace_context_SUITE).
 
 -compile(export_all).
 
@@ -10,7 +10,7 @@
 -include_lib("common_test/include/ct.hrl").
 
 all() ->
-    [encode_decode, decode_with_extra_junk].
+    [encode_decode, decode_with_extra_junk, encode_decode_headers].
 
 init_per_suite(Config) ->
     Config.
@@ -44,3 +44,13 @@ decode_with_extra_junk(_Config) ->
     Encoded = oc_trace_context_binary:encode(Decoded),
 
     ?assertMatch(Binary, Encoded).
+
+encode_decode_headers(_Config) ->
+    %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    %% SpanId: 00f067aa0ba902b7
+    %% Enabled: true
+    Header = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01">>,
+    Decoded = oc_trace_context_headers:decode(Header),
+    Encoded = oc_trace_context_headers:encode(Decoded),
+    ?assertEqual(Header, list_to_binary(Encoded)),
+    ?assertEqual(Decoded, oc_trace_context_headers:decode(Encoded)).
