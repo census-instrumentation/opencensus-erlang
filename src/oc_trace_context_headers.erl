@@ -24,19 +24,31 @@
 
 -define(VERSION, "00").
 
--spec encode(opencensus:trace_context()) -> iolist().
+-define(ZERO_TRACEID, <<"00000000000000000000000000000000">>).
+-define(ZERO_SPANID, <<"0000000000000000">>).
+
+-spec encode(opencensus:trace_context()) -> {ok, iolist()} | {error, invalid}.
+encode(#trace_context{trace_id=TraceId,
+                      span_id=SpanId}) when TraceId =:= 0
+                                          ;  SpanId =:= 0 ->
+    {error, invalid};
 encode(#trace_context{trace_id=TraceId,
                       span_id=SpanId,
                       enabled=Enabled}) ->
     Options = case Enabled of true -> <<"01">>; _ -> <<"00">> end,
     EncodedTraceId = io_lib:format("~32.16.0b", [TraceId]),
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
-    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
+    {ok, [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options]}.
 
--spec decode(binary()) -> opencensus:trace_context().
+-spec decode(iolist() | binary()) -> {ok, opencensus:trace_context()} | {error, invalid}.
 decode(TraceContext) when is_list(TraceContext) ->
     decode(list_to_binary(TraceContext));
+decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, _/binary>>) when TraceId =:= ?ZERO_TRACEID
+                                                                                 ;  SpanId =:= ?ZERO_SPANID ->
+    {error, invalid};
 decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, "-", Enabled:2/binary, _Rest/binary>>) ->
-    #trace_context{trace_id=binary_to_integer(TraceId, 16),
-                   span_id=binary_to_integer(SpanId, 16),
-                   enabled=case Enabled of <<"01">> -> true; _ -> false end}.
+    {ok, #trace_context{trace_id=binary_to_integer(TraceId, 16),
+                        span_id=binary_to_integer(SpanId, 16),
+                        enabled=case Enabled of <<"01">> -> true; _ -> false end}};
+decode(_) ->
+    {error, invalid}.

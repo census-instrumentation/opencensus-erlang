@@ -28,24 +28,34 @@
 -define(SPAN_ID_FIELD_NUM, 1).
 -define(TRACE_OPTIONS_FIELD_NUM, 2).
 
--spec encode(opencensus:trace_context()) -> binary().
+-spec encode(opencensus:trace_context()) -> {ok, binary()} | {error, invalid}.
+encode(#trace_context{trace_id=TraceId,
+                      span_id=SpanId}) when TraceId =:= 0
+                                          ; SpanId =:= 0 ->
+    {error, invalid};
 encode(#trace_context{trace_id=TraceId,
                       span_id=SpanId,
                       enabled=Enabled}) ->
     Options = case Enabled of true -> <<1:8>>; _ -> <<0:8>> end,
-    <<?VERSION:8, 0:8, TraceId:128, 1:8, SpanId:64, 2:8, Options/binary>>.
+    {ok, <<?VERSION:8, 0:8, TraceId:128, 1:8, SpanId:64, 2:8, Options/binary>>}.
 
--spec decode(binary()) -> opencensus:trace_context().
+-spec decode(binary()) -> {ok, opencensus:trace_context()} | {error, invalid}.
 decode(<<0:8/integer, VersionFormat/binary>>) ->
     decode_0(VersionFormat, #trace_context{}).
 
 decode_0(<<>>, TraceContext) ->
-    TraceContext;
+    {ok, TraceContext};
+decode_0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, _/binary>>, _)
+  when TraceId =:= 0 ->
+    {error, invalid};
 decode_0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{trace_id=TraceId});
+decode_0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, _/binary>>, _)
+  when SpanId =:= 0 ->
+    {error, invalid};
 decode_0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{span_id=SpanId});
 decode_0(<<?TRACE_OPTIONS_FIELD_NUM:8/signed-integer, _TraceOptions:7, Enabled:1, Rest/binary>>, TraceContext) ->
     decode_0(Rest, TraceContext#trace_context{enabled=case Enabled of 1 -> true; _ -> false end});
 decode_0(_, TraceContext) ->
-    TraceContext.
+    {ok, TraceContext}.
