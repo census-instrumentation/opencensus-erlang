@@ -42,9 +42,13 @@ start_trace() ->
     put(?SKEY, []).
 
 -spec start_trace(opencensus:trace_context()) -> ok.
-start_trace(TraceContext) ->
+start_trace(TraceContext = #trace_context{}) ->
     put(?CONTEXT, TraceContext),
-    put(?SKEY, []).
+    put(?SKEY, []);
+start_trace(_) ->
+    put(?CONTEXT, undefined),
+    put(?SKEY, []),
+    error.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -52,7 +56,7 @@ start_trace(TraceContext) ->
 %% and pushes the parent on the span stack in the process dictionary.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:chardata()) -> opencensus:maybe(opencensus:span()).
+-spec start_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span()).
 start_span(Name) ->
     Ctx = case get(?KEY) of
               undefined ->
@@ -109,9 +113,12 @@ context() ->
 %% If the attribute already exists it is overwritten with the new value.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attribute(unicode:chardata(), opencensus:attribute_value()) -> ok.
-put_attribute(Key, Value) ->
-    put(?KEY, opencensus:put_attribute(Key, Value, get(?KEY))).
+-spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value()) -> ok | {error, invalid_attribute}.
+put_attribute(Key, Value) when is_binary(Key)
+                             , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
+    put(?KEY, opencensus:put_attribute(Key, Value, get(?KEY)));
+put_attribute(_Key, _Value) ->
+    {error, invalid_attribute}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -119,6 +126,6 @@ put_attribute(Key, Value) ->
 %% The new values overwrite the old if any keys are the same.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attributes(#{unicode:chardata() => opencensus:attribute_value()}) -> ok.
+-spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()}) -> ok.
 put_attributes(NewAttributes) ->
     put(?KEY, opencensus:put_attributes(NewAttributes, get(?KEY))).

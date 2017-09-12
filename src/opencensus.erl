@@ -45,9 +45,9 @@
 -type trace_context() :: #trace_context{}.
 -type span()          :: #span{}.
 
--type annotations()   :: maps:map(unicode:chardata(), attribute_value()).
--type attributes()    :: #{unicode:chardata() => attribute_value()}.
--type attribute_value() :: unicode:chardata() | boolean() | integer().
+-type annotations()   :: maps:map(unicode:unicode_binary(), attribute_value()).
+-type attributes()    :: #{unicode:unicode_binary() => attribute_value()}.
+-type attribute_value() :: unicode:unicode_binary() | boolean() | integer().
 
 %% A link requires a type which describes the relationship with the linked span
 %% and the identifiers of the linked span.
@@ -59,7 +59,7 @@
 
 -type time_event() :: #time_event{}.
 -type time_events() :: #time_events{}.
--type annotation() :: {unicode:chardata(), opencensus:attributes()}.
+-type annotation() :: {unicode:unicode_binary(), opencensus:attributes()}.
 -type network_event() :: #network_event{}.
 -type network_event_type() :: recv | sent | unspecified.
 
@@ -102,7 +102,7 @@ start_trace(TraceId, SpanId, _)  ->
 %% Starts a new span with a given Trace ID and Parent ID.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:chardata(), maybe(trace_context() | span())) -> maybe(span()).
+-spec start_span(unicode:unicode_binary(), maybe(trace_context() | span())) -> maybe(span()).
 start_span(_Name, undefined) ->
     undefined;
 start_span(Name, #trace_context{trace_id=TraceId,
@@ -112,7 +112,7 @@ start_span(Name, #span{trace_id=TraceId,
                        span_id=ParentId}) ->
     start_span(Name, TraceId, ParentId).
 
--spec start_span(unicode:chardata(), maybe(integer()), maybe(integer())) -> maybe(span()).
+-spec start_span(unicode:unicode_binary(), maybe(integer()), maybe(integer())) -> maybe(span()).
 start_span(_Name, undefined, undefined) ->
     undefined;
 start_span(Name, TraceId, ParentId) when is_integer(TraceId)
@@ -156,11 +156,16 @@ context(#span{trace_id=TraceId,
 %% If the attribute already exists it is overwritten with the new value.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attribute(unicode:chardata(), attribute_value(), maybe(span())) -> maybe(span()).
+-spec put_attribute(unicode:unicode_binary(), attribute_value(), maybe(span()))
+                   -> maybe(span()) | {error, invalid_attribute}.
 put_attribute(_Key, _Value, undefined) ->
     undefined;
-put_attribute(Key, Value, Span=#span{attributes=Attributes}) ->
-    Span#span{attributes=maps:put(Key, Value, Attributes)}.
+put_attribute(Key, Value, Span=#span{attributes=Attributes})
+  when is_binary(Key)
+     , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
+    Span#span{attributes=maps:put(Key, Value, Attributes)};
+put_attribute(_Key, _Value, _Span) ->
+    {error, invalid_attribute}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -168,7 +173,7 @@ put_attribute(Key, Value, Span=#span{attributes=Attributes}) ->
 %% The new values overwrite the old if any keys are the same.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attributes(#{unicode:chardata() => attribute_value()}, maybe(span())) -> maybe(span()).
+-spec put_attributes(#{unicode:unicode_binary() => attribute_value()}, maybe(span())) -> maybe(span()).
 put_attributes(_NewAttributes, undefined) ->
     undefined;
 put_attributes(NewAttributes, Span=#span{attributes=Attributes}) ->

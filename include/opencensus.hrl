@@ -29,7 +29,7 @@
           %% 128 bit int trace id
           trace_id   :: opencensus:trace_id() | undefined,
           %% name of the span
-          name       :: unicode:chardata(),
+          name       :: unicode:unicode_binary(),
           %% 64 bit int span id
           span_id    :: opencensus:span_id() | undefined,
           %% 64 bit int parent span
@@ -112,6 +112,6 @@
 -record(status, {
           code :: integer(),
           %% developer-facing error message
-          message :: unicode:chardata(),
+          message :: unicode:unicode_binary(),
           details :: [term()]
          }).
