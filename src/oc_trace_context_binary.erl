@@ -12,7 +12,9 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc Functions to support the binary format trace context serialization
+%% @doc Functions to support the binary format trace context serialization.
+%% Implements the spec found here
+%% [https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md]
 %% @end
 %%%-------------------------------------------------------------------------
 -module(oc_trace_context_binary).

@@ -13,6 +13,8 @@
 %% limitations under the License.
 %%
 %% @doc Functions to support the http header format of the tracecontext-spec
+%% Implements the spec found here
+%% [https://github.com/TraceContext/tracecontext-spec/blob/018cd514b/HTTP_HEADER_FORMAT.md]
 %% @end
 %%%-------------------------------------------------------------------------
 -module(oc_trace_context_headers).
