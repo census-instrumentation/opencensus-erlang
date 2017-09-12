@@ -17,9 +17,18 @@
 %%%-------------------------------------------------------------------------
 -module(opencensus).
 
--export([start_span/3,
+-export([start_trace/0,
+         start_trace/1,
+         start_trace/3,
+
+         start_span/2,
+         start_span/3,
          finish_span/1,
-         child_span/2,
+
+         context/1,
+
+         put_attribute/3,
+         put_attributes/2,
 
          generate_trace_id/0,
          generate_span_id/0]).
@@ -36,9 +45,9 @@
 -type trace_context() :: #trace_context{}.
 -type span()          :: #span{}.
 
--type annotations()   :: maps:map(unicode:chardata(), attribute_value()).
--type attributes()    :: maps:map(unicode:chardata(), attribute_value()).
--type attribute_value() :: unicode:chardata() | boolean() | integer().
+-type annotations()   :: maps:map(unicode:unicode_binary(), attribute_value()).
+-type attributes()    :: #{unicode:unicode_binary() => attribute_value()}.
+-type attribute_value() :: unicode:unicode_binary() | boolean() | integer().
 
 %% A link requires a type which describes the relationship with the linked span
 %% and the identifiers of the linked span.
@@ -50,21 +59,56 @@
 
 -type time_event() :: #time_event{}.
 -type time_events() :: #time_events{}.
--type annotation() :: {unicode:chardata(), opencensus:attributes()}.
+-type annotation() :: {unicode:unicode_binary(), opencensus:attributes()}.
 -type network_event() :: #network_event{}.
 -type network_event_type() :: recv | sent | unspecified.
 
--type maybe(T)        :: T | undefined.
+-type maybe(T) :: T | undefined.
 
 %% timestamp in microseconds
 -type time_us() :: non_neg_integer().
 
 %%--------------------------------------------------------------------
 %% @doc
+%% Creates a new trace context if `enabled` is true in the trace context
+%% argument or the sampling function returns true. If the sampling returns
+%% false then `undefined` is returned.
+%% @end
+%%--------------------------------------------------------------------
+-spec start_trace() -> trace_context().
+start_trace()  ->
+    start_trace(generate_trace_id(), undefined, undefined).
+
+start_trace(undefined)  ->
+    start_trace(generate_trace_id(), undefined, undefined);
+start_trace(#trace_context{trace_id=TraceId,
+                           span_id=SpanId,
+                           enabled=Enabled})  ->
+    start_trace(TraceId, SpanId, Enabled);
+start_trace(TraceId)  ->
+    start_trace(TraceId, undefined, undefined).
+
+start_trace(TraceId, SpanId, Enabled)  ->
+    #trace_context{trace_id = TraceId,
+                   span_id = SpanId,
+                   enabled = Enabled}.
+
+%%--------------------------------------------------------------------
+%% @doc
 %% Starts a new span with a given Trace ID and Parent ID.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:chardata(), maybe(integer()), maybe(integer())) -> maybe(span()).
+-spec start_span(unicode:unicode_binary(), maybe(trace_context() | span())) -> maybe(span()).
+start_span(_Name, undefined) ->
+    undefined;
+start_span(Name, #trace_context{trace_id=TraceId,
+                                span_id=ParentId}) ->
+    start_span(Name, TraceId, ParentId);
+start_span(Name, #span{trace_id=TraceId,
+                       span_id=ParentId}) ->
+    start_span(Name, TraceId, ParentId).
+
+-spec start_span(unicode:unicode_binary(), maybe(integer()), maybe(integer())) -> maybe(span()).
 start_span(_Name, undefined, undefined) ->
     undefined;
 start_span(Name, TraceId, ParentId) when is_integer(TraceId)
@@ -91,15 +135,45 @@ finish_span(Span=#span{start_time=StartTime}) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts a new span as a child of a existing span, using the parents
-%% Trace ID and setting the childs parent to the parents Span ID
+%% Return the current trace context for a span, to be used for
+%% propagation across process boundries.
 %% @end
 %%--------------------------------------------------------------------
--spec child_span(unicode:chardata(), maybe(span())) -> maybe(span()).
-child_span(_Name, undefined) ->
+context(undefined) ->
     undefined;
-child_span(Name, #span{trace_id = TraceId, span_id = ParentId}) ->
-    start_span(Name, TraceId, ParentId).
+context(#span{trace_id=TraceId,
+              span_id=SpanId}) ->
+    #trace_context{trace_id=TraceId,
+                   span_id=SpanId}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Put an attribute (a key/value pair) in the attribute map of a span.
+%% If the attribute already exists it is overwritten with the new value.
+%% @end
+%%--------------------------------------------------------------------
+-spec put_attribute(unicode:unicode_binary(), attribute_value(), maybe(span()))
+                   -> maybe(span()) | {error, invalid_attribute}.
+put_attribute(_Key, _Value, undefined) ->
+    undefined;
+put_attribute(Key, Value, Span=#span{attributes=Attributes})
+  when is_binary(Key)
+     , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
+    Span#span{attributes=maps:put(Key, Value, Attributes)};
+put_attribute(_Key, _Value, _Span) ->
+    {error, invalid_attribute}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Merge a map of attributes with the current attributes of a span.
+%% The new values overwrite the old if any keys are the same.
+%% @end
+%%--------------------------------------------------------------------
+-spec put_attributes(#{unicode:unicode_binary() => attribute_value()}, maybe(span())) -> maybe(span()).
+put_attributes(_NewAttributes, undefined) ->
+    undefined;
+put_attributes(NewAttributes, Span=#span{attributes=Attributes}) ->
+    Span#span{attributes=maps:merge(Attributes, NewAttributes)}.
 
 %%--------------------------------------------------------------------
 %% @doc
