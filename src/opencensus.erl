@@ -88,14 +88,10 @@ start_trace(#trace_context{trace_id=TraceId,
 start_trace(TraceId)  ->
     start_trace(TraceId, undefined, undefined).
 
-start_trace(TraceId, SpanId, true)  ->
+start_trace(TraceId, SpanId, Enabled)  ->
     #trace_context{trace_id = TraceId,
                    span_id = SpanId,
-                   enabled = true};
-start_trace(TraceId, SpanId, _)  ->
-    #trace_context{trace_id = TraceId,
-                   span_id = SpanId,
-                   enabled = true}.
+                   enabled = Enabled}.
 
 %%--------------------------------------------------------------------
 %% @doc
