@@ -132,7 +132,7 @@ finish_span(Span=#span{start_time=StartTime}) ->
     EndTime = wts:timestamp(),
     Span1 = Span#span{end_time = EndTime,
                       duration = wts:duration(StartTime, EndTime)},
-    _ = oc_report_buffer:store_span(Span1),
+    _ = oc_reporter:store_span(Span1),
     Span1.
 
 %%--------------------------------------------------------------------

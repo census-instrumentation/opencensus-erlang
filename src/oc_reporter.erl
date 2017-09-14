@@ -12,10 +12,11 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc Buffer of trace spans to be reported.
+%% @doc This module has the behaviour that each reporter must implement
+%% and creates the buffer of trace spans to be reported.
 %% @end
 %%%-----------------------------------------------------------------------
--module(oc_report_buffer).
+-module(oc_reporter).
 
 -behaviour(gen_server).
 
@@ -30,6 +31,19 @@
          code_change/3]).
 
 -include("opencensus.hrl").
+
+%% behaviour for reporters to implement
+-type opts() :: term().
+
+%% @doc Do any initialization of the reporter here and return configuration
+%% that will be passed along with a list of spans to the `report' function.
+-callback init(term()) -> opts().
+
+%% @doc This function is called when the configured interval expires with any
+%% spans that have been collected so far and the configuration returned in `init'.
+%% Do whatever needs to be done to report each span here, the caller will block
+%% until it returns.
+-callback report([opencensus:spans()], opts()) -> ok.
 
 -record(state, {reporter :: module(),
                 reporter_config :: #{},
