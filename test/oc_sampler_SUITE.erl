@@ -12,8 +12,8 @@
 -include("opencensus.hrl").
 
 all() ->
-    [never_sample, always_sample, probability_sample, probability_0_sample,
-     probability_100_sample, deterministic_probability].
+    [never_sample, always_sample, probability_sample, probability_zero_sample,
+     probability_hundred_sample, deterministic_probability].
 
 init_per_suite(Config) ->
     application:load(opencensus),
@@ -34,11 +34,11 @@ init_per_testcase(probability_sample, Config) ->
     application:set_env(opencensus, sampler, {oc_sampler_probability, [{probability, 0.5}]}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
-init_per_testcase(probability_0_sample, Config) ->
+init_per_testcase(probability_zero_sample, Config) ->
     application:set_env(opencensus, sampler, {oc_sampler_probability, [{probability, 0.0}]}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
-init_per_testcase(probability_100_sample, Config) ->
+init_per_testcase(probability_hundred_sample, Config) ->
     application:set_env(opencensus, sampler, {oc_sampler_probability, [{probability, 1.0}]}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
@@ -78,7 +78,7 @@ probability_sample(Config) ->
     Length = length(L),
     ?assert(Length < Limit andalso Length > 0).
 
-probability_0_sample(Config) ->
+probability_zero_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          TraceContext = opencensus:start_trace(),
@@ -86,7 +86,7 @@ probability_0_sample(Config) ->
                      end, lists:seq(1, Limit)),
     ?assertEqual(0, length(L)).
 
-probability_100_sample(Config) ->
+probability_hundred_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          %% include a test where an already generated id is passed as the TraceId
