@@ -34,7 +34,15 @@
 
 %% behaviour for reporters to implement
 -type opts() :: term().
+
+%% @doc Do any initialization of the reporter here and return configuration
+%% that will be passed along with a list of spans to the `report' function.
 -callback init(term()) -> opts().
+
+%% @doc This function is called when the configured interval expires with any
+%% spans that have been collected so far and the configuration returned in `init'.
+%% Do whatever needs to be done to report each span here, the caller will block
+%% until it returns.
 -callback report([opencensus:spans()], opts()) -> ok.
 
 -record(state, {reporter :: module(),
