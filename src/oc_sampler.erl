@@ -30,21 +30,16 @@
 -callback init(term()) -> ok.
 
 %% @doc Called at the start of a trace or after crossing a process boundary.
--callback should_sample(TraceId, SpanId, Enabled, Opts) -> boolean() when
+-callback should_sample(TraceId, SpanId, Enabled) -> boolean() when
       TraceId :: opencensus:trace_id() | undefined,
       SpanId :: opencensus:span_id() | undefined,
-      Enabled :: boolean() | undefined,
-      Opts :: term().
+      Enabled :: boolean() | undefined.
 
 init({SamplerModule, SamplerInitArgs}) ->
-    SamplerOpts = SamplerModule:init(SamplerInitArgs),
-
-    ImplModule = ?Q(["-module(oc_sampler_impl).",
-                     "-export([should_sample/3]).",
-                     "should_sample(TraceId, SpanId, Enabled) -> ",
-                     "    _@SamplerModule@:should_sample(TraceId, SpanId, Enabled, _@SamplerOpts@)."]),
-    merl:compile_and_load(ImplModule),
+    _ = SamplerModule:init(SamplerInitArgs),
+    application:set_env(opencensus, sampler_module, SamplerModule),
     ok.
 
 should_sample(TraceId, SpanId, Enabled) ->
-    oc_sampler_impl:should_sample(TraceId, SpanId, Enabled).
+    {ok, Module} = application:get_env(opencensus, sampler_module),
+    Module:should_sample(TraceId, SpanId, Enabled).

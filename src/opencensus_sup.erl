@@ -32,12 +32,12 @@ start_link() ->
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
-    Reporter = #{id => oc_reporter,
-                 start => {oc_reporter, start_link, []},
+    Reporter = #{id => oc_report_buffer,
+                 start => {oc_report_buffer, start_link, []},
                  restart => permanent,
                  shutdown => 1000,
                  type => worker,
-                 modules => [oc_reporter]},
+                 modules => [oc_report_buffer]},
     {ok, {#{strategy => one_for_one,
             intensity => 1,
             period => 5}, [Reporter]}}.

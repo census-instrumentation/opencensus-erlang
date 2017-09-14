@@ -25,7 +25,7 @@
 -include_lib("syntax_tools/include/merl.hrl").
 
 -export([init/1,
-         should_sample/4]).
+         should_sample/3]).
 
 -define(MAX_VALUE, 9223372036854775807).
 
@@ -41,8 +41,11 @@ init(Opts) ->
              , P =< 1.0 ->
             IdUpperBound = (P * ?MAX_VALUE)
     end,
-    IdUpperBound.
+    IdUpperBound,
 
-should_sample(TraceId, _, _, IdUpperBound) ->
+    application:set_env(opencensus, sampler_id_upper_bound, IdUpperBound).
+
+should_sample(TraceId, _, _) ->
+    {ok, IdUpperBound} = application:get_env(opencensus, sampler_id_upper_bound),
     Lower64Bits = TraceId band ?MAX_VALUE,
     erlang:abs(Lower64Bits) < IdUpperBound.

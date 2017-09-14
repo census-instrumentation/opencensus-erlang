@@ -20,10 +20,10 @@
 -behaviour(oc_sampler).
 
 -export([init/1,
-         should_sample/4]).
+         should_sample/3]).
 
 init(_) ->
     ok.
 
-should_sample(_, _, _, _) ->
+should_sample(_, _, _) ->
     false.
