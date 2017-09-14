@@ -76,6 +76,22 @@ jobs:
       - run:
           command: rebar3 xref
 
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: /home/circleci/census
+
+      - restore_cache:
+          keys:
+            - census-{{ checksum "rebar.lock" }}
+            - census-hex-packages
+
+      - run:
+          command: rebar3 as lint lint
+
   tests:
     <<: *defaults
     steps:
@@ -111,6 +127,9 @@ workflows:
           requires:
             - build
       - xref:
+          requires:
+            - build
+      - lint:
           requires:
             - build
       - tests:
