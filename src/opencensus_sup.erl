@@ -30,6 +30,8 @@ start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 init([]) ->
+    ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
+
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
                  restart => permanent,

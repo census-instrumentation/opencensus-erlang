@@ -91,7 +91,7 @@ start_trace(TraceId)  ->
 start_trace(TraceId, SpanId, Enabled)  ->
     #trace_context{trace_id = TraceId,
                    span_id = SpanId,
-                   enabled = Enabled}.
+                   enabled = oc_sampler:should_sample(TraceId, SpanId, Enabled)}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -118,7 +118,8 @@ start_span(Name, TraceId, ParentId) when is_integer(TraceId)
           trace_id = TraceId,
           span_id = generate_span_id(),
           parent_span_id = ParentId,
-          name = Name}.
+          name = Name,
+          attributes = maps:new()}.
 
 %%--------------------------------------------------------------------
 %% @doc
