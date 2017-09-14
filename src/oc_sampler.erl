@@ -12,10 +12,34 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc Sampler
+%% @doc Behaviour each sampler must implement. The function `should_trace'
+%% is given the trace id of the current trace, if one exists, the span id
+%% of what would be the parent of any new span in this trace and a boolean
+%% for whether the trace was enabled in the process that propagated this
+%% context.
 %% @end
 %%%------------------------------------------------------------------------
 
 -module(oc_sampler).
 
--export([]).
+-export([init/1,
+         should_sample/3]).
+
+-include_lib("syntax_tools/include/merl.hrl").
+
+-callback init(term()) -> ok.
+
+%% @doc Called at the start of a trace or after crossing a process boundary.
+-callback should_sample(TraceId, SpanId, Enabled) -> boolean() when
+      TraceId :: opencensus:trace_id() | undefined,
+      SpanId :: opencensus:span_id() | undefined,
+      Enabled :: boolean() | undefined.
+
+init({SamplerModule, SamplerInitArgs}) ->
+    _ = SamplerModule:init(SamplerInitArgs),
+    application:set_env(opencensus, sampler_module, SamplerModule),
+    ok.
+
+should_sample(TraceId, SpanId, Enabled) ->
+    {ok, Module} = application:get_env(opencensus, sampler_module),
+    Module:should_sample(TraceId, SpanId, Enabled).
