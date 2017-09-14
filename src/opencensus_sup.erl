@@ -30,12 +30,12 @@ start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 init([]) ->
-    Reporter = #{id => oc_report_buffer,
-                 start => {oc_report_buffer, start_link, []},
+    Reporter = #{id => oc_reporter,
+                 start => {oc_reporter, start_link, []},
                  restart => permanent,
                  shutdown => 1000,
                  type => worker,
-                 modules => [oc_report_buffer]},
+                 modules => [oc_reporter]},
     {ok, {#{strategy => one_for_one,
             intensity => 1,
             period => 5}, [Reporter]}}.

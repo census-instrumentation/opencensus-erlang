@@ -17,11 +17,13 @@
 %%%-----------------------------------------------------------------------
 -module(oc_noop_reporter).
 
+-behaviour(oc_reporter).
+
 -export([init/1,
          report/2]).
 
 init(_Opts) ->
-    #{}.
+    [].
 
 report(_Spans, _Opts) ->
     ok.

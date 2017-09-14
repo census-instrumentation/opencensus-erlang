@@ -17,6 +17,8 @@
 %%%-----------------------------------------------------------------------
 -module(oc_pid_reporter).
 
+-behaviour(oc_reporter).
+
 -export([init/1,
          report/2]).
 
