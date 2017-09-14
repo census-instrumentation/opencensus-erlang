@@ -43,21 +43,21 @@ encode(#trace_context{trace_id=TraceId,
 
 -spec decode(binary()) -> {ok, opencensus:trace_context()} | {error, invalid}.
 decode(<<0:8/integer, VersionFormat/binary>>) ->
-    decode_0(VersionFormat, #trace_context{}).
+    decode_v0(VersionFormat, #trace_context{}).
 
-decode_0(<<>>, TraceContext) ->
+decode_v0(<<>>, TraceContext) ->
     {ok, TraceContext};
-decode_0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, _/binary>>, _)
+decode_v0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, _/binary>>, _)
   when TraceId =:= 0 ->
     {error, invalid};
-decode_0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
-    decode_0(Rest, TraceContext#trace_context{trace_id=TraceId});
-decode_0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, _/binary>>, _)
+decode_v0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
+    decode_v0(Rest, TraceContext#trace_context{trace_id=TraceId});
+decode_v0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, _/binary>>, _)
   when SpanId =:= 0 ->
     {error, invalid};
-decode_0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
-    decode_0(Rest, TraceContext#trace_context{span_id=SpanId});
-decode_0(<<?TRACE_OPTIONS_FIELD_NUM:8/signed-integer, _TraceOptions:7, Enabled:1, Rest/binary>>, TraceContext) ->
-    decode_0(Rest, TraceContext#trace_context{enabled=case Enabled of 1 -> true; _ -> false end});
-decode_0(_, TraceContext) ->
+decode_v0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
+    decode_v0(Rest, TraceContext#trace_context{span_id=SpanId});
+decode_v0(<<?TRACE_OPTIONS_FIELD_NUM:8/signed-integer, _TraceOptions:7, Enabled:1, Rest/binary>>, TraceContext) ->
+    decode_v0(Rest, TraceContext#trace_context{enabled=case Enabled of 1 -> true; _ -> false end});
+decode_v0(_, TraceContext) ->
     {ok, TraceContext}.
