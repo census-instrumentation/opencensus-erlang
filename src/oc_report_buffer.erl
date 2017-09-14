@@ -26,7 +26,8 @@
          handle_call/3,
          handle_cast/2,
          handle_info/2,
-         terminate/2]).
+         terminate/2,
+         code_change/3]).
 
 -include("opencensus.hrl").
 
@@ -74,6 +75,9 @@ handle_info(report_spans, State=#state{reporter=Reporter,
     Ref1 = erlang:send_after(SendInterval, self(), report_spans),
     send_spans(Reporter, Config),
     {noreply, State#state{timer_ref=Ref1}}.
+
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
 
 terminate(_, #state{timer_ref=Ref}) ->
     erlang:cancel_timer(Ref),
