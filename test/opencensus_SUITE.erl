@@ -12,7 +12,7 @@
 -include("opencensus.hrl").
 
 all() ->
-    [start_finish, child_spans, noops].
+    [start_finish, child_spans, noops, attributes_test].
 
 init_per_suite(Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
@@ -64,3 +64,34 @@ noops(_Config) ->
 
     ?assertEqual(undefined, ChildSpan2),
     ?assertEqual(undefined, Span2).
+
+attributes_test(_Config) ->
+    SpanName1 = <<"span-1">>,
+    Span0 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Span1 = opencensus:put_attribute(<<"attr-0">>, <<"value-0">>, Span0),
+
+    ChildSpanName1 = <<"child-span-1">>,
+    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
+    ?assertEqual(ChildSpanName1, ChildSpan1#span.name),
+    ?assertEqual(Span1#span.span_id, ChildSpan1#span.parent_span_id),
+
+    ChildSpan2 = opencensus:put_attribute(<<"attr-1">>, <<"value-1">>, ChildSpan1),
+    ChildSpan3 = opencensus:put_attribute(<<"attr-2">>, 123, ChildSpan2),
+    ChildSpan4 = opencensus:put_attribute(<<"attr-3">>, true, ChildSpan3),
+
+    %% attribute keys must be binary strings and values must be binary strings, integers or booleans
+    ?assertEqual({error, invalid_attribute}, opencensus:put_attribute('attr-6', <<"value-6">>, ChildSpan4)),
+    ?assertEqual({error, invalid_attribute}, opencensus:put_attribute(<<"attr-7">>, 1.0, ChildSpan4)),
+
+    ChildSpan5 = opencensus:finish_span(ChildSpan4),
+    ?assert(ChildSpan5#span.end_time > ChildSpan1#span.start_time),
+    ?assertNot(maps:is_key(<<"attr-0">>, ChildSpan5#span.attributes)),
+    ?assertEqual(<<"value-1">>, maps:get(<<"attr-1">>, ChildSpan5#span.attributes)),
+    ?assertEqual(123, maps:get(<<"attr-2">>, ChildSpan5#span.attributes)),
+    ?assertEqual(true, maps:get(<<"attr-3">>, ChildSpan5#span.attributes)),
+
+    Span2 = opencensus:finish_span(Span1),
+
+    ?assertEqual(SpanName1, Span2#span.name),
+    ?assert(Span2#span.end_time > Span2#span.start_time),
+    ?assertEqual(<<"value-0">>, maps:get(<<"attr-0">>, Span2#span.attributes)).
