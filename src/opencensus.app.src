@@ -7,8 +7,8 @@
    [kernel,
     stdlib
    ]},
-  {env,[]},
   {modules, []},
+  {env, [{send_interval_ms, 500}]},
 
   {maintainers, ["Tristan Sloughter"]},
   {licenses, ["Apache 2.0"]},
