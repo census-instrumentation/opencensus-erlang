@@ -34,7 +34,7 @@
           span_id    :: opencensus:span_id() | undefined,
           %% 64 bit int parent span
           parent_span_id  :: opencensus:span_id() | undefined,
-          %% microseconds between span start/end
+          %% native time units between span start/end
           duration   :: opencensus:time_us(),
 
           annotations :: opencensus:annotations(),
