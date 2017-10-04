@@ -1,3 +1,4 @@
+
 %%% ---------------------------------------------------------------------------
 %%% @doc
 %%% @end
@@ -12,21 +13,33 @@
 -include("opencensus.hrl").
 
 all() ->
-    [pid_reporter].
+    [pid_reporter,
+     sequential_reporter].
 
 init_per_suite(Config) ->
+    ok = application:load(opencensus),
     Config.
 
 end_per_suite(_Config) ->
+  ok.
+
+init_per_testcase(pid_reporter, Config) ->
+    application:set_env(opencensus, reporter, {oc_pid_reporter, []}),
+    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    {ok, _} = application:ensure_all_started(opencensus),
+    Config;
+init_per_testcase(sequential_reporter, Config) ->
+    application:set_env(opencensus, reporter, {oc_sequential_reporter, [{oc_pid_reporter, []},
+                                                                   {oc_pid_reporter, []}]}),
+    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    {ok, _} = application:ensure_all_started(opencensus),
+    Config.
+
+end_per_testcase(_, _Config) ->
+    ok = application:stop(opencensus),
     ok.
 
 pid_reporter(_Config) ->
-    ok = application:load(opencensus),
-    application:set_env(opencensus, reporter, {oc_pid_reporter, []}),
-    application:set_env(opencensus, pid_reporter, #{pid => self()}),
-
-    {ok, _} = application:ensure_all_started(opencensus),
-
     SpanName1 = <<"span-1">>,
     Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
 
@@ -49,6 +62,26 @@ pid_reporter(_Config) ->
                                                       andalso is_integer(O), S#span.end_time),
                               ?assert(is_integer(S#span.duration))
                       end
-                  end, [SpanName1, ChildSpanName1]),
+                  end, [SpanName1, ChildSpanName1]).
 
-    ok = application:stop(opencensus).
+sequential_reporter(_Config) ->
+    SpanName1 = <<"span-1">>,
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+
+    ChildSpanName1 = <<"child-span-1">>,
+    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
+    opencensus:finish_span(ChildSpan1),
+    opencensus:finish_span(Span1),
+
+    SortedNames = [ChildSpanName1, ChildSpanName1, SpanName1, SpanName1],
+
+    Received = lists:map(fun(Name) ->
+                             receive
+                                 {span, #span{name = Name}} ->
+                                     Name
+                             after 5000 ->
+                                     undefined
+                             end
+                         end, SortedNames), %% receive order is undefined though
+
+    ?assertMatch(SortedNames, lists:sort(Received)).
