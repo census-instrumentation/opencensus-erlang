@@ -43,7 +43,7 @@
 %% spans that have been collected so far and the configuration returned in `init'.
 %% Do whatever needs to be done to report each span here, the caller will block
 %% until it returns.
--callback report([opencensus:spans()], opts()) -> ok.
+-callback report(nonempty_list(opencensus:span()), opts()) -> ok.
 
 -record(state, {reporter :: module(),
                 reporter_config :: #{},
