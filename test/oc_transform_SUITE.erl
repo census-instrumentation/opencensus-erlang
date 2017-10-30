@@ -64,7 +64,6 @@ trace_transform(_Config) ->
                       end
                   end, [SpanName1, <<"traced_function">>, <<"my_name">>, SpanName2]).
 
-
 -trace([]).
 traced_function() ->
     another_traced_function().

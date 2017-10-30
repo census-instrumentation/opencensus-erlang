@@ -71,6 +71,8 @@ to_binary(X) when is_atom(X) ->
 
 args_proplist(A) when is_binary(A) ->
     [{name, A}];
+args_proplist(A) when is_atom(A) ->
+    [{name, A}];
 args_proplist([]) ->
     [];
 args_proplist(A) when is_list(A) ->
@@ -86,6 +88,6 @@ args_proplist(A) ->
     {error, {bad_trace_args, A}}.
 
 format_error({bad_trace_args, Args}) ->
-    io_lib:format("Bad trace arguments. Must be binary or proplist. Got: ~p", [Args]);
+    io_lib:format("Bad trace arguments. Must be binary, atom, list string or proplist. Got: ~p", [Args]);
 format_error({bad_name, Args}) ->
-    io_lib:format("Bad span name. Name must be a printable binary or list string. Got: ~p", [Args]).
+    io_lib:format("Bad span name. Name must be an atom, binary or printable list. Got: ~p", [Args]).
