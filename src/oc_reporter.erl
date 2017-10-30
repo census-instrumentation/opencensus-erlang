@@ -58,10 +58,15 @@ start_link() ->
     maybe_init_ets(),
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
--spec store_span(opencensus:span()) -> ok | {error, invalid_span}.
+-spec store_span(opencensus:span()) -> ok | {error, invalid_span} | {error, no_report_buffer}.
 store_span(Span=#span{}) ->
-    [{_, Buffer}] = ets:lookup(?BUFFER_STATUS, current_buffer),
-    ets:insert(Buffer, Span);
+    try
+        [{_, Buffer}] = ets:lookup(?BUFFER_STATUS, current_buffer),
+        ets:insert(Buffer, Span)
+    catch
+        error:badarg ->
+            {error, no_report_buffer}
+    end;
 store_span(_) ->
     {error, invalid_span}.
 
@@ -123,7 +128,14 @@ send_spans(Reporter, Config) ->
             ok;
         Spans ->
             ets:delete_all_objects(Buffer),
-            report(Reporter, Spans, Config)
+            %% don't let a reporter exception crash us
+            try
+                report(Reporter, Spans, Config)
+            catch
+                _Class:_Exception ->
+                    error_logger:info_msg("reporter threw exception: reporter=~p stacktrace=~p",
+                                          [Reporter, erlang:get_stacktrace()])
+            end
     end.
 
 report(undefined, _, _) ->
