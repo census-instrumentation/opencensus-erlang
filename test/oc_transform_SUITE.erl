@@ -62,7 +62,7 @@ trace_transform(_Config) ->
                       after 1000 ->
                               error(timeout)
                       end
-                  end, [SpanName1, <<"traced_function">>, <<"my_name">>, SpanName2]).
+                  end, [SpanName1, <<"oc_transform_SUITE:traced_function/0">>, <<"my_name">>, SpanName2]).
 
 -trace([]).
 traced_function() ->

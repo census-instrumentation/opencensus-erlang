@@ -23,7 +23,7 @@
          format_error/1]).
 
 parse_transform(Ast, _Options)->
-    try lists:mapfoldl(fun form/2, {false, []}, Ast) of
+    try lists:mapfoldl(fun form/2, {false, [], []}, Ast) of
         {Ast1, _} ->
             lists:flatten(lists:filter(fun(Node) -> Node =/= nil end, Ast1))
     catch
@@ -31,21 +31,23 @@ parse_transform(Ast, _Options)->
             E
     end.
 
-form({attribute, _Line, trace, Args}, _) ->
-    {nil, {true, Args}};
-form(Node={function, _Line, _FuncName, _Arity, _Clauses}, {false, []}) ->
-    {Node, {false, []}};
-form(Node={function, _Line, _FuncName, _Arity, _Clauses}, {true, Args}) ->
-    {trace(Node, Args), {false, []}};
+form(Node={attribute, _Line, module, Module}, _) ->
+    {Node, {false, Module, []}};
+form({attribute, _Line, trace, Args}, {_, Module, _}) ->
+    {nil, {true, Module, Args}};
+form(Node={function, _Line, _FuncName, _Arity, _Clauses}, {false, Module, []}) ->
+    {Node, {false, Module, []}};
+form(Node={function, _Line, _FuncName, _Arity, _Clauses}, {true, Module, Args}) ->
+    {trace(Node, Module, Args), {false, Module, []}};
 form(Node, Trace) ->
     {Node, Trace}.
 
-trace({function, Line, Name, Arity, Clauses}, Args) ->
+trace({function, Line, Name, Arity, Clauses}, Module, Args) ->
     case args_proplist(Args) of
         {error, Reason} ->
             {error, {Line, ?MODULE, Reason}};
         ArgsPropList ->
-            SpanName = proplists:get_value(name, ArgsPropList, Name),
+            SpanName = proplists:get_value(name, ArgsPropList, io_lib:format("~s:~s/~w", [Module, Name, Arity])),
             Clauses1 = trace_clauses(Clauses, SpanName),
             {function, Line, Name, Arity, Clauses1}
     end.
