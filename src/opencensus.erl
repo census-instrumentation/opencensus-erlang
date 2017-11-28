@@ -159,12 +159,8 @@ context(#span{trace_id=TraceId,
                    -> maybe(span()) | {error, invalid_attribute}.
 put_attribute(_Key, _Value, undefined) ->
     undefined;
-put_attribute(Key, Value, Span=#span{attributes=Attributes})
-  when is_binary(Key)
-     , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
-    Span#span{attributes=maps:put(Key, Value, Attributes)};
-put_attribute(_Key, _Value, _Span) ->
-    {error, invalid_attribute}.
+put_attribute(Key, Value, Span=#span{attributes=Attributes}) ->
+    Span#span{attributes=maps:put(Key, Value, Attributes)}.
 
 %%--------------------------------------------------------------------
 %% @doc
