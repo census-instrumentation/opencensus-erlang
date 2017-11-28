@@ -79,10 +79,6 @@ attributes_test(_Config) ->
     ChildSpan3 = opencensus:put_attribute(<<"attr-2">>, 123, ChildSpan2),
     ChildSpan4 = opencensus:put_attribute(<<"attr-3">>, true, ChildSpan3),
 
-    %% attribute keys must be binary strings and values must be binary strings, integers or booleans
-    ?assertEqual({error, invalid_attribute}, opencensus:put_attribute('attr-6', <<"value-6">>, ChildSpan4)),
-    ?assertEqual({error, invalid_attribute}, opencensus:put_attribute(<<"attr-7">>, 1.0, ChildSpan4)),
-
     ChildSpan5 = opencensus:finish_span(ChildSpan4),
     ?assert(ChildSpan5#span.end_time > ChildSpan1#span.start_time),
     ?assertNot(maps:is_key(<<"attr-0">>, ChildSpan5#span.attributes)),
