@@ -132,7 +132,7 @@ finish_span(undefined) ->
 finish_span(Span=#span{start_time=StartTime}) ->
     EndTime = wts:timestamp(),
     Span1 = Span#span{end_time = EndTime,
-                      duration = wts:duration(StartTime, EndTime)},
+                      duration = duration(StartTime, EndTime)},
     _ = oc_reporter:store_span(Span1),
     Span1.
 
@@ -209,3 +209,7 @@ uniform(X) ->
     R = rand:uniform(?TWO_POW_56),
     (uniform(X bsr 56) bsl 56) + R.
 -endif.
+
+-spec duration(wts:timestamp(), wts:timestamp()) -> integer().
+duration({Timestamp1, _}, {Timestamp2, _}) ->
+    Timestamp2 - Timestamp1.
