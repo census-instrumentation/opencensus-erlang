@@ -26,6 +26,7 @@
          finish_span/1,
 
          context/1,
+         context/2,
 
          put_attribute/3,
          put_attributes/2,
@@ -147,7 +148,16 @@ context(undefined) ->
 context(#span{trace_id=TraceId,
               span_id=SpanId}) ->
     #trace_context{trace_id=TraceId,
-                   span_id=SpanId}.
+                   span_id=SpanId,
+                   enabled=true}.
+context(undefined, _) ->
+  undefined;
+context(#span{trace_id=TraceId,
+              span_id=SpanId}, Enabled) ->
+    #trace_context{trace_id=TraceId,
+                   span_id=SpanId,
+                   enabled=Enabled}.
+
 
 %%--------------------------------------------------------------------
 %% @doc
