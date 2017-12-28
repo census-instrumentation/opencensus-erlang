@@ -30,7 +30,7 @@ init_per_testcase(pid_reporter, Config) ->
     Config;
 init_per_testcase(sequential_reporter, Config) ->
     application:set_env(opencensus, reporter, {oc_sequential_reporter, [{oc_pid_reporter, []},
-                                                                   {oc_pid_reporter, []}]}),
+                                                                        {oc_pid_reporter, []}]}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
@@ -59,8 +59,7 @@ pid_reporter(_Config) ->
                               ?assertMatch({ST, O} when is_integer(ST)
                                                       andalso is_integer(O), S#span.start_time),
                               ?assertMatch({ST, O} when is_integer(ST)
-                                                      andalso is_integer(O), S#span.end_time),
-                              ?assert(is_integer(S#span.duration))
+                                                      andalso is_integer(O), S#span.end_time)
                       end
                   end, [SpanName1, ChildSpanName1]).
 
