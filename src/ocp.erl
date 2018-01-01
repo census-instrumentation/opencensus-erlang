@@ -105,7 +105,12 @@ finish_span() ->
 -spec context() -> opencensus:maybe(opencensus:span()).
 context() ->
     Span = get(?KEY),
-    opencensus:context(Span).
+    Enabled = case get(?CONTEXT) of
+      #trace_context{} = Context -> Context#trace_context.enabled;
+      _ -> false
+    end,
+
+    opencensus:context(Span, Enabled).
 
 %%--------------------------------------------------------------------
 %% @doc
