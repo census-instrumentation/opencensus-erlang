@@ -109,7 +109,7 @@ jobs:
           command: |
             set -eux
             rebar3 do ct, cover
-            rebar3 coveralls send
+            # rebar3 coveralls send
 
       - store_test_results:
           path: /home/circleci/census/_build/test/logs/

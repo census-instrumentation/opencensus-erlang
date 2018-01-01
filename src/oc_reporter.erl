@@ -106,8 +106,8 @@ maybe_init_ets() ->
     case ets:info(?BUFFER_STATUS, name) of
         undefined ->
             [ets:new(Tab, [named_table, public | TableProps ]) ||
-                {Tab, TableProps} <- [{?BUFFER_1, [{write_concurrency, true}, {keypos, 2}]},
-                                      {?BUFFER_2, [{write_concurrency, true}, {keypos, 2}]},
+                {Tab, TableProps} <- [{?BUFFER_1, [{write_concurrency, true}, {keypos, #span.span_id}]},
+                                      {?BUFFER_2, [{write_concurrency, true}, {keypos, #span.span_id}]},
                                       {?BUFFER_STATUS, [{read_concurrency, true}]}]],
             ets:insert(?BUFFER_STATUS, {current_buffer, ?BUFFER_1});
         _ ->
