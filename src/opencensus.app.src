@@ -5,7 +5,8 @@
   {mod, {opencensus_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    wts
    ]},
   {modules, []},
   {env, [{send_interval_ms, 500}]},

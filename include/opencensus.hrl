@@ -24,94 +24,74 @@
          }).
 
 -record(span, {
-          start_time  :: wts:timestamp(),
-          end_time  :: wts:timestamp() | undefined,
-          %% 128 bit int trace id
-          trace_id   :: opencensus:trace_id() | undefined,
           %% name of the span
-          name       :: unicode:unicode_binary(),
-          %% 64 bit int span id
-          span_id    :: opencensus:span_id() | undefined,
-          %% 64 bit int parent span
-          parent_span_id  :: opencensus:span_id() | undefined,
-          %% microseconds between span start/end
-          duration   :: opencensus:time_us(),
+          name                                    :: unicode:unicode_binary(),
 
-          annotations :: opencensus:annotations(),
-          attributes  :: opencensus:attributes(),
+          %% 128 bit int trace id
+          trace_id                                :: opencensus:trace_id() | undefined,
+
+          %% 64 bit int span id
+          span_id                                 :: opencensus:span_id() | undefined,
+          %% 64 bit int parent span
+          parent_span_id                          :: opencensus:span_id() | undefined,
+
+          start_time                              :: wts:timestamp(),
+          end_time                                :: wts:timestamp() | undefined,
+
+          attributes = #{}                        :: opencensus:attributes(),
+
+          %% optional stacktrace from where the span was started
+          stack_trace                              :: opencensus:stack_trace() | undefined,
 
           %% links to spans in other traces
-          links       :: opencensus:links(),
+          links = []                              :: opencensus:links(),
 
-          time_events :: opencensus:time_events(),
+          time_events = []                        :: opencensus:time_events(),
 
           %% An optional final status for this span.
-          status      :: undefined,
+          status = undefined                      :: opencensus:status() | undefined,
 
           %% A highly recommended but not required flag that identifies when a trace
           %% crosses a process boundary. True when the parent_span belongs to the
           %% same process as the current span.
-          %same_process_as_parent_span :: boolean(),
+          same_process_as_parent_span = undefined :: boolean() | undefined,
 
           %% An optional number of child spans that were generated while this span
           %% was active. If set, allows implementation to detect missing child spans.
-          child_span_count = 0 :: integer()
+          child_span_count = undefined            :: integer() | undefined
          }).
 
 -record(link, {
           %% The relationship of the current span relative to the linked span:
           %% child, parent, or unspecified.
-          type :: opencensus:link_type(),
-          trace_id :: opencensus:trace_id(),
-          span_id    :: opencensus:span_id(),
-          attributes  :: opencensus:attributes()
+          type = 'TYPE_UNSPECIFIED' :: opencensus:link_type(),
+          trace_id                  :: opencensus:trace_id(),
+          span_id                   :: opencensus:span_id(),
+          attributes = #{}          :: opencensus:attributes()
          }).
 
--record(links, {
-          links :: [opencensus:link()],
-
-          %% The number of dropped links after the maximum size was enforced. If
-          %% this value is 0, then no links were dropped.
-          dropped_links_count :: integer()
-         }).
-
--record(time_event, {
-          time :: opencensus:time_us(),
-          value :: opencensus:annotation() | opencensus:network_event()
-         }).
-
--record(network_event, {
-          time :: opencensus:time_us(),
-
-          %% type of NetworkEvent. Indicates whether the RPC message was sent or received.
-          type :: opencensus:network_event_type(),
+-record(message_event, {
+          %% type of MessageEvent. Indicates whether the RPC message was sent or received.
+          type = 'TYPE_UNSPECIFIED' :: opencensus:message_event_type(),
 
           %% identifier for the message, which must be unique in this span.
-          message_id :: integer(),
+          id                        :: integer(),
 
           %% number of uncompressed bytes sent or received
-          uncompressed_message_size :: integer(),
+          uncompressed_size         :: integer(),
 
           %% number of compressed bytes sent or received
-          compressed_message_size :: integer()
+          compressed_size           :: integer()
          }).
 
--record(time_events, {
-          %% A collection of `TimeEvent`s.
-          time_event :: [opencensus:time_event()],
-
-          %% The number of dropped annotations in all the included time events.
-          %% If the value is 0, then no annotations were dropped.
-          dropped_annotations_count :: integer(),
-
-          %% The number of dropped network events in all the included time events.
-          %% If the value is 0, then no network events were dropped.
-          dropped_network_events_count :: integer()
+-record(annotation, {
+          description      :: unicode:unicode_binary() | undefined,
+          attributes = #{} :: opencensus:attributes()
          }).
 
 -record(status, {
-          code :: integer(),
+          code    :: integer(),
           %% developer-facing error message
-          message :: unicode:unicode_binary(),
-          details :: [term()]
+          message :: unicode:unicode_binary()
          }).
+

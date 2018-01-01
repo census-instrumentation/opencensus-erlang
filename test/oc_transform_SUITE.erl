@@ -57,8 +57,7 @@ trace_transform(_Config) ->
                               ?assertMatch({ST, O} when is_integer(ST)
                                                       andalso is_integer(O), S#span.start_time),
                               ?assertMatch({ST, O} when is_integer(ST)
-                                                      andalso is_integer(O), S#span.end_time),
-                              ?assert(is_integer(S#span.duration))
+                                                      andalso is_integer(O), S#span.end_time)
                       after 1000 ->
                               error(timeout)
                       end

@@ -38,35 +38,34 @@
 -export_type([trace_id/0,
               span_id/0,
               trace_context/0,
-              span/0]).
+              span/0,
+              link/0,
+              links/0,
+              link_type/0,
+              attributes/0,
+              annotation/0,
+              time_events/0,
+              message_event/0,
+              message_event_type/0,
+              stack_trace/0,
+              status/0]).
 
--type trace_id()      :: non_neg_integer().
--type span_id()       :: non_neg_integer().
--type trace_context() :: #trace_context{}.
--type span()          :: #span{}.
-
--type annotations()   :: maps:map(unicode:unicode_binary(), attribute_value()).
--type attributes()    :: #{unicode:unicode_binary() => attribute_value()}.
--type attribute_value() :: unicode:unicode_binary() | boolean() | integer().
-
-%% A link requires a type which describes the relationship with the linked span
-%% and the identifiers of the linked span.
-%% Can be used, for example, in batching operations, where a single batch handler
-%% processes multiple requests from different traces.
--type link() :: #link{}.
--type link_type() :: child_linked_span | parent_linked_span | unspecified.
--type links() :: [link()].
-
--type time_event() :: #time_event{}.
--type time_events() :: #time_events{}.
--type annotation() :: {unicode:unicode_binary(), opencensus:attributes()}.
--type network_event() :: #network_event{}.
--type network_event_type() :: recv | sent | unspecified.
-
--type maybe(T) :: T | undefined.
-
-%% timestamp in microseconds
--type time_us() :: non_neg_integer().
+-type trace_id()           :: non_neg_integer().
+-type span_id()            :: non_neg_integer().
+-type trace_context()      :: #trace_context{}.
+-type span()               :: #span{}.
+-type stack_trace()        :: [erlang:stack_item()].
+-type attribute_value()    :: unicode:unicode_binary() | boolean() | integer().
+-type attributes()         :: #{unicode:unicode_binary() => attribute_value()}.
+-type annotation()         :: #annotation{}.
+-type message_event()      :: #message_event{}.
+-type message_event_type() :: 'TYPE_UNSPECIFIED' | 'SENT' | 'RECEIVED'.
+-type time_events()        :: [{wts:timestamp(), annotation() | message_event()}].
+-type link()               :: #link{}.
+-type links()              :: [link()].
+-type link_type()          :: 'TYPE_UNSPECIFIED' | 'CHILD_LINKED_SPAN' | 'PARENT_LINKED_SPAN'.
+-type status()             :: #status{}.
+-type maybe(T)             :: T | undefined.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -108,7 +107,7 @@ start_span(Name, #span{trace_id=TraceId,
                        span_id=ParentId}) ->
     start_span(Name, TraceId, ParentId).
 
--spec start_span(unicode:unicode_binary(), maybe(integer()), maybe(integer())) -> maybe(span()).
+-spec start_span(unicode:unicode_binary(), maybe(trace_id()), maybe(span_id())) -> maybe(span()).
 start_span(_Name, undefined, undefined) ->
     undefined;
 start_span(Name, TraceId, ParentId) when is_integer(TraceId)
@@ -129,10 +128,9 @@ start_span(Name, TraceId, ParentId) when is_integer(TraceId)
 -spec finish_span(maybe(span())) -> maybe(span()).
 finish_span(undefined) ->
     undefined;
-finish_span(Span=#span{start_time=StartTime}) ->
+finish_span(Span=#span{}) ->
     EndTime = wts:timestamp(),
-    Span1 = Span#span{end_time = EndTime,
-                      duration = wts:duration(StartTime, EndTime)},
+    Span1 = Span#span{end_time = EndTime},
     _ = oc_reporter:store_span(Span1),
     Span1.
 
@@ -179,7 +177,7 @@ put_attributes(NewAttributes, Span=#span{attributes=Attributes}) ->
 %% Generates a 128 bit random integer to use as a trace id.
 %% @end
 %%--------------------------------------------------------------------
--spec generate_trace_id() -> non_neg_integer().
+-spec generate_trace_id() -> trace_id().
 generate_trace_id() ->
     uniform(2 bsl 127). %% 2 shifted left by 127 == 2 ^ 128
 
@@ -188,7 +186,7 @@ generate_trace_id() ->
 %% Generates a 64 bit random integer to use as a span id.
 %% @end
 %%--------------------------------------------------------------------
--spec generate_span_id() -> non_neg_integer().
+-spec generate_span_id() -> span_id().
 generate_span_id() ->
     uniform(2 bsl 63). %% 2 shifted left by 63 == 2 ^ 64
 

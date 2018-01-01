@@ -1,3 +1,4 @@
+priv/opencensus-proto
 .rebar3
 _*
 .eunit
