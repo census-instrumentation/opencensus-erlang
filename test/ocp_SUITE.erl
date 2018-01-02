@@ -12,9 +12,10 @@
 -include("opencensus.hrl").
 
 all() ->
-    [multiple_child_spans, attributes_test].
+    [multiple_child_spans, attributes_test, restore_context_enabled_flag].
 
 init_per_suite(Config) ->
+    application:set_env(opencensus, sampler, {oc_sampler_always, []}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
@@ -79,3 +80,19 @@ attributes_test(_Config) ->
     ?assertEqual(true, maps:get(<<"attr-0">>, FinishedSpan#span.attributes)),
     ?assertEqual(5423, maps:get(<<"attr-4">>, FinishedSpan#span.attributes)),
     ?assertEqual(<<"value-5">>, maps:get(<<"attr-5">>, FinishedSpan#span.attributes)).
+
+
+restore_context_enabled_flag(_Config) ->
+    SpanName1 = <<"span-1">>,
+
+    %% trace is `enabled` because it passed sampling
+    %% by default we use sampler `always` so it is always enabled
+    ocp:start_trace(),
+    ocp:start_span(SpanName1),
+
+    Context = ocp:context(),
+
+    %% should be `true` because trace context is enabled by sampler
+    ?assert(Context#trace_context.enabled),
+
+    _ = ocp:finish_span().
