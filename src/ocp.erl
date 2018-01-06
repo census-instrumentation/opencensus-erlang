@@ -24,7 +24,11 @@
          finish_span/0,
          context/0,
          put_attribute/2,
-         put_attributes/1]).
+         put_attributes/1,
+         add_time_event/1,
+         add_time_event/2,
+         add_link/1,
+         set_status/2]).
 
 -include("opencensus.hrl").
 
@@ -139,10 +143,42 @@ put_attribute(_Key, _Value) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Merge a map of attributes with the current attributes of a span.
+%% Merge a map of attributes with the attributes of current span.
 %% The new values overwrite the old if any keys are the same.
 %% @end
 %%--------------------------------------------------------------------
 -spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()}) -> ok.
 put_attributes(NewAttributes) ->
     put(?KEY, opencensus:put_attributes(NewAttributes, get(?KEY))).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add an Annotation or MessageEvent to the list of TimeEvents in the
+%% current span.
+%% @end
+%%--------------------------------------------------------------------
+-spec add_time_event(opencensus:annotation() | opencensus:message_event()) -> ok.
+add_time_event(TimeEvent) ->
+    put(?KEY, opencensus:add_time_event(TimeEvent, get(?KEY))).
+
+-spec add_time_event(wts:timestamp(), opencensus:annotation() | opencensus:message_event()) -> ok.
+add_time_event(Timestamp, TimeEvent) ->
+    put(?KEY, opencensus:add_time_event(Timestamp, TimeEvent, get(?KEY))).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Set Status of current span.
+%% @end
+%%--------------------------------------------------------------------
+-spec set_status(integer(), unicode:unicode_binary()) -> ok.
+set_status(Code, Message) ->
+    put(?KEY, opencensus:set_status(Code, Message, get(?KEY))).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add a Link to the list of Links in the current span.
+%% @end
+%%--------------------------------------------------------------------
+-spec add_link(opencensus:link()) -> ok.
+add_link(Link) ->
+    put(?KEY, opencensus:add_link(Link, get(?KEY))).
