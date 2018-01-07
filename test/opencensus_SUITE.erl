@@ -29,7 +29,7 @@ end_per_testcase(_, _Config) ->
 
 start_finish(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
     ?assertMatch({T, O} when is_integer(T)
                            andalso is_integer(O), Span1#span.start_time),
 
@@ -40,7 +40,7 @@ start_finish(_Config) ->
 
 child_spans(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
 
     ChildSpanName1 = <<"child-span-1">>,
     ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
@@ -67,7 +67,10 @@ noops(_Config) ->
 
 attributes_test(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span0 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Attributes = #{<<"attr-1">> => <<"value-1">>,
+                   <<"attr-2">> => 123,
+                   <<"attr-3">> => true},
+    Span0 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
     Span1 = opencensus:put_attribute(<<"attr-0">>, <<"value-0">>, Span0),
 
     ChildSpanName1 = <<"child-span-1">>,
@@ -85,6 +88,11 @@ attributes_test(_Config) ->
     ?assertEqual(<<"value-1">>, maps:get(<<"attr-1">>, ChildSpan5#span.attributes)),
     ?assertEqual(123, maps:get(<<"attr-2">>, ChildSpan5#span.attributes)),
     ?assertEqual(true, maps:get(<<"attr-3">>, ChildSpan5#span.attributes)),
+
+    SpanA1 = opencensus:start_span(ChildSpanName1, Span1, Attributes),
+    SpanA2 = opencensus:start_span(ChildSpanName1, Span1#span.trace_id, Span1#span.span_id, Attributes),
+    ?assertEqual(ChildSpan4#span.attributes, SpanA1#span.attributes),
+    ?assertEqual(ChildSpan4#span.attributes, SpanA2#span.attributes),
 
     Span2 = opencensus:finish_span(Span1),
 
