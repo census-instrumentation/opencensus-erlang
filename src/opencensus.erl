@@ -23,6 +23,7 @@
 
          start_span/2,
          start_span/3,
+         start_span/4,
          finish_span/1,
 
          context/1,
@@ -103,15 +104,25 @@ start_span(_Name, undefined) ->
     undefined;
 start_span(Name, #trace_context{trace_id=TraceId,
                                 span_id=ParentId}) ->
-    start_span(Name, TraceId, ParentId);
+    start_span(Name, TraceId, ParentId, #{});
 start_span(Name, #span{trace_id=TraceId,
                        span_id=ParentId}) ->
-    start_span(Name, TraceId, ParentId).
+    start_span(Name, TraceId, ParentId, #{}).
 
--spec start_span(unicode:unicode_binary(), maybe(trace_id()), maybe(span_id())) -> maybe(span()).
-start_span(_Name, undefined, undefined) ->
+-spec start_span(unicode:unicode_binary(), maybe(trace_context() | span()), map()) -> maybe(span()).
+start_span(_Name, undefined, _) ->
     undefined;
-start_span(Name, TraceId, ParentId) when is_integer(TraceId)
+start_span(Name, #trace_context{trace_id=TraceId,
+                                span_id=ParentId}, Attributes) ->
+    start_span(Name, TraceId, ParentId, Attributes);
+start_span(Name, #span{trace_id=TraceId,
+                       span_id=ParentId}, Attributes) ->
+    start_span(Name, TraceId, ParentId, Attributes).
+
+-spec start_span(unicode:unicode_binary(), maybe(trace_id()), maybe(span_id()), map()) -> maybe(span()).
+start_span(_Name, undefined, undefined, _) ->
+    undefined;
+start_span(Name, TraceId, ParentId, Attributes) when is_integer(TraceId)
                                        , (is_integer(ParentId)
                                          orelse ParentId =:= undefined) ->
     #span{start_time = wts:timestamp(),
@@ -119,7 +130,7 @@ start_span(Name, TraceId, ParentId) when is_integer(TraceId)
           span_id = generate_span_id(),
           parent_span_id = ParentId,
           name = Name,
-          attributes = maps:new()}.
+          attributes = Attributes}.
 
 %%--------------------------------------------------------------------
 %% @doc

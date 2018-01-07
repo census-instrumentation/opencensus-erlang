@@ -41,7 +41,7 @@ end_per_testcase(_, _Config) ->
 
 pid_reporter(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
 
     ChildSpanName1 = <<"child-span-1">>,
     ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
@@ -65,7 +65,7 @@ pid_reporter(_Config) ->
 
 sequential_reporter(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined),
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
 
     ChildSpanName1 = <<"child-span-1">>,
     ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
