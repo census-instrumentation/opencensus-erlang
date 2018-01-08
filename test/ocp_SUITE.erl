@@ -32,15 +32,17 @@ end_per_testcase(_, _Config) ->
 multiple_child_spans(_Config) ->
     SpanName1 = <<"span-1">>,
     SpanName2 = <<"span-2">>,
+    Attributes = #{key => value},
     SpanName3 = <<"span-3">>,
     ocp:start_trace(),
     ocp:start_span(SpanName1),
     ?assertMatch(#span{name=SpanName1}, ocp:finish_span()),
     ocp:start_span(SpanName1),
-    ocp:start_span(SpanName2),
+    ocp:start_span(SpanName2, Attributes),
     ocp:start_span(SpanName3),
     ?assertMatch(#span{name=SpanName3}, ocp:finish_span()),
-    ?assertMatch(#span{name=SpanName2}, ocp:finish_span()),
+    ?assertMatch(#span{name=SpanName2,
+                       attributes = Attributes}, ocp:finish_span()),
     ocp:finish_span(),
     ?assertMatch(undefined, ocp:finish_span()).
 

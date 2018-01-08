@@ -20,6 +20,7 @@
 -export([start_trace/0,
          start_trace/1,
          start_span/1,
+         start_span/2,
          finish_span/0,
          context/0,
          put_attribute/2,
@@ -58,6 +59,17 @@ start_trace(_) ->
 %%--------------------------------------------------------------------
 -spec start_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span()).
 start_span(Name) ->
+    start_span(Name, #{}).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new span with `Attributes' as a child of the current span,
+%% if one exists, and pushes the parent on the span stack in the process
+%% dictionary.
+%% @end
+%%--------------------------------------------------------------------
+-spec start_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span()).
+start_span(Name, Attributes) ->
     Ctx = case get(?KEY) of
               undefined ->
                   get(?CONTEXT);
@@ -70,7 +82,7 @@ start_span(Name) ->
                   end,
                   Span
           end,
-    NewSpan = opencensus:start_span(Name, Ctx),
+    NewSpan = opencensus:start_span(Name, Ctx, Attributes),
     put(?KEY, NewSpan),
 
     NewSpan.
