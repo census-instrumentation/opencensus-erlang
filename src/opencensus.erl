@@ -57,7 +57,7 @@
 -type trace_context()      :: #trace_context{}.
 -type span()               :: #span{}.
 -type stack_trace()        :: [erlang:stack_item()].
--type attribute_value()    :: unicode:unicode_binary() | boolean() | integer().
+-type attribute_value()    :: any().
 -type attributes()         :: #{unicode:unicode_binary() => attribute_value()}.
 -type annotation()         :: #annotation{}.
 -type message_event()      :: #message_event{}.
