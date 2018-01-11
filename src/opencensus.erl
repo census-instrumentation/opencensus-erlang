@@ -57,7 +57,7 @@
 -type trace_context()      :: #trace_context{}.
 -type span()               :: #span{}.
 -type stack_trace()        :: [erlang:stack_item()].
--type attribute_value()    :: unicode:unicode_binary() | boolean() | integer().
+-type attribute_value()    :: any().
 -type attributes()         :: #{unicode:unicode_binary() => attribute_value()}.
 -type annotation()         :: #annotation{}.
 -type message_event()      :: #message_event{}.
@@ -99,7 +99,7 @@ start_trace(TraceId, SpanId, Enabled)  ->
 %% Starts a new span with a given Trace ID and Parent ID.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:unicode_binary(), maybe(trace_context() | span())) -> maybe(span()).
+-spec start_span(unicode:unicode_binary(), maybe(trace_context() | span() | trace_id())) -> maybe(span()).
 start_span(_Name, undefined) ->
     undefined;
 start_span(Name, #trace_context{trace_id=TraceId,
@@ -107,7 +107,9 @@ start_span(Name, #trace_context{trace_id=TraceId,
     start_span(Name, TraceId, ParentId, #{});
 start_span(Name, #span{trace_id=TraceId,
                        span_id=ParentId}) ->
-    start_span(Name, TraceId, ParentId, #{}).
+    start_span(Name, TraceId, ParentId, #{});
+start_span(Name, TraceId) when is_integer(TraceId) andalso TraceId > 0->
+    start_span(Name, TraceId, undefined, #{}).
 
 -spec start_span(unicode:unicode_binary(), maybe(trace_context() | span()), map()) -> maybe(span()).
 start_span(_Name, undefined, _) ->
