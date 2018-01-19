@@ -73,9 +73,38 @@ some_fun() ->
 * [Google Cloud Trace](https://github.com/tsloughter/oc_google_reporter): Support for v1 in master, v2 and grpc coming soon;
 * [Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
 
-### Attributes
+### Working with Spans
 
-### Time Events
+#### Attributes
+
+A span has a map of attributes providing details about the span. The key is a binary string and the value of the attribute can be a binary string, integer, or boolean.
+
+```erlang
+Span1 = opencensus:put_attribute(<<"/instance_id">>, <<"my-instance">>, Span),
+```
+
+#### Time Events
+
+A time event is a timestamped annotation with user-supplied key-value pairs or a message event to represent a message (not specificly an Erlang message) sent to or received from another span.
+
+The `message_event` consists of a type, identifier and size of the message. `Id` is an identifier for the event's message that can be used to match `SENT` and `RECEIVED` `message_event`s. For example, this field could represent a sequence ID for a streaming RPC. It is recommended to be unique within a Span. If `CompressedSize` is `0` it is assumed to be the same as `UncompressedSize`.
+
+```erlang
+Event = opencensus:message_event(?MESSAGE_EVENT_TYPE_SENT, Id, UncompressedSize, CompressedSize)
+Span1 = opencensus:add_time_event(Event, Span),
+```
+
+#### Links
+
+Links are useful in cases like a job queue. A job is created with a span context and when run wants to report a new span. The job isn't a direct child of the span that inserted it into the queue, but it is related. The job creates a link to the span that created it.
+
+```erlang
+Span = opencensus:start_span(<<"running job">>, TraceId),
+Link = link(?LINK_TYPE_PARENT_LINKED_SPAN, TraceId, ParentSpanId, #{}),
+Span1 = opencensus:add_link(Link, Span),
+... run job ...
+opencensus:finish_span(Span1).
+```
 
 ### Stats
 
