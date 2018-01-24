@@ -13,6 +13,14 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
+-define(MESSAGE_EVENT_TYPE_UNSPECIFIED, 'TYPE_UNSPECIFIED').
+-define(MESSAGE_EVENT_TYPE_SENT, 'SENT').
+-define(MESSAGE_EVENT_TYPE_RECEIVED, 'RECEIVED').
+
+-define(LINK_TYPE_UNSPECIFIED, 'TYPE_UNSPECIFIED').
+-define(LINK_TYPE_CHILD_LINKED_SPAN, 'CHILD_LINKED_SPAN').
+-define(LINK_TYPE_PARENT_LINKED_SPAN, 'PARENT_LINKED_SPAN').
+
 -record(trace_context, {
           trace_id   :: opencensus:trace_id() | undefined,
           span_id    :: opencensus:span_id() | undefined,

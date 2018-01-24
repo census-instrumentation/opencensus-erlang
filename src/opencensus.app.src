@@ -11,7 +11,7 @@
   {modules, []},
   {env, [{send_interval_ms, 500}]},
 
-  {maintainers, ["Tristan Sloughter"]},
+  {maintainers, ["Tristan Sloughter", "Heinz Gies", "Ilya Khaprov"]},
   {licenses, ["Apache 2.0"]},
   {links, [{"GitHub", "https://github.com/census-instrumentation/opencensus-erlang"}]}
  ]}.
