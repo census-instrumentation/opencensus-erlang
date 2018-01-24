@@ -32,6 +32,18 @@
          put_attribute/3,
          put_attributes/2,
 
+         add_time_event/2,
+         add_time_event/3,
+
+         add_link/2,
+         link/4,
+
+         annotation/2,
+
+         message_event/4,
+
+         set_status/3,
+
          generate_trace_id/0,
          generate_span_id/0]).
 
@@ -61,11 +73,11 @@
 -type attributes()         :: #{unicode:unicode_binary() => attribute_value()}.
 -type annotation()         :: #annotation{}.
 -type message_event()      :: #message_event{}.
--type message_event_type() :: 'TYPE_UNSPECIFIED' | 'SENT' | 'RECEIVED'.
+-type message_event_type() :: ?MESSAGE_EVENT_TYPE_UNSPECIFIED | ?MESSAGE_EVENT_TYPE_SENT | ?MESSAGE_EVENT_TYPE_RECEIVED.
 -type time_events()        :: [{wts:timestamp(), annotation() | message_event()}].
 -type link()               :: #link{}.
 -type links()              :: [link()].
--type link_type()          :: 'TYPE_UNSPECIFIED' | 'CHILD_LINKED_SPAN' | 'PARENT_LINKED_SPAN'.
+-type link_type()          :: ?LINK_TYPE_UNSPECIFIED | ?LINK_TYPE_CHILD_LINKED_SPAN | ?LINK_TYPE_PARENT_LINKED_SPAN.
 -type status()             :: #status{}.
 -type maybe(T)             :: T | undefined.
 
@@ -194,6 +206,79 @@ put_attributes(_NewAttributes, undefined) ->
     undefined;
 put_attributes(NewAttributes, Span=#span{attributes=Attributes}) ->
     Span#span{attributes=maps:merge(Attributes, NewAttributes)}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add an Annotation or MessageEvent to the list of TimeEvents in a span.
+%%
+%% @end
+%%--------------------------------------------------------------------
+-spec add_time_event(annotation() | message_event(), maybe(span())) -> maybe(span()).
+add_time_event(TimeEvent, Span) ->
+    add_time_event(wts:timestamp(), TimeEvent, Span).
+
+-spec add_time_event(wts:timestamp(), annotation() | message_event(), maybe(span())) -> maybe(span()).
+add_time_event(_Timestamp, _TimeEvent, undefined) ->
+    undefined;
+add_time_event(Timestamp, TimeEvent, Span=#span{time_events=TimeEvents}) ->
+    Span#span{time_events=[{Timestamp, TimeEvent} | TimeEvents]}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Create an Annotation.
+%% @end
+%%--------------------------------------------------------------------
+-spec annotation(unicode:unicode_binary(), attributes()) -> annotation().
+annotation(Description, Attributes) ->
+    #annotation{description=Description,
+                attributes=Attributes}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Create a MessageEvent.
+%% @end
+%%--------------------------------------------------------------------
+-spec message_event(message_event_type(), integer(), integer(), integer()) -> message_event().
+message_event(MessageEventType, Id, UncompressedSize, CompressedSize) ->
+    #message_event{type=MessageEventType,
+                   id=Id,
+                   uncompressed_size=UncompressedSize,
+                   compressed_size=CompressedSize}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Set Status.
+%% @end
+%%--------------------------------------------------------------------
+-spec set_status(integer(), unicode:unicode_binary(), maybe(span())) -> maybe(span()).
+set_status(_Code, _Message, undefined) ->
+    undefined;
+set_status(Code, Message, Span) ->
+    Span#span{status=#status{code=Code,
+                             message=Message}}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add a Link to the list of Links in the span.
+%% @end
+%%--------------------------------------------------------------------
+-spec add_link(link(), maybe(span())) -> maybe(span()).
+add_link(_Link, undefined) ->
+    undefined;
+add_link(Link, Span=#span{links=Links}) ->
+    Span#span{links=[Link | Links]}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Create a Link which can be added to a Span.
+%% @end
+%%--------------------------------------------------------------------
+-spec link(link_type(), trace_id(), span_id(), attributes()) -> link().
+link(LinkType, TraceId, SpanId, Attributes) ->
+    #link{type=LinkType,
+          trace_id=TraceId,
+          span_id=SpanId,
+          attributes=Attributes}.
 
 %%--------------------------------------------------------------------
 %% @doc

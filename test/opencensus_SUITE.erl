@@ -12,7 +12,8 @@
 -include("opencensus.hrl").
 
 all() ->
-    [start_finish, child_spans, noops, attributes_test].
+    [start_finish, child_spans, noops, attributes_test,
+     links, time_events, status].
 
 init_per_suite(Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
@@ -101,3 +102,73 @@ attributes_test(_Config) ->
     ?assertEqual(SpanName1, Span2#span.name),
     ?assert(Span2#span.end_time > Span2#span.start_time),
     ?assertEqual(<<"value-0">>, maps:get(<<"attr-0">>, Span2#span.attributes)).
+
+links(_Config) ->
+    SpanName1 = <<"span-1">>,
+    Span0TraceId = opencensus:generate_trace_id(),
+    Span0 = opencensus:start_span(SpanName1, Span0TraceId),
+
+    SpanWithLinkName = <<"span-with-link-1">>,
+    SpanWithLink0 = opencensus:start_span(SpanWithLinkName, opencensus:generate_trace_id()),
+
+    LinkAttributes = #{<<"attr-1">> => <<"value-1">>},
+    Link = opencensus:link(?LINK_TYPE_CHILD_LINKED_SPAN, Span0TraceId,
+                           Span0#span.span_id, LinkAttributes),
+    SpanWithLink1 = opencensus:add_link(Link, SpanWithLink0),
+    SpanWithLink2 = opencensus:finish_span(SpanWithLink1),
+
+    ?assertEqual([#link{type=?LINK_TYPE_CHILD_LINKED_SPAN,
+                        trace_id=Span0TraceId,
+                        span_id=Span0#span.span_id,
+                        attributes=LinkAttributes}], SpanWithLink2#span.links),
+
+    Span1 = opencensus:finish_span(Span0),
+    ?assert(Span1#span.end_time > Span1#span.start_time),
+    ok.
+
+
+time_events(_Config) ->
+    SpanName1 = <<"time-events-span-1">>,
+    Span0TraceId = opencensus:generate_trace_id(),
+    Span0 = opencensus:start_span(SpanName1, Span0TraceId),
+
+    Description = <<"annotation description">>,
+    Attributes = #{<<"attr-1">> => <<"value-1">>},
+    Annotation = opencensus:annotation(Description, Attributes),
+    Timestamp1 = wts:timestamp(),
+    Span1 = opencensus:add_time_event(Timestamp1, Annotation, Span0),
+
+    MessageEventType = ?MESSAGE_EVENT_TYPE_SENT,
+    MessageEventId = 34,
+    UncompressedSize = 100,
+    CompressedSize = 64,
+    MessageEvent = opencensus:message_event(MessageEventType, MessageEventId, UncompressedSize, CompressedSize),
+
+    Span2 = opencensus:add_time_event(MessageEvent, Span1),
+
+    Span3 = opencensus:finish_span(Span2),
+    ?assert(Span3#span.end_time > Span3#span.start_time),
+    ?assertMatch([{Timestamp2, #message_event{type=MessageEventType,
+                                              id=MessageEventId,
+                                              uncompressed_size=UncompressedSize,
+                                              compressed_size=CompressedSize}},
+                  {Timestamp1, #annotation{description=Description,
+                                           attributes=Attributes}}]
+                 when Timestamp2 > Timestamp1, Span3#span.time_events),
+    ok.
+
+
+status(_Config) ->
+    SpanName1 = <<"status-span-1">>,
+    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id()),
+
+    Code = 1,
+    Message = <<"I am a status">>,
+    Span2 = opencensus:set_status(Code, Message, Span1),
+
+    Span3 = opencensus:finish_span(Span2),
+
+    ?assertEqual(SpanName1, Span3#span.name),
+    ?assert(Span3#span.end_time > Span3#span.start_time),
+    ?assertMatch(#status{code=Code,
+                         message=Message}, Span3#span.status).
