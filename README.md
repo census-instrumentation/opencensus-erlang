@@ -1,8 +1,9 @@
 ## Erlang stats collection and distributed tracing framework
 
 [![CircleCI](https://circleci.com/gh/census-instrumentation/opencensus-erlang.svg?style=svg)](https://circleci.com/gh/census-instrumentation/opencensus-erlang)
-
 [![Coverage Status](https://coveralls.io/repos/github/census-instrumentation/opencensus-erlang/badge.svg?branch=master)](https://coveralls.io/github/census-instrumentation/opencensus-erlang?branch=master)
+[![Hex.pm](https://img.shields.io/hexpm/v//opencensus.svg?maxAge=2592000)](https://hex.pm/packages/opencensus)
+[![Hex.pm](https://img.shields.io/hexpm/dt/opencensus.svg?maxAge=2592000)](https://hex.pm/packages/opencensus)
 
 ### Using with Rebar3 project
 
