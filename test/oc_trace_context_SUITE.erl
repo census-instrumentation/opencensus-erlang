@@ -77,7 +77,7 @@ encode_decode_headers(_Config) ->
     {ok, DisabledEncoded} = oc_trace_context_headers:encode(DisabledDecoded),
     ?assertEqual(DisabledHeader, list_to_binary(DisabledEncoded)),
     ?assertEqual({ok, DisabledDecoded}, oc_trace_context_headers:decode(DisabledEncoded)),
-    ?assertNot(DisabledDecoded#trace_context.enabled),
+    ?assertEqual(0, DisabledDecoded#span_ctx.trace_options),
 
     %% Decode invalid headers
     InvalidSpanIdHeader = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-00">>,
@@ -91,17 +91,17 @@ encode_decode_headers(_Config) ->
 
 
     %% Encode invalid trace contexts
-    InvalidTC = #trace_context{trace_id = 0,
-                               span_id = 0,
-                               enabled = false},
+    InvalidTC = #span_ctx{trace_id = 0,
+                          span_id = 0,
+                          trace_options = false},
     {error, invalid} = oc_trace_context_headers:encode(InvalidTC),
 
-    InvalidTraceIdTC = #trace_context{trace_id = 85409434994488837557643013731547696719,
-                                      span_id = 0,
-                                      enabled = true},
+    InvalidTraceIdTC = #span_ctx{trace_id = 85409434994488837557643013731547696719,
+                                 span_id = 0,
+                                 trace_options = true},
     {error, invalid} = oc_trace_context_headers:encode(InvalidTraceIdTC),
 
-    InvalidSpanIdTC = #trace_context{trace_id = 0,
-                                     span_id = 7017280452245743464,
-                                     enabled = false},
+    InvalidSpanIdTC = #span_ctx{trace_id = 0,
+                                span_id = 7017280452245743464,
+                                trace_options = false},
     {error, invalid} = oc_trace_context_headers:encode(InvalidSpanIdTC).

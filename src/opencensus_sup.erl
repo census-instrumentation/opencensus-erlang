@@ -43,6 +43,12 @@ init([]) ->
                  shutdown => 1000,
                  type => worker,
                  modules => [oc_reporter]},
+    TraceServer = #{id => oc_server,
+                    start => {oc_server, start_link, []},
+                    restart => permanent,
+                    shutdown => 1000,
+                    type => worker,
+                    modules => [oc_server]},
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter]}}.
+            period => 5}, [Reporter, TraceServer]}}.

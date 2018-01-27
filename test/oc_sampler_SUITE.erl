@@ -54,8 +54,8 @@ end_per_testcase(_, _Config) ->
 never_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
-                         TraceContext = opencensus:start_trace(),
-                         TraceContext#trace_context.enabled
+                         SpanContext = oc_trace:start_span(<<"span">>, undefined),
+                         SpanContext#span_ctx.trace_options =:= 1
                      end, lists:seq(1, Limit)),
 
     ?assertEqual(0, length(L)).
@@ -64,16 +64,16 @@ always_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          %% include a test where 'undefined' is passed as the TC
-                         TraceContext = opencensus:start_trace(undefined),
-                         TraceContext#trace_context.enabled
+                         SpanContext = oc_trace:start_span(<<"span">>, undefined),
+                         SpanContext#span_ctx.trace_options =:= 1
                      end, lists:seq(1, Limit)),
     ?assertEqual(Limit, length(L)).
 
 probability_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
-                         TraceContext = opencensus:start_trace(),
-                         TraceContext#trace_context.enabled
+                         SpanContext = oc_trace:start_span(<<"span">>, undefined),
+                         SpanContext#span_ctx.trace_options =:= 1
                      end, lists:seq(1, Limit)),
     Length = length(L),
     ?assert(Length < Limit andalso Length > 0).
@@ -81,8 +81,8 @@ probability_sample(Config) ->
 probability_zero_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
-                         TraceContext = opencensus:start_trace(),
-                         TraceContext#trace_context.enabled
+                         SpanContext = oc_trace:start_span(<<"span">>, undefined),
+                         SpanContext#span_ctx.trace_options =:= 1
                      end, lists:seq(1, Limit)),
     ?assertEqual(0, length(L)).
 
@@ -90,8 +90,8 @@ probability_hundred_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          %% include a test where an already generated id is passed as the TraceId
-                         TraceContext = opencensus:start_trace(opencensus:generate_trace_id()),
-                         TraceContext#trace_context.enabled
+                         SpanContext = oc_trace:start_span(<<"span">>, undefined),
+                         SpanContext#span_ctx.trace_options =:= 1
                      end, lists:seq(1, Limit)),
     ?assertEqual(Limit, length(L)).
 
@@ -103,8 +103,8 @@ deterministic_probability(Config) ->
     lists:foldl(fun(_, Acc) ->
                     L = lists:filter(fun(TraceId) ->
                                          %% include a test where a TC record is passed as the TraceId
-                                         TraceContext = opencensus:start_trace(#trace_context{trace_id=TraceId}),
-                                         TraceContext#trace_context.enabled
+                                         SpanContext = oc_trace:start_span(<<"span">>, #span_ctx{trace_id=TraceId}),
+                                         SpanContext#span_ctx.trace_options =:= 1
                                      end, TraceIds),
                     %% verify that every list of sampled is the same
                     ?assert(lists:all(fun(X) -> X =:= L end, Acc)),

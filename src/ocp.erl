@@ -12,17 +12,26 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc opencensus functionality using the pdict to track trace context
+%% @doc ocp uses the pdict instead of a ctx variable for tracking context.
+%%      The functions fetch the current span context from the pdict and
+%%      passes it through to the oc_trace function of the same name.
 %% @end
 %%%-----------------------------------------------------------------------
 -module(ocp).
 
--export([start_trace/0,
-         start_trace/1,
-         start_span/1,
-         start_span/2,
+-export([with_tags/1,
+
+         with_span/1,
+
+         with_child_span/1,
+         with_child_span/2,
+         with_child_span/3,
+
+         current_span/0,
+         current_tags/0,
+
          finish_span/0,
-         context/0,
+
          put_attribute/2,
          put_attributes/1,
          add_time_event/1,
@@ -32,101 +41,76 @@
 
 -include("opencensus.hrl").
 
--define(CONTEXT, current_context).
--define(KEY, current_span).
--define(SKEY, current_spans).
+%%--------------------------------------------------------------------
+%% @doc
+%% Replaces the tags in the current context.
+%% @end
+%%--------------------------------------------------------------------
+-spec with_tags(opencensus:tags()) -> maybe(opencensus:tags()).
+with_tags(Map) ->
+    put(?TAG_CTX, Map).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Creates a new trace context.
+%% Replaces the span in the current context.
 %% @end
 %%--------------------------------------------------------------------
--spec start_trace() -> ok.
-start_trace() ->
-    put(?CONTEXT, opencensus:start_trace()),
-    put(?SKEY, []).
-
--spec start_trace(opencensus:trace_context()) -> ok.
-start_trace(TraceContext = #trace_context{}) ->
-    put(?CONTEXT, TraceContext),
-    put(?SKEY, []);
-start_trace(_) ->
-    put(?CONTEXT, undefined),
-    put(?SKEY, []),
-    error.
+-spec with_span(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
+with_span(Span) ->
+    put(?SPAN_CTX, Span).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts a new span as a child of the current span, if one exists,
-%% and pushes the parent on the span stack in the process dictionary.
+%% Starts a new span as a child of the current span and replaces it.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span()).
-start_span(Name) ->
-    start_span(Name, #{}).
+-spec with_child_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span_ctx()).
+with_child_span(Name) ->
+    with_span(oc_trace:start_span(Name, get(?SPAN_CTX), #{})).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts a new span with `Attributes' as a child of the current span,
-%% if one exists, and pushes the parent on the span stack in the process
-%% dictionary.
+%% Starts a new span as a child of the current span and uses it as the
+%% current span while running the function `Fun`, finishing the span
+%% and resetting the current span context after the function finishes.
 %% @end
 %%--------------------------------------------------------------------
--spec start_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span()).
-start_span(Name, Attributes) ->
-    Ctx = case get(?KEY) of
-              undefined ->
-                  get(?CONTEXT);
-              Span ->
-                  case get(?SKEY) of
-                      undefined ->
-                          put(?SKEY, [Span]);
-                      Spans ->
-                          put(?SKEY, [Span | Spans])
-                  end,
-                  Span
-          end,
-    NewSpan = opencensus:start_span(Name, Ctx, Attributes),
-    put(?KEY, NewSpan),
+-spec with_child_span(unicode:unicode_binary(), fun()) -> maybe(opencensus:span_ctx()).
+with_child_span(Name, Fun) ->
+    with_child_span(Name, #{}, Fun).
 
-    NewSpan.
+-spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> maybe(opencensus:span_ctx()).
+with_child_span(Name, Attributes, Fun) ->
+    CurrentSpan = get(?SPAN_CTX),
+    NewSpan = oc_trace:start_span(Name, CurrentSpan, #{attributes => Attributes}),
+    put(?SPAN_CTX, NewSpan),
+    try Fun()
+    after
+        oc_trace:finish_span(get(?SPAN_CTX)),
+        put(?SPAN_CTX, CurrentSpan)
+    end.
 
+-spec current_span() -> maybe(opencensus:span_ctx()).
+current_span() ->
+    get(?SPAN_CTX).
 
-%%--------------------------------------------------------------------
-%% @doc
-%% Finishes the current span and pops it from the stack of open spans.
-%% @end
-%%--------------------------------------------------------------------
--spec finish_span() -> opencensus:maybe(opencensus:span()).
-finish_span() ->
-    OldSpan = opencensus:finish_span(get(?KEY)),
-    case get(?SKEY) of
+-spec current_tags() -> opencensus:tags().
+current_tags() ->
+    case get(?TAG_CTX) of
         undefined ->
-            put(?KEY, undefined),
-            undefined;
-        [] ->
-            put(?KEY, undefined),
-            undefined;
-        [Span | Spans] ->
-            put(?SKEY, Spans),
-            put(?KEY, Span)
-    end,
-    OldSpan.
+            oc_tags:new();
+        Tags ->
+            Tags
+    end.
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Return the current trace context for the process.
+%% Finishes the span in the current pdict context.
 %% @end
 %%--------------------------------------------------------------------
--spec context() -> opencensus:maybe(opencensus:span()).
-context() ->
-    Span = get(?KEY),
-    Enabled = case get(?CONTEXT) of
-      #trace_context{} = Context -> Context#trace_context.enabled;
-      _ -> false
-    end,
-
-    opencensus:context(Span, Enabled).
+-spec finish_span() -> boolean().
+finish_span() ->
+    oc_trace:finish_span(get(?SPAN_CTX)).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -134,10 +118,10 @@ context() ->
 %% If the attribute already exists it is overwritten with the new value.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value()) -> ok | {error, invalid_attribute}.
+-spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value()) -> boolean() | {error, invalid_attribute}.
 put_attribute(Key, Value) when is_binary(Key)
-                             , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
-    put(?KEY, opencensus:put_attribute(Key, Value, get(?KEY)));
+                               , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
+    oc_trace:put_attribute(Key, Value, get(?SPAN_CTX));
 put_attribute(_Key, _Value) ->
     {error, invalid_attribute}.
 
@@ -147,9 +131,9 @@ put_attribute(_Key, _Value) ->
 %% The new values overwrite the old if any keys are the same.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()}) -> ok.
+-spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()}) -> boolean().
 put_attributes(NewAttributes) ->
-    put(?KEY, opencensus:put_attributes(NewAttributes, get(?KEY))).
+    oc_trace:put_attributes(NewAttributes, get(?SPAN_CTX)).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -157,28 +141,28 @@ put_attributes(NewAttributes) ->
 %% current span.
 %% @end
 %%--------------------------------------------------------------------
--spec add_time_event(opencensus:annotation() | opencensus:message_event()) -> ok.
+-spec add_time_event(opencensus:annotation() | opencensus:message_event()) -> boolean().
 add_time_event(TimeEvent) ->
-    put(?KEY, opencensus:add_time_event(TimeEvent, get(?KEY))).
+    oc_trace:add_time_event(TimeEvent, get(?SPAN_CTX)).
 
--spec add_time_event(wts:timestamp(), opencensus:annotation() | opencensus:message_event()) -> ok.
+-spec add_time_event(wts:timestamp(), opencensus:annotation() | opencensus:message_event()) -> boolean().
 add_time_event(Timestamp, TimeEvent) ->
-    put(?KEY, opencensus:add_time_event(Timestamp, TimeEvent, get(?KEY))).
+    oc_trace:add_time_event(Timestamp, TimeEvent, get(?SPAN_CTX)).
 
 %%--------------------------------------------------------------------
 %% @doc
 %% Set Status of current span.
 %% @end
 %%--------------------------------------------------------------------
--spec set_status(integer(), unicode:unicode_binary()) -> ok.
+-spec set_status(integer(), unicode:unicode_binary()) -> boolean().
 set_status(Code, Message) ->
-    put(?KEY, opencensus:set_status(Code, Message, get(?KEY))).
+    oc_trace:set_status(Code, Message, get(?SPAN_CTX)).
 
 %%--------------------------------------------------------------------
 %% @doc
 %% Add a Link to the list of Links in the current span.
 %% @end
 %%--------------------------------------------------------------------
--spec add_link(opencensus:link()) -> ok.
+-spec add_link(opencensus:link()) -> boolean().
 add_link(Link) ->
-    put(?KEY, opencensus:add_link(Link, get(?KEY))).
+    oc_trace:add_link(Link, get(?SPAN_CTX)).
