@@ -6,7 +6,8 @@
   {applications,
    [kernel,
     stdlib,
-    wts
+    wts,
+    ctx
    ]},
   {modules, []},
   {env, [{send_interval_ms, 500}]},
