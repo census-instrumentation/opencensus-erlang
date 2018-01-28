@@ -51,7 +51,7 @@ some_fun() ->
 
 ##### Manual
 
-Span's can be tracked manually in a variable:
+Spans can be tracked manually in a variable:
 
 ```erlang
 some_fun() ->
