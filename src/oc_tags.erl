@@ -11,11 +11,12 @@
          format_error/1]).
 
 -export_types([key/0,
-               value/0]).
+               value/0,
+               tags/0]).
 
 -include("opencensus.hrl").
 
--type key() :: unicode:latin1_charlist().
+-type key() :: atom() | unicode:latin1_charlist().
 -type value() :: unicode:latin1_charlist().
 -type tags() :: #{key() => value()}.
 
@@ -55,6 +56,8 @@ put(Key, Value, Tags) ->
             {error, {?MODULE, invalid_tag}}
     end.
 
+verify_key(Key) when is_atom(Key) ->
+  verify_key(atom_to_list(Key));
 verify_key(Key) ->
     KeyLength = erlang:length(Key),
     KeyLength > 0 andalso KeyLength < 256 andalso
