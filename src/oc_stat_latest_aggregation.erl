@@ -5,14 +5,14 @@
          export/2]).
 
 init(Name, Description, {CTags, Keys}, Options) ->
-  prometheus_gauge:declare([{name, Name},
-                            {help, Description},
-                            {labels, Keys},
-                            {constant_labels, CTags}]),
-  Options.
+    prometheus_gauge:declare([{name, Name},
+                              {help, Description},
+                              {labels, Keys},
+                              {constant_labels, CTags}]),
+    Options.
 
 add_sample(Name, Tags, Value, _Options) ->
-  prometheus_gauge:set(Name, Tags, Value).
+    prometheus_gauge:set(Name, Tags, Value).
 
 export(_Name, _Options) ->
-  erlang:error(not_supported).
+    erlang:error(not_supported).
