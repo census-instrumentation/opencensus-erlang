@@ -13,6 +13,8 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
+-define(TAG_CTX, oc_tag_ctx_key).
+
 -define(MESSAGE_EVENT_TYPE_UNSPECIFIED, 'TYPE_UNSPECIFIED').
 -define(MESSAGE_EVENT_TYPE_SENT, 'SENT').
 -define(MESSAGE_EVENT_TYPE_RECEIVED, 'RECEIVED').
