@@ -17,7 +17,8 @@ encode(TagContext) ->
                           EncodedKeySize = encode_varint(KeySize),
                           EncodedValueSize = encode_varint(ValueSize),
                           {Size+KeySize+ValueSize+size(EncodedKeySize)+size(EncodedValueSize),
-                            [Acc | [<<?TAG_CONTEXT_FIELD_ID:8/integer>>, EncodedKeySize, Key, EncodedValueSize, Value]]};
+                            [Acc | [<<?TAG_CONTEXT_FIELD_ID:8/integer>>, EncodedKeySize,
+                                    Key, EncodedValueSize, Value]]};
                      (_, _, _)->
                           throw({?MODULE, encoding_too_large})
                   end, {0, [<<?VERSION:8/integer>>]}, TagContext) of
