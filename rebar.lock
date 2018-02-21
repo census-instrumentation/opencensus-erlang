@@ -1,12 +1,12 @@
 {"1.1.0",
 [{<<"ctx">>,{pkg,<<"ctx">>,<<"0.4.1">>},0},
- {<<"prometheus">>,{pkg,<<"prometheus">>,<<"4.0.0">>},0},
+ {<<"prometheus">>,{pkg,<<"prometheus">>,<<"4.0.1">>},0},
  {<<"rfc3339">>,{pkg,<<"rfc3339">>,<<"0.9.0">>},1},
  {<<"wts">>,{pkg,<<"wts">>,<<"0.3.0">>},0}]}.
 [
 {pkg_hash,[
  {<<"ctx">>, <<"E4297DD25CCDE992BC7DE298F514BEACD0A44FAA9126A1F2567306D94C519A13">>},
- {<<"prometheus">>, <<"261253C4BD0BD71175F185553B684F456188A3572ACFA8221A8C10FDA52AFF81">>},
+ {<<"prometheus">>, <<"A290D537481C74CCC0202B9677D37EE249A6DE526B5294BFE098653D9E4F344A">>},
  {<<"rfc3339">>, <<"2075653DC9407541C84B1E15F8BDA2ABE95FB17C9694025E079583F2D19C1060">>},
  {<<"wts">>, <<"5CDF22C775CB1EBAE24C326A5DB6074D753C42F4BD12A9AA47CC62D3E2C71AD1">>}]}
 ].
