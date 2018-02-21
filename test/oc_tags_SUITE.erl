@@ -10,7 +10,7 @@
 -include_lib("common_test/include/ct.hrl").
 
 all() ->
-    [encode_decode, invalid_tags, basic].
+    [encode_decode, invalid_tags, basic, ctx].
 
 encode_decode(_Config) ->
     Empty = #{},
@@ -47,4 +47,12 @@ basic(_Config) ->
     ?assertMatch(#{"key-1" := "value-1",
                    "key-2" := "value-2",
                    "key-3" := "value-3",
-                   "key-4" := "value-4"}, Tags2).
+                   "key-4" := "value-4"}, oc_tags:to_map(Tags2)).
+
+ctx(_Config) ->
+    Ctx = oc_tags:new_ctx(ctx:new(), #{"key-1" => "value-1",
+                                       "key-2" => "value-2"}),
+    Tags = oc_tags:from_ctx(Ctx),
+
+    ?assertMatch(#{"key-1" := "value-1",
+                   "key-2" := "value-2"}, oc_tags:to_map(Tags)).

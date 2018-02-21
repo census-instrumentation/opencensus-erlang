@@ -4,6 +4,7 @@
          new/1,
          new_ctx/2,
          from_ctx/1,
+         to_map/1,
          put/3,
          verify_key/1,
          verify_value/1,
@@ -37,8 +38,13 @@ new(Map) ->
 new_ctx(Ctx, Map) ->
     ctx:with_value(Ctx, ?TAG_CTX, new(Map)).
 
+-spec from_ctx(ctx:t()) -> tags().
 from_ctx(Ctx) ->
     ctx:get(Ctx, ?TAG_CTX, #{}).
+
+-spec to_map(tags()) -> maps:map().
+to_map(Tags) ->
+    Tags.
 
 -spec put(key(), value(), tags()) -> {ok, tags()} | {error, term()}.
 put(Key, Value, Tags) ->
