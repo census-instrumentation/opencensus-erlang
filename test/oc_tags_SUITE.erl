@@ -10,7 +10,7 @@
 -include_lib("common_test/include/ct.hrl").
 
 all() ->
-    [encode_decode, invalid_tags].
+    [encode_decode, invalid_tags, basic].
 
 encode_decode(_Config) ->
     Empty = #{},
@@ -36,3 +36,15 @@ invalid_tags(_Config) ->
     TooManyBytes = maps:from_list([{integer_to_list(X), "some value"} || X <- lists:seq(1, 8192)]),
     ?assertMatch({error, {oc_tag_context_binary, encoding_too_large}}, oc_tag_context_binary:encode(TooManyBytes)),
     ok.
+
+basic(_Config) ->
+    Tags = oc_tags:new(#{"key-1" => "value-1",
+                         "key-2" => "value-2"}),
+    {ok, Tags1} = oc_tags:put("key-3", "value-3", Tags),
+    {ok, Tags2} = oc_tags:put("key-4", "value-4", Tags1),
+
+
+    ?assertMatch(#{"key-1" := "value-1",
+                   "key-2" := "value-2",
+                   "key-3" := "value-3",
+                   "key-4" := "value-4"}, Tags2).

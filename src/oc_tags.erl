@@ -1,15 +1,18 @@
 -module(oc_tags).
 
 -export([new/0,
+         new/1,
+         new_ctx/2,
+         from_ctx/1,
          put/3,
-
          verify_key/1,
          verify_value/1,
-
          format_error/1]).
 
 -export_types([key/0,
                value/0]).
+
+-include("opencensus.hrl").
 
 -type key() :: unicode:latin1_charlist().
 -type value() :: unicode:latin1_charlist().
@@ -19,11 +22,29 @@
 new() ->
     #{}.
 
--spec put(key(), value(), tags()) -> tags().
+-spec new(maps:map()) -> tags().
+new(Map) ->
+    maps:fold(fun(K, V, Acc) ->
+                      case put(K, V, Acc) of
+                          {ok, Acc1} ->
+                              Acc1;
+                          {error, _} ->
+                              Acc
+                      end
+              end, #{}, Map).
+
+-spec new_ctx(ctx:t(), maps:map()) -> ctx:t().
+new_ctx(Ctx, Map) ->
+    ctx:with_value(Ctx, ?TAG_CTX, new(Map)).
+
+from_ctx(Ctx) ->
+    ctx:get(Ctx, ?TAG_CTX, #{}).
+
+-spec put(key(), value(), tags()) -> {ok, tags()} | {error, term()}.
 put(Key, Value, Tags) ->
     case verify_key(Key) andalso verify_value(Value) of
         true ->
-            maps:put(Key, Value, Tags);
+            {ok, maps:put(Key, Value, Tags)};
         false ->
             {error, {?MODULE, invalid_tag}}
     end.
