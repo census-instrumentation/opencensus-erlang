@@ -34,8 +34,7 @@ init([]) ->
 
     ok = oc_stat_view:'__init_backend__'(),
 
-    StatConf = application:get_env(opencensus, stat, []),
-    oc_stat_view:batch_subscribe(proplists:get_value(views, StatConf, [])),
+    oc_stat_view:batch_subscribe(oc_stat_config:views()),
 
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},

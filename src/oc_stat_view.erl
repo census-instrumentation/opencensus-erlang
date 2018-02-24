@@ -14,12 +14,17 @@
          add_sample/3,
          export/1]).
 
+-export_types([view_data/0]).
+
 -export(['__init_backend__'/0]).
 
 -include("opencensus.hrl").
 
 -define(NAME_POS, 2).
 -define(SUBSCRIBED_POS, 3).
+
+%% FIXME: too generic
+-type view_data() :: any().
 
 -spec register(view_name(), view_description(), oc_tags:tags(),
                measure_name(), aggregation()) -> ok.
@@ -103,6 +108,7 @@ add_sample({_Measure, Name, _Subscribed, _Description, ViewTags, Aggregation}, C
     {AggregationModule, AggregationOptions} = Aggregation,
     AggregationModule:add_sample(Name, TagValues, Value, AggregationOptions).
 
+-spec export(tuple()) -> view_data().
 export({_Measure, Name, _, Description, ViewTags, Aggregation}) ->
     {AggregationModule, AggregationOptions} = Aggregation,
     {STags, Keys} = ViewTags,
