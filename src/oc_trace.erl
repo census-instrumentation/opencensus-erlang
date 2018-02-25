@@ -31,6 +31,8 @@
 
          finish_span/1,
 
+         is_enabled/1,
+
          put_attribute/3,
          put_attributes/2,
 
@@ -122,7 +124,8 @@ start_span(Name, SpanCtx, Options) ->
 %% if parent is undefined, first run sampler
 new_span_(Name, undefined, _) ->
     TraceId = opencensus:generate_trace_id(),
-    Span = #span_ctx{trace_id=TraceId},
+    Span = #span_ctx{trace_id=TraceId,
+                     trace_options=0},
     TraceOptions = update_trace_options(should_sample, Span),
     new_span_(Name, Span#span_ctx{trace_options=TraceOptions}, false);
 %% if parent is remote, first run sampler
@@ -168,6 +171,17 @@ finish_span(#span_ctx{span_id=SpanId,
     end;
 finish_span(_) ->
     true.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns true if trace is enabled.
+%% @end
+%%--------------------------------------------------------------------
+-spec is_enabled(maybe(opencensus:span_ctx())) -> boolean().
+is_enabled(undefined) ->
+    false;
+is_enabled(#span_ctx{trace_options=TraceOptions}) ->
+    ?IS_ENABLED(TraceOptions).
 
 %%--------------------------------------------------------------------
 %% @doc
