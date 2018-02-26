@@ -33,8 +33,11 @@ init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
     ok = oc_stat_view:'__init_backend__'(),
+    ok = oc_stat_exporter:'__init_backend__'(),
 
     oc_stat_view:batch_subscribe(oc_stat_config:views()),
+
+    oc_stat_exporter:batch_register(oc_stat_config:exporters()),
 
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
@@ -42,12 +45,21 @@ init([]) ->
                  shutdown => 1000,
                  type => worker,
                  modules => [oc_reporter]},
+
+    Exporter = #{id => oc_stat_exporter,
+                 start => {oc_stat_exporter, start_link, []},
+                 restart => permanent,
+                 shutdown => 1000,
+                 type => worker,
+                 modules => [oc_stat_exporter]},
+    
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},
                     restart => permanent,
                     shutdown => 1000,
                     type => worker,
                     modules => [oc_server]},
+
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, TraceServer]}}.
+            period => 5}, [Reporter, Exporter, TraceServer]}}.

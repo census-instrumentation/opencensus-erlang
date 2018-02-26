@@ -31,6 +31,8 @@
          code_change/3,
          terminate/2]).
 
+-export(['__init_backend__'/0]).
+
 -export_types([exporter/0]).
 
 -compile({no_auto_import, [register/2]}).
@@ -44,11 +46,10 @@
       Config  :: any().
 
 -record(state, {%% exporters :: [{module(), any}],
-                export_interval_ms :: integer(),
-                timer_ref :: reference()}).
+          export_interval_ms :: integer(),
+          timer_ref :: reference()}).
 
 start_link() ->
-    maybe_init_ets(),
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @doc
@@ -100,7 +101,7 @@ deregister(Exporter) ->
 registered(Exporter) ->
     ets:lookup(?MODULE, Exporter) =/= [].
 
-maybe_init_ets() ->
+'__init_backend__'() ->
     ?MODULE = ets:new(?MODULE, [set, named_table, public, {read_concurrency, true}]),
     ok.
 
@@ -111,6 +112,7 @@ maybe_init_ets() ->
 export() ->
     Measurements = oc_stat:export(),
     Exporters = ets:tab2list(?MODULE),
+
     [try
          Exporter:export(Measurements, Config)
      catch
