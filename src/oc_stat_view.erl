@@ -111,11 +111,11 @@ add_sample({_Measure, Name, _Subscribed, _Description, ViewTags, Aggregation}, C
 -spec export(tuple()) -> view_data().
 export({_Measure, Name, _, Description, ViewTags, Aggregation}) ->
     {AggregationModule, AggregationOptions} = Aggregation,
-    {STags, Keys} = ViewTags,
+    {CTags, _Keys} = ViewTags,
     #{name => Name,
       description => Description,
-      aggregation => Aggregation,
-      tags => {STags, lists:reverse(Keys)},
+      type => AggregationModule:type(),
+      ctags => CTags,
       rows => AggregationModule:export(Name, AggregationOptions)}.
 
 normalize_aggregation({Module, Options}) ->
