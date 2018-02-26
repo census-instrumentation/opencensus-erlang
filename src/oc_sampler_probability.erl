@@ -43,6 +43,9 @@ init(Opts) ->
     end,
     IdUpperBound.
 
+%% probability sampler keeps parent decision if it is true
+should_sample(_, _, true, _) ->
+    true;
 should_sample(TraceId, _, _, IdUpperBound) ->
     Lower64Bits = TraceId band ?MAX_VALUE,
     erlang:abs(Lower64Bits) < IdUpperBound.

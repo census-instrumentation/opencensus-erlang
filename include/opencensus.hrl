@@ -13,6 +13,9 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
+-define(SPAN_TAB, oc_span_tab).
+
+-define(SPAN_CTX, oc_span_ctx_key).
 -define(TAG_CTX, oc_tag_ctx_key).
 
 -define(MESSAGE_EVENT_TYPE_UNSPECIFIED, 'TYPE_UNSPECIFIED').
@@ -23,14 +26,15 @@
 -define(LINK_TYPE_CHILD_LINKED_SPAN, 'CHILD_LINKED_SPAN').
 -define(LINK_TYPE_PARENT_LINKED_SPAN, 'PARENT_LINKED_SPAN').
 
--record(trace_context, {
-          trace_id   :: opencensus:trace_id() | undefined,
-          span_id    :: opencensus:span_id() | undefined,
-          enabled    :: boolean() | undefined,
+-type maybe(T) :: T | undefined.
 
-          sampler    :: module(),
-          reporter   :: module(),
-          propagator :: module()
+-record(span_ctx, {
+          %% 128 bit int trace id
+          trace_id          :: opencensus:trace_id() | undefined,
+          %% 64 bit int span id
+          span_id           :: opencensus:span_id() | undefined,
+          %% 8-bit integer, lowest bit is if it is sampled
+          trace_options = 1 :: integer() | undefined
          }).
 
 -record(span, {
@@ -45,13 +49,16 @@
           %% 64 bit int parent span
           parent_span_id                          :: opencensus:span_id() | undefined,
 
+          %% 8-bit integer, lowest bit is if it is sampled
+          trace_options = 1                       :: integer() | undefined,
+
           start_time                              :: wts:timestamp(),
           end_time                                :: wts:timestamp() | undefined,
 
           attributes = #{}                        :: opencensus:attributes(),
 
           %% optional stacktrace from where the span was started
-          stack_trace                              :: opencensus:stack_trace() | undefined,
+          stack_trace                             :: opencensus:stack_trace() | undefined,
 
           %% links to spans in other traces
           links = []                              :: opencensus:links(),

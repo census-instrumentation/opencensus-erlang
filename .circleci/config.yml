@@ -90,7 +90,7 @@ jobs:
             - census-hex-packages
 
       - run:
-          command: rebar3 as lint lint
+          command: rebar3 lint
 
   tests:
     <<: *defaults

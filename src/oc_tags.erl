@@ -1,3 +1,20 @@
+%%%------------------------------------------------------------------------
+%% Copyright 2017, OpenCensus Authors
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+%%
+%% @doc
+%% @end
+%%%-------------------------------------------------------------------------
 -module(oc_tags).
 
 -export([new/0,
@@ -16,9 +33,9 @@
 
 -include("opencensus.hrl").
 
--type key() :: atom() | unicode:latin1_charlist().
+-type key()   :: unicode:latin1_charlist().
 -type value() :: unicode:latin1_charlist().
--type tags() :: #{key() => value()}.
+-type tags()  :: #{key() => value()}.
 
 -spec new() -> tags().
 new() ->
@@ -35,9 +52,9 @@ new(Map) ->
                       end
               end, #{}, Map).
 
--spec new_ctx(ctx:t(), maps:map()) -> ctx:t().
-new_ctx(Ctx, Map) ->
-    ctx:with_value(Ctx, ?TAG_CTX, new(Map)).
+-spec new_ctx(ctx:t(), tags()) -> ctx:t().
+new_ctx(Ctx, Tags) ->
+    ctx:with_value(Ctx, ?TAG_CTX, Tags).
 
 -spec from_ctx(ctx:t()) -> tags().
 from_ctx(Ctx) ->

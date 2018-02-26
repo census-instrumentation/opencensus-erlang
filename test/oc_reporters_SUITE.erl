@@ -24,11 +24,13 @@ end_per_suite(_Config) ->
   ok.
 
 init_per_testcase(pid_reporter, Config) ->
+    application:set_env(opencensus, send_interval_ms, 1),
     application:set_env(opencensus, reporter, {oc_pid_reporter, []}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(sequential_reporter, Config) ->
+    application:set_env(opencensus, send_interval_ms, 1),
     application:set_env(opencensus, reporter, {oc_sequential_reporter, [{oc_pid_reporter, []},
                                                                         {oc_pid_reporter, []}]}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
@@ -41,14 +43,17 @@ end_per_testcase(_, _Config) ->
 
 pid_reporter(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
+    SpanCtx = oc_trace:start_span(SpanName1, undefined),
 
     ChildSpanName1 = <<"child-span-1">>,
-    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
-    ?assertEqual(ChildSpanName1, ChildSpan1#span.name),
-    ?assertEqual(Span1#span.span_id, ChildSpan1#span.parent_span_id),
-    opencensus:finish_span(ChildSpan1),
-    opencensus:finish_span(Span1),
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
+
+    [ChildSpanData] = ets:lookup(?SPAN_TAB, ChildSpanCtx#span_ctx.span_id),
+    ?assertEqual(ChildSpanName1, ChildSpanData#span.name),
+    ?assertEqual(SpanCtx#span_ctx.span_id, ChildSpanData#span.parent_span_id),
+
+    oc_trace:finish_span(ChildSpanCtx),
+    oc_trace:finish_span(SpanCtx),
 
     %% Order the spans are reported is undefined, so use a selective receive to make
     %% sure we get them all
@@ -65,12 +70,13 @@ pid_reporter(_Config) ->
 
 sequential_reporter(_Config) ->
     SpanName1 = <<"span-1">>,
-    Span1 = opencensus:start_span(SpanName1, opencensus:generate_trace_id(), undefined, #{}),
+    SpanCtx = oc_trace:start_span(SpanName1, undefined),
 
     ChildSpanName1 = <<"child-span-1">>,
-    ChildSpan1 = opencensus:start_span(ChildSpanName1, Span1),
-    opencensus:finish_span(ChildSpan1),
-    opencensus:finish_span(Span1),
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
+
+    oc_trace:finish_span(ChildSpanCtx),
+    oc_trace:finish_span(SpanCtx),
 
     SortedNames = [ChildSpanName1, ChildSpanName1, SpanName1, SpanName1],
 

@@ -33,7 +33,7 @@ parse_transform(Ast, _Options)->
 
 form(Node={attribute, _Line, module, Module}, _) ->
     {Node, {false, Module, []}};
-form({attribute, _Line, trace, Args}, {_, Module, _}) ->
+form({attribute, _Line, span, Args}, {_, Module, _}) ->
     {nil, {true, Module, Args}};
 form(Node={function, _Line, _FuncName, _Arity, _Clauses}, {false, Module, []}) ->
     {Node, {false, Module, []}};
@@ -55,14 +55,25 @@ trace({function, Line, Name, Arity, Clauses}, Module, Args) ->
 trace_clauses([], _) ->
     [];
 trace_clauses([{clause, Line, H, G, B} | Cs], Name) ->
-    StartSpan = [{call, Line,
-                  {remote, Line, {atom, Line, ocp}, {atom, Line, start_span}},
+    CurrentSpan = make_varname("CurrentSpan", Line),
+    StartSpan = [{match, Line, {var, Line, CurrentSpan},
+                  {call, Line,
+                   {remote, Line, {atom, Line, ocp}, {atom, Line, current_span}},
+                   []}},
+                 {call, Line,
+                  {remote, Line, {atom, Line, ocp}, {atom, Line, with_child_span}},
                   [{string, Line, to_binary(Name)}]}],
     FinishSpan = [{call, Line,
                    {remote, Line, {atom, Line, ocp}, {atom, Line, finish_span}},
-                   []}],
+                   []},
+                  {call, Line,
+                   {remote, Line, {atom, Line, ocp}, {atom, Line, with_span}},
+                   [{var, Line, CurrentSpan}]}],
     Trace = StartSpan ++ [{'try', Line, B, [], [], FinishSpan}],
     [{clause, Line, H, G, Trace} | trace_clauses(Cs, Name)].
+
+make_varname(Prefix, Line) ->
+    list_to_atom(Prefix ++ atom_to_list(get(module)) ++ integer_to_list(Line)).
 
 to_binary(X) when is_binary(X) ->
     X;

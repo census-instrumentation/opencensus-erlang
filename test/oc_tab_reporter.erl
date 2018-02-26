@@ -12,30 +12,20 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc opencensus application
+%% @doc A test reporter that keeps finished spans in an ETS table.
 %% @end
-%%%------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------
+-module(oc_tab_reporter).
 
--module(opencensus_app).
+-behaviour(oc_reporter).
 
--behaviour(application).
+-export([init/1,
+         report/2]).
 
--export([start/2, stop/1]).
+init(_) ->
+    application:get_env(opencensus, tab_reporter, #{}).
 
--include("opencensus.hrl").
-
-start(_StartType, _StartArgs) ->
-    maybe_init_ets(),
-    opencensus_sup:start_link().
-
-stop(_State) ->
+report(Spans, Opts) ->
+    Tid = maps:get(tid, Opts),
+    ets:insert(Tid, Spans),
     ok.
-
-maybe_init_ets() ->
-    case ets:info(?SPAN_TAB, name) of
-        undefined ->
-            ets:new(?SPAN_TAB, [named_table, public, {write_concurrency, true},
-                                {read_concurrency, true}, {keypos, #span.span_id}]);
-        _ ->
-            ok
-    end.

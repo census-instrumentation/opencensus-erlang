@@ -14,15 +14,15 @@ all() ->
 
 encode_decode(_Config) ->
     Empty = #{},
-    {ok, EmptyIOList} = oc_tag_context_binary:encode(Empty),
+    {ok, EmptyIOList} = oc_tag_ctx_binary:encode(Empty),
     EmptyEncodedT = iolist_to_binary(EmptyIOList),
-    ?assertMatch({ok, Empty}, oc_tag_context_binary:decode(EmptyEncodedT)),
+    ?assertMatch({ok, Empty}, oc_tag_ctx_binary:decode(EmptyEncodedT)),
 
     T = #{"key-1" => "value-1",
           "key-2" => "value-2"},
-    {ok, IOList} = oc_tag_context_binary:encode(T),
+    {ok, IOList} = oc_tag_ctx_binary:encode(T),
     EncodedT = iolist_to_binary(IOList),
-    ?assertMatch({ok, T}, oc_tag_context_binary:decode(EncodedT)),
+    ?assertMatch({ok, T}, oc_tag_ctx_binary:decode(EncodedT)),
     ok.
 
 invalid_tags(_Config) ->
@@ -34,7 +34,7 @@ invalid_tags(_Config) ->
     ?assertMatch({error, {oc_tags, invalid_tag}}, oc_tags:put("invalid", "k\x7f", #{})),
 
     TooManyBytes = maps:from_list([{integer_to_list(X), "some value"} || X <- lists:seq(1, 8192)]),
-    ?assertMatch({error, {oc_tag_context_binary, encoding_too_large}}, oc_tag_context_binary:encode(TooManyBytes)),
+    ?assertMatch({error, {oc_tag_ctx_binary, encoding_too_large}}, oc_tag_ctx_binary:encode(TooManyBytes)),
     ok.
 
 basic(_Config) ->
