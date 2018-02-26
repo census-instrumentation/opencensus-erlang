@@ -52,7 +52,7 @@ init([]) ->
                  shutdown => 1000,
                  type => worker,
                  modules => [oc_stat_exporter]},
-    
+
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},
                     restart => permanent,
