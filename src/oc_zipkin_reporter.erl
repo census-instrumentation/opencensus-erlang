@@ -43,14 +43,15 @@ report(Spans, {Address, LocalEndpoint}) ->
                 {ok, {{_, 202, _}, _, _}} ->
                     ok;
                 {ok, {{_, Code, _}, _, Message}} ->
-                    report_error("Unable to send spans, Zipkin reported an error: ~p : ~p", [Code, Message]);
+                    error_logger:error_msg("Zipkin: Unable to send spans, Zipkin reported an error: ~p : ~p",
+                                           [Code, Message]);
 
                 {error, Reason} ->
-                    report_error("Unable to send spans, client error: ~p", [Reason])
+                    error_logger:error_msg("Zipkin: Unable to send spans, client error: ~p", [Reason])
             end
     catch
         error:Error ->
-            report_error("Can't spans encode to json: ~p", [Error])
+            error_logger:error_msg("Zipkin: Can't spans encode to json: ~p", [Error])
     end.
 
 zipkin_span(Span, LocalEndpoint) ->
@@ -84,9 +85,6 @@ to_tags(Attributes) ->
     maps:map(fun(Name, Value) ->
                      to_tag(Name, Value)
              end, Attributes).
-
-report_error(Message, Reason) ->
-    erlang:error({zipkin_error, Message,  Reason}).
 
 zipkin_address(Options) ->
     proplists:get_value(address, Options, ?DEFAULT_ZIPKIN_ADDRESS).
