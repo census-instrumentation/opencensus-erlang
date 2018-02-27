@@ -23,26 +23,23 @@
 
 -behaviour(oc_reporter).
 
--define(DEFAULT_ZIPKIN_ADDRESS, "http://localhost:9411").
+-define(DEFAULT_ZIPKIN_ADDRESS, "http://localhost:9411/api/v2/spans").
 -define(DEFAULT_LOCAL_ENDPOINT, #{<<"serviceName">> => node()}).
 
 -export([init/1,
          report/2]).
 
 init(Opts) ->
-    Opts.
+    Address = zipkin_address(Opts),
+    LocalEndpoint = local_endpoint(Opts),
+    {Address, LocalEndpoint}.
 
-report(Spans, _Opts) ->
-    Address = zipkin_address(),
-    ZSpans = [zipkin_span(Span) || Span <- Spans],
+report(Spans, {Address, LocalEndpoint}) ->
+    ZSpans = [zipkin_span(Span, LocalEndpoint) || Span <- Spans],
 
     try jsx:encode(ZSpans) of
         JSON ->
-            case httpc:request(post,
-                               {Address ++ "/api/v2/spans", [],
-                                "application/json",
-                                JSON
-                               }, [], []) of
+            case httpc:request(post, {Address, [], "application/json", JSON}, [], []) of
                 {ok, {{_, 202, _}, _, _}} ->
                     ok;
                 {ok, {{_, Code, _}, _, Message}} ->
@@ -56,7 +53,7 @@ report(Spans, _Opts) ->
             report_error("Can't spans encode to json: ~p", [Error])
     end.
 
-zipkin_span(Span) ->
+zipkin_span(Span, LocalEndpoint) ->
 
     ParentId = case Span#span.parent_span_id of
                    undefined -> null;
@@ -72,7 +69,7 @@ zipkin_span(Span) ->
        <<"duration">> => wts:duration(Span#span.start_time, Span#span.end_time),
        <<"debug">> => false, %% TODO: get from attributes?
        <<"shared">> => false, %% TODO: get from attributes?
-       <<"localEndpoint">> => local_endpoint(),
+       <<"localEndpoint">> => LocalEndpoint,
        %% <<"remoteEndpoint">> =>  %% TODO: get from attributes?
        <<"annotations">> => [],
        <<"tags">> => to_tags(Span#span.attributes) %% TODO: merge with oc_tags?
@@ -91,11 +88,8 @@ to_tags(Attributes) ->
 report_error(Message, Reason) ->
     erlang:error({zipkin_error, Message,  Reason}).
 
-zipkin_address() ->
-    proplists:get_value(address, conf(), ?DEFAULT_ZIPKIN_ADDRESS).
+zipkin_address(Options) ->
+    proplists:get_value(address, Options, ?DEFAULT_ZIPKIN_ADDRESS).
 
-local_endpoint() ->
-    proplists:get_value(local_endpoint, conf(), ?DEFAULT_LOCAL_ENDPOINT).
-
-conf() ->
-    application:get_env(opencensus, zipkin_reporter, []).
+local_endpoint(Options) ->
+    proplists:get_value(local_endpoint, Options, ?DEFAULT_LOCAL_ENDPOINT).
