@@ -6,6 +6,7 @@
   {applications,
    [kernel,
     stdlib,
+    inets,
     wts,
     ctx,
     prometheus

@@ -132,9 +132,9 @@ send_spans(Reporter, Config) ->
             try
                 report(Reporter, Spans, Config)
             catch
-                _Class:_Exception ->
-                    error_logger:info_msg("reporter threw exception: reporter=~p stacktrace=~p",
-                                          [Reporter, erlang:get_stacktrace()])
+                Class:Exception ->
+                    error_logger:info_msg("reporter threw exception: reporter=~p ~p:~p stacktrace=~p",
+                                          [Reporter, Class, Exception, erlang:get_stacktrace()])
             end
     end.
 

@@ -14,14 +14,15 @@
 
 all() ->
     [pid_reporter,
-     sequential_reporter].
+     sequential_reporter,
+     zipkin_reporter].
 
 init_per_suite(Config) ->
     ok = application:load(opencensus),
     Config.
 
 end_per_suite(_Config) ->
-  ok.
+    ok.
 
 init_per_testcase(pid_reporter, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
@@ -35,7 +36,16 @@ init_per_testcase(sequential_reporter, Config) ->
                                                                         {oc_pid_reporter, []}]}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
     {ok, _} = application:ensure_all_started(opencensus),
+    Config;
+init_per_testcase(zipkin_reporter, Config) ->
+    application:set_env(opencensus, reporter, {oc_zipkin_reporter, [{address, "http://ct-host:9411/endpoint"},
+                                                                    {local_endpoint,
+                                                                     #{<<"serviceName">> => "ct-service"}}]}),
+    application:set_env(opencensus, sampler, {oc_sampler_always, []}),
+
+    {ok, _} = application:ensure_all_started(opencensus),
     Config.
+
 
 end_per_testcase(_, _Config) ->
     ok = application:stop(opencensus),
@@ -58,14 +68,14 @@ pid_reporter(_Config) ->
     %% Order the spans are reported is undefined, so use a selective receive to make
     %% sure we get them all
     lists:foreach(fun(Name) ->
-                      receive
-                          {span, S=#span{name = Name}} ->
-                              %% Verify the end time and duration are set when the span was finished
-                              ?assertMatch({ST, O} when is_integer(ST)
-                                                      andalso is_integer(O), S#span.start_time),
-                              ?assertMatch({ST, O} when is_integer(ST)
-                                                      andalso is_integer(O), S#span.end_time)
-                      end
+                          receive
+                              {span, S=#span{name = Name}} ->
+                                  %% Verify the end time and duration are set when the span was finished
+                                  ?assertMatch({ST, O} when is_integer(ST)
+                                                            andalso is_integer(O), S#span.start_time),
+                                  ?assertMatch({ST, O} when is_integer(ST)
+                                                            andalso is_integer(O), S#span.end_time)
+                          end
                   end, [SpanName1, ChildSpanName1]).
 
 sequential_reporter(_Config) ->
@@ -81,12 +91,78 @@ sequential_reporter(_Config) ->
     SortedNames = [ChildSpanName1, ChildSpanName1, SpanName1, SpanName1],
 
     Received = lists:map(fun(Name) ->
-                             receive
-                                 {span, #span{name = Name}} ->
-                                     Name
-                             after 5000 ->
-                                     undefined
-                             end
+                                 receive
+                                     {span, #span{name = Name}} ->
+                                         Name
+                                 after 5000 ->
+                                         undefined
+                                 end
                          end, SortedNames), %% receive order is undefined though
 
     ?assertMatch(SortedNames, lists:sort(Received)).
+
+zipkin_reporter(_Config) ->
+
+    Self = self(),
+
+    meck:new(httpc),
+    meck:expect(httpc, request,
+                fun (post, {"http://ct-host:9411/endpoint", [], "application/json", Content}, [], []) ->
+                        Self ! {ok, Content},
+                        {ok, {{ok, 202, ok}, ok, ok}};
+                    (_, _, _, _)  ->
+                        {ok, {{ok, 202, ok}, ok, ok}}
+                end),
+
+    try
+        Parent = oc_trace:start_span(<<"Parent">>, undefined),
+        Child = oc_trace:start_span(<<"span-name">>,
+                                    Parent,
+                                    #{attributes => #{<<"attr1">> => <<"val1">>,
+                                                      <<"attr_as_function">> =>
+                                                          fun () -> <<"val2">> end}}),
+        oc_trace:finish_span(Child),
+        oc_trace:finish_span(Parent),
+
+        ParentSpanId = iolist_to_binary(io_lib:format("~16.16.0b", [Parent#span_ctx.span_id])),
+        ParentTraceId = iolist_to_binary(io_lib:format("~32.16.0b", [Parent#span_ctx.trace_id])),
+
+        ChildSpanId = iolist_to_binary(io_lib:format("~16.16.0b", [Child#span_ctx.span_id])),
+
+        receive
+            {ok, Content} ->
+                [#{<<"annotations">> := [],
+                   <<"debug">> := false,
+                   <<"duration">> := _,
+                   <<"id">> := ChildSpanId,
+                   <<"kind">> := <<"SERVER">>,
+                   <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
+                   <<"name">> := <<"span-name">>,
+                   <<"parentId">> := ParentSpanId,
+                   <<"shared">> := false,
+                   <<"tags">> :=
+                       #{<<"attr1">> := <<"val1">>,
+                         <<"attr_as_function">> := <<"val2">>},
+                   <<"timestamp">> := _,
+                   <<"traceId">> := ParentTraceId},
+                 #{<<"annotations">> := [],
+                   <<"debug">> := false,
+                   <<"duration">> := _,
+                   <<"id">> := ParentSpanId,
+                   <<"kind">> := <<"SERVER">>,
+                   <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
+                   <<"name">> := <<"Parent">>,
+                   <<"parentId">> := null,
+                   <<"shared">> := false,
+                   <<"tags">> := #{},
+                   <<"timestamp">> := _,
+                   <<"traceId">> := ParentTraceId}]
+                    = lists:sort(jsx:decode(Content, [return_maps]))
+
+        after
+            6000 -> ct:fail("Zipking reporter doesn't work")
+        end
+    after
+        meck:validate(httpc),
+        meck:unload(httpc)
+    end.
