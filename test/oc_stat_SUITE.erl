@@ -65,7 +65,7 @@ init_per_testcase(full, Config) ->
                 aggregation => {oc_stat_distribution_aggregation, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
               }],
 
-    Exporters = [{oc_stat_test_exporter, self()}],
+    Exporters = [{oc_stat_pid_exporter, self()}],
 
     application:set_env(opencensus, stat, [{views, Views}, {exporters, Exporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
@@ -117,7 +117,7 @@ full(_Config) ->
     ?assertMatch(?VD,
                  lists:sort(oc_stat:export())),
 
-    ?assertMatch(true, oc_stat_exporter:registered(oc_stat_test_exporter)),
+    ?assertMatch(true, oc_stat_exporter:registered(oc_stat_pid_exporter)),
 
     receive
         {view_data, Thing} ->

@@ -1,4 +1,4 @@
--module(oc_stat_test_exporter).
+-module(oc_stat_pid_exporter).
 
 -export([export/2]).
 
