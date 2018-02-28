@@ -34,8 +34,7 @@ init([]) ->
 
     ok = oc_stat_view:'__init_backend__'(),
 
-    StatConf = application:get_env(opencensus, stat, []),
-    oc_stat_view:batch_subscribe(proplists:get_value(views, StatConf, [])),
+    oc_stat_view:batch_subscribe(oc_stat_config:views()),
 
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
@@ -43,12 +42,21 @@ init([]) ->
                  shutdown => 1000,
                  type => worker,
                  modules => [oc_reporter]},
+
+    Exporter = #{id => oc_stat_exporter,
+                 start => {oc_stat_exporter, start_link, []},
+                 restart => permanent,
+                 shutdown => 1000,
+                 type => worker,
+                 modules => [oc_stat_exporter]},
+
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},
                     restart => permanent,
                     shutdown => 1000,
                     type => worker,
                     modules => [oc_server]},
+
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, TraceServer]}}.
+            period => 5}, [Reporter, Exporter, TraceServer]}}.
