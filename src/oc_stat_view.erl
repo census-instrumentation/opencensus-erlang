@@ -14,7 +14,9 @@
          add_sample/3,
          export/1]).
 
--export_types([view_data/0]).
+-export_types([name/0,
+               description/0,
+               view_data/0]).
 
 -export(['__init_backend__'/0]).
 
@@ -23,21 +25,27 @@
 -define(NAME_POS, 2).
 -define(SUBSCRIBED_POS, 3).
 
-%% FIXME: too generic
--type view_data() :: any().
+-type name() :: atom() | binary() | string().
+-type description() :: binary() | string().
 
--spec register(view_name(), view_description(), oc_tags:tags(),
+-type view_data() :: #{name := name(),
+                       description := description(),
+                       ctags := oc_tags:tags(),
+                       data := oc_stat_aggregation:data()}.
+
+
+-spec register(name(), description(), oc_tags:tags(),
                measure_name(), aggregation()) -> ok.
 register(Name, Description, Tags, Measure, Aggregation) ->
     %% TODO: check Measure exists?
     register(Name, Description, Tags, Measure, Aggregation, false).
 
--spec deregister(view_name()) -> ok.
+-spec deregister(name()) -> ok.
 deregister(Name) ->
     ets:delete(?MODULE, Name),
     ok.
 
--spec subscribe(map() | view_name()) -> ok.
+-spec subscribe(map() | name()) -> ok.
 subscribe(#{name := Name, description := Description, tags := Tags,
             measure := Measure, aggregation := Aggregation}) ->
     subscribe(Name, Description, Tags, Measure, Aggregation);
@@ -45,7 +53,7 @@ subscribe(Name) ->
     ets:update_element(?MODULE, Name, {?SUBSCRIBED_POS, true}),
     ok.
 
--spec subscribe(view_name(), view_description(), oc_tags:tags(),
+-spec subscribe(name(), description(), oc_tags:tags(),
                 measure_name(), aggregation()) -> ok.
 subscribe(Name, Description, Tags, Measure, Aggregation) ->
     %% TODO: check Measure exists?
@@ -54,12 +62,12 @@ subscribe(Name, Description, Tags, Measure, Aggregation) ->
 %% @doc
 %% Subscribe many `Views' at once.
 %% @end
--spec batch_subscribe(list(view_name() | map())) -> ok.
+-spec batch_subscribe(list(name() | map())) -> ok.
 batch_subscribe(Views) when is_list(Views) ->
     [ok = subscribe(View) || View <- Views],
     ok.
 
--spec register(view_name(), view_description(), oc_tags:tags(),
+-spec register(name(), description(), oc_tags:tags(),
                measure_name(), aggregation(), boolean()) -> ok | no_return().
 register(Name, Description, Tags, Measure, Aggregation, Subscribed) ->
     NAggregation = normalize_aggregation(Aggregation),
@@ -81,7 +89,7 @@ register(Name, Description, Tags, Measure, Aggregation, Subscribed) ->
     end,
     ok.
 
--spec unsubscribe(view_name()) -> ok.
+-spec unsubscribe(name()) -> ok.
 unsubscribe(Name) ->
     ets:update_element(?MODULE, Name, {?SUBSCRIBED_POS, false}),
     ok.
@@ -89,7 +97,7 @@ unsubscribe(Name) ->
 %% @doc
 %% Checks whether a view `Name' is registered.
 %% @end
--spec registered(view_name()) -> boolean().
+-spec registered(name()) -> boolean().
 registered(Name) ->
     ets:lookup_element(?MODULE, Name, ?NAME_POS) =/= [].
 
@@ -114,9 +122,8 @@ export({_Measure, Name, _, Description, ViewTags, Aggregation}) ->
     {CTags, _Keys} = ViewTags,
     #{name => Name,
       description => Description,
-      type => AggregationModule:type(),
       ctags => CTags,
-      rows => AggregationModule:export(Name, AggregationOptions)}.
+      data => AggregationModule:export(Name, AggregationOptions)}.
 
 normalize_aggregation({Module, Options}) ->
     {Module, Options};

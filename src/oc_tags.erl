@@ -33,7 +33,7 @@
 
 -include("opencensus.hrl").
 
--type key()   :: unicode:latin1_charlist().
+-type key()   :: atom() | unicode:latin1_charlist().
 -type value() :: unicode:latin1_charlist().
 -type tags()  :: #{key() => value()}.
 

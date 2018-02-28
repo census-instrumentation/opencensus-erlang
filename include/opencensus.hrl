@@ -113,7 +113,4 @@
          }).
 
 -type measure_name() :: atom() | binary() | string().
-
--type view_name() :: atom() | binary() | string().
--type view_description() :: binary() | string().
 -type aggregation() :: atom().

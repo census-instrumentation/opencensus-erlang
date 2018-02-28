@@ -5,6 +5,8 @@
          add_sample/4,
          export/2]).
 
+-behavior(oc_stat_aggregation).
+
 init(Name, Description, {CTags, Keys}, Options) ->
     prometheus_gauge:declare([{name, Name},
                               {help, Description},
@@ -15,11 +17,15 @@ init(Name, Description, {CTags, Keys}, Options) ->
 type() ->
     latest.
 
+-spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 add_sample(Name, Tags, Value, _Options) ->
-    prometheus_gauge:set(Name, Tags, Value).
+    prometheus_gauge:set(Name, Tags, Value),
+    ok.
 
 export(Name, _Options) ->
-    lists:map(fun({Tags, Value}) ->
-                      #{tags => maps:from_list(Tags),
-                        value => Value}
-              end, prometheus_gauge:values(default, Name)).
+    Rows = lists:map(fun({Tags, Value}) ->
+                             #{tags => maps:from_list(Tags),
+                               value => Value}
+                     end, prometheus_gauge:values(default, Name)),
+    #{type => type(),
+      rows => Rows}.
