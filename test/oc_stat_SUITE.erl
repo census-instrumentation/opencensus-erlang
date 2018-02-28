@@ -12,7 +12,7 @@
                ctags := #{ctag := value},
                data := #{type := latest,
                          rows := [#{tags := #{},
-                                    value := 4096}]}},
+                                    value := 1024}]}},
              #{name := "video_size",
                description :=
                    "number of videos processed processed over time",
@@ -21,28 +21,28 @@
                          rows :=
                              [#{tags := #{},
                                 value := #{buckets := [{0, 0},
-                                                       {65536, 2},
+                                                       {65536, 3},
                                                        {4294967296, 0},
                                                        {infinity, 0}],
-                                           count := 2,
-                                           mean := 2560.0,
-                                           sum := 5120}}]}},
+                                           count := 3,
+                                           mean := 2048.0,
+                                           sum := 6144}}]}},
              #{name := "video_count",
                description :=
                    "number of videos processed processed over time",
                ctags := #{ctag := value},
                data := #{type := count,
                          rows := [#{tags := #{"type" := "mpeg"},
-                                    value := 2}]}},
+                                    value := 3}]}},
              #{name := "video_sum",
                description := "video_size_sum",
                ctags := #{sum_tag := value},
                data := #{type := sum,
                          rows := [#{tags := #{"category" := "category1",
                                               "type" := "mpeg"},
-                                    value := #{count := 2,
-                                               mean := 2560.0,
-                                               sum := 5120}}]}}]).
+                                    value := #{count := 3,
+                                               mean := 2048.0,
+                                               sum := 6144}}]}}]).
 
 all() ->
     [
@@ -106,13 +106,16 @@ full(_Config) ->
            'my.org/measures/video_size_sum',
            oc_stat_latest_aggregation),
 
-    Ctx = oc_tags:new_ctx(ctx:new(), #{type => "mpeg",
-                                       category => "category1"}),
+    Tags = #{type => "mpeg",
+             category => "category1"},
+    Ctx = oc_tags:new_ctx(ctx:new(), Tags),
 
-    oc_stat:record('my.org/measures/video_count', Ctx, 1),
-    oc_stat:record('my.org/measures/video_count', Ctx, 1),
-    oc_stat:record('my.org/measures/video_size_sum', Ctx, 1024),
-    oc_stat:record('my.org/measures/video_size_sum', Ctx, 4096),
+    oc_stat:record(Ctx, 'my.org/measures/video_count', 1),
+    oc_stat:record(Tags, [{'my.org/measures/video_count', 1},
+                          {'my.org/measures/video_size_sum', 1024}]),
+    oc_stat:record(Tags, 'my.org/measures/video_size_sum', 4096),
+    oc_stat:record(Ctx, [{'my.org/measures/video_count', 1},
+                         {'my.org/measures/video_size_sum', 1024}]),
 
     ?assertMatch(?VD,
                  lists:sort(oc_stat:export())),
