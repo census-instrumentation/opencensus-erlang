@@ -17,9 +17,10 @@
 %% [https://github.com/TraceContext/tracecontext-spec/blob/018cd514b/HTTP_HEADER_FORMAT.md]
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_trace_context_headers).
+-module(oc_span_ctx_header).
 
--export([encode/1,
+-export([field_name/0,
+         encode/1,
          decode/1]).
 
 -include("opencensus.hrl").
@@ -29,28 +30,31 @@
 -define(ZERO_TRACEID, <<"00000000000000000000000000000000">>).
 -define(ZERO_SPANID, <<"0000000000000000">>).
 
--spec encode(opencensus:span_ctx()) -> {ok, iolist()} | {error, invalid}.
+field_name() ->
+    <<"Trace-Parent">>.
+
+-spec encode(opencensus:span_ctx()) -> maybe(iolist()).
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId}) when TraceId =:= 0
                                        ;  SpanId =:= 0 ->
-    {error, invalid};
+    undefined;
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId,
                  trace_options=TraceOptions}) ->
     Options = case TraceOptions band 1 of 1 -> <<"01">>; _ -> <<"00">> end,
     EncodedTraceId = io_lib:format("~32.16.0b", [TraceId]),
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
-    {ok, [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options]}.
+    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
 
--spec decode(iolist() | binary()) -> {ok, opencensus:span_ctx()} | {error, invalid}.
+-spec decode(iolist() | binary()) -> maybe(opencensus:span_ctx()).
 decode(TraceContext) when is_list(TraceContext) ->
     decode(list_to_binary(TraceContext));
 decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, _/binary>>) when TraceId =:= ?ZERO_TRACEID
                                                                                  ;  SpanId =:= ?ZERO_SPANID ->
-    {error, invalid};
+    undefined;
 decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, "-", TraceOptions:2/binary, _Rest/binary>>) ->
-    {ok, #span_ctx{trace_id=binary_to_integer(TraceId, 16),
-                   span_id=binary_to_integer(SpanId, 16),
-                   trace_options=case TraceOptions of <<"01">> -> 1; _ -> 0 end}};
+    #span_ctx{trace_id=binary_to_integer(TraceId, 16),
+              span_id=binary_to_integer(SpanId, 16),
+              trace_options=case TraceOptions of <<"01">> -> 1; _ -> 0 end};
 decode(_) ->
-    {error, invalid}.
+    undefined.

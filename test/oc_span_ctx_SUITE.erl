@@ -2,7 +2,7 @@
 %%% @doc
 %%% @end
 %%% ---------------------------------------------------------------------------
--module(oc_trace_context_SUITE).
+-module(oc_span_ctx_SUITE).
 
 -compile(export_all).
 
@@ -30,11 +30,11 @@ end_per_testcase(_, _Config) ->
 %% SpanId: 7017280452245743464
 %% Enabled: true
 -define(EXAMPLE_BIN, <<0, 0, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
-        79, 1, 97, 98, 99, 100, 101, 102, 103, 104, 2, 1>>).
+                       79, 1, 97, 98, 99, 100, 101, 102, 103, 104, 2, 1>>).
 
 reencode(Binary) ->
-    {ok, Decoded} = oc_trace_context_binary:decode(Binary),
-    {ok, Encoded} = oc_trace_context_binary:encode(Decoded),
+    Decoded = oc_span_ctx_binary:decode(Binary),
+    Encoded = oc_span_ctx_binary:encode(Decoded),
     Encoded.
 
 encode_decode(_Config) ->
@@ -43,13 +43,13 @@ encode_decode(_Config) ->
     ?assertMatch(?EXAMPLE_BIN, Encoded),
 
     InvalidBothIdsBinary = <<0:8, 0:8, 0:128, 1:8, 0:64, 2:8, 1>>,
-    ?assertEqual({error, invalid}, oc_trace_context_binary:decode(InvalidBothIdsBinary)),
+    ?assertEqual(undefined, oc_span_ctx_binary:decode(InvalidBothIdsBinary)),
 
     InvalidTraceIdBinary = <<0:8, 0:8, 0:128, 1:8, 1:64, 2:8, 1>>,
-    ?assertEqual({error, invalid}, oc_trace_context_binary:decode(InvalidTraceIdBinary)),
+    ?assertEqual(undefined, oc_span_ctx_binary:decode(InvalidTraceIdBinary)),
 
     InvalidSpanIdBinary = <<0:8, 0:8, 1:128, 1:8, 0:64, 2:8, 1>>,
-    ?assertEqual({error, invalid}, oc_trace_context_binary:decode(InvalidSpanIdBinary)).
+    ?assertEqual(undefined, oc_span_ctx_binary:decode(InvalidSpanIdBinary)).
 
 
 decode_with_extra_junk(_Config) ->
@@ -64,44 +64,44 @@ encode_decode_headers(_Config) ->
     %% SpanId: 00f067aa0ba902b7
     %% Enabled: true
     Header = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01">>,
-    {ok, Decoded} = oc_trace_context_headers:decode(Header),
-    {ok, Encoded} = oc_trace_context_headers:encode(Decoded),
+    Decoded = oc_span_ctx_header:decode(Header),
+    Encoded = oc_span_ctx_header:encode(Decoded),
     ?assertEqual(Header, list_to_binary(Encoded)),
-    ?assertEqual({ok, Decoded}, oc_trace_context_headers:decode(Encoded)),
+    ?assertEqual(Decoded, oc_span_ctx_header:decode(Encoded)),
 
     %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
     %% SpanId: 00f067aa0ba902b7
     %% Enabled: false
     DisabledHeader = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00">>,
-    {ok, DisabledDecoded} = oc_trace_context_headers:decode(DisabledHeader),
-    {ok, DisabledEncoded} = oc_trace_context_headers:encode(DisabledDecoded),
+    DisabledDecoded = oc_span_ctx_header:decode(DisabledHeader),
+    DisabledEncoded = oc_span_ctx_header:encode(DisabledDecoded),
     ?assertEqual(DisabledHeader, list_to_binary(DisabledEncoded)),
-    ?assertEqual({ok, DisabledDecoded}, oc_trace_context_headers:decode(DisabledEncoded)),
+    ?assertEqual(DisabledDecoded, oc_span_ctx_header:decode(DisabledEncoded)),
     ?assertEqual(0, DisabledDecoded#span_ctx.trace_options),
 
     %% Decode invalid headers
     InvalidSpanIdHeader = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-00">>,
-    {error, invalid} = oc_trace_context_headers:decode(InvalidSpanIdHeader),
+    undefined = oc_span_ctx_header:decode(InvalidSpanIdHeader),
 
     InvalidTraceIdHeader = <<"00-00000000000000000000000000000000-00f067aa0ba902b7-00">>,
-    {error, invalid} = oc_trace_context_headers:decode(InvalidTraceIdHeader),
+    undefined = oc_span_ctx_header:decode(InvalidTraceIdHeader),
 
     InvalidBothIdsHeader = <<"00-00000000000000000000000000000000-0000000000000000-00">>,
-    {error, invalid} = oc_trace_context_headers:decode(InvalidBothIdsHeader),
+    undefined = oc_span_ctx_header:decode(InvalidBothIdsHeader),
 
 
     %% Encode invalid trace contexts
     InvalidTC = #span_ctx{trace_id = 0,
                           span_id = 0,
                           trace_options = false},
-    {error, invalid} = oc_trace_context_headers:encode(InvalidTC),
+    undefined = oc_span_ctx_header:encode(InvalidTC),
 
     InvalidTraceIdTC = #span_ctx{trace_id = 85409434994488837557643013731547696719,
                                  span_id = 0,
                                  trace_options = true},
-    {error, invalid} = oc_trace_context_headers:encode(InvalidTraceIdTC),
+    undefined = oc_span_ctx_header:encode(InvalidTraceIdTC),
 
     InvalidSpanIdTC = #span_ctx{trace_id = 0,
                                 span_id = 7017280452245743464,
                                 trace_options = false},
-    {error, invalid} = oc_trace_context_headers:encode(InvalidSpanIdTC).
+    undefined = oc_span_ctx_header:encode(InvalidSpanIdTC).
