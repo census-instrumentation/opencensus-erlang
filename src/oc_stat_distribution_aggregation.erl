@@ -1,18 +1,20 @@
 -module(oc_stat_distribution_aggregation).
 
--export([init/4,
+-export([init/3,
          type/0,
          add_sample/4,
          export/2]).
 
 -behavior(oc_stat_aggregation).
 
-init(Name, Description, {CTags, Keys}, Options) ->
+-include("opencensus.hrl").
+
+init(Name, Keys, Options) ->
     Buckets = prometheus_buckets:new(proplists:get_value(buckets, Options, default)),
     prometheus_histogram:declare([{name, Name},
-                                  {help, Description},
+                                  {registry, ?PROM_REGISTRY},
+                                  {help, ""},
                                   {labels, Keys},
-                                  {constant_labels, CTags},
                                   {buckets, Buckets}]),
     Buckets.
 
@@ -22,7 +24,7 @@ type() ->
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 add_sample(Name, Tags, Value, Buckets) ->
     Position = prometheus_buckets:position(Buckets, Value),
-    prometheus_histogram:pobserve(default, Name, Tags, Buckets, Position, Value).
+    prometheus_histogram:pobserve(?PROM_REGISTRY, Name, Tags, Buckets, Position, Value).
 
 export(Name, _Options) ->
     Rows = lists:map(fun({Tags, Buckets, Sum}) ->
@@ -34,6 +36,6 @@ export(Name, _Options) ->
                                           sum => Sum,
                                           mean => Sum / Count,
                                           buckets => Buckets}}
-                     end, prometheus_histogram:values(default, Name)),
+                     end, prometheus_histogram:values(?PROM_REGISTRY, Name)),
     #{type => type(),
       rows => Rows}.
