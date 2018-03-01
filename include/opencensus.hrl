@@ -114,3 +114,5 @@
 
 -type measure_name() :: atom() | binary() | string().
 -type aggregation() :: atom().
+
+-define(PROM_REGISTRY, '__opencensus__').

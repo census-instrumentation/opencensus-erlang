@@ -7,9 +7,11 @@
 
 -behavior(oc_stat_aggregation).
 
+-include("opencensus.hrl").
+
 init(Name, Keys, Options) ->
     prometheus_summary:declare([{name, Name},
-                                {registry, '__opencensus__'},
+                                {registry, ?PROM_REGISTRY},
                                 {help, ""},
                                 {labels, Keys}]),
     Options.
@@ -19,7 +21,7 @@ type() ->
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 add_sample(Name, Tags, Value, _Options) ->
-    prometheus_summary:observe('__opencensus__', Name, Tags, Value),
+    prometheus_summary:observe(?PROM_REGISTRY, Name, Tags, Value),
     ok.
 
 export(Name, _Options) ->
@@ -28,6 +30,6 @@ export(Name, _Options) ->
                                value => #{count => Count,
                                           sum => Sum,
                                           mean => Sum / Count}}
-                     end, prometheus_summary:values('__opencensus__', Name)),
+                     end, prometheus_summary:values(?PROM_REGISTRY, Name)),
     #{type => type(),
       rows => Rows}.
