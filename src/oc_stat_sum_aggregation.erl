@@ -1,17 +1,17 @@
 -module(oc_stat_sum_aggregation).
 
--export([init/4,
+-export([init/3,
          type/0,
          add_sample/4,
          export/2]).
 
 -behavior(oc_stat_aggregation).
 
-init(Name, Description, {CTags, Keys}, Options) ->
+init(Name, Keys, Options) ->
     prometheus_summary:declare([{name, Name},
-                                {help, Description},
-                                {labels, Keys},
-                                {constant_labels, CTags}]),
+                                {registry, '__opencensus__'},
+                                {help, ""},
+                                {labels, Keys}]),
     Options.
 
 type() ->
@@ -19,7 +19,7 @@ type() ->
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 add_sample(Name, Tags, Value, _Options) ->
-    prometheus_summary:observe(Name, Tags, Value),
+    prometheus_summary:observe('__opencensus__', Name, Tags, Value),
     ok.
 
 export(Name, _Options) ->
@@ -28,6 +28,6 @@ export(Name, _Options) ->
                                value => #{count => Count,
                                           sum => Sum,
                                           mean => Sum / Count}}
-                     end, prometheus_summary:values(default, Name)),
+                     end, prometheus_summary:values('__opencensus__', Name)),
     #{type => type(),
       rows => Rows}.

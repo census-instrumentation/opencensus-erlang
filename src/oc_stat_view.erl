@@ -79,11 +79,10 @@ register(Name, Description, Tags, Measure, Aggregation, Subscribed) ->
             erlang:error({already_exists, Name});
         _ ->
             {AggregationModule, AggregationOptions} = NAggregation,
-            {CTags, Keys} = NTags,
+            {_, Keys} = NTags,
             %% TODO: transaction?
             %% HACK: Keys reversed because tag_value reverses
-            NAggregationOptions = AggregationModule:init(Name, Description,
-                                                         {CTags, lists:reverse(Keys)}, AggregationOptions),
+            NAggregationOptions = AggregationModule:init(Name, lists:reverse(Keys), AggregationOptions),
             ets:insert(?MODULE, {Measure, Name, Subscribed, Description, NTags,
                                  {AggregationModule, NAggregationOptions}})
     end,

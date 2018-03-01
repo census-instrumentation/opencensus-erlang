@@ -20,7 +20,7 @@
 
 -type keys()  :: [oc_tags:key()].
 
--callback init(oc_stat_view:name(), oc_stat_view:description(), {oc_tags:tags(), keys()}, any()) -> any().
+-callback init(oc_stat_view:name(), keys(), any()) -> any().
 
 -callback type() -> latest | count | sum | distribution.
 
