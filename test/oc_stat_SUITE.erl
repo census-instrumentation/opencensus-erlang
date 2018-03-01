@@ -64,10 +64,10 @@ init_per_testcase(full, Config) ->
                 description => "number of videos processed processed over time",
                 tags => [#{ctag => value}],
                 measure => 'my.org/measures/video_size_sum',
-                aggregation => {oc_stat_distribution_aggregation, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
+                aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
               }],
 
-    Exporters = [{oc_stat_pid_exporter, self()}],
+    Exporters = [{oc_stat_exporter_pid, self()}],
 
     application:set_env(opencensus, stat, [{views, Views}, {exporters, Exporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
@@ -78,7 +78,7 @@ init_per_testcase(prometheus_collector, Config) ->
                 description => "number of videos processed processed over time",
                 tags => [#{ctag => value}],
                 measure => 'my.org/measures/video_size_sum',
-                aggregation => {oc_stat_distribution_aggregation, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
+                aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
               }],
 
     application:set_env(opencensus, stat, [{views, Views}]),
@@ -104,7 +104,7 @@ full(_Config) ->
            [#{ctag => value},
             type],
            'my.org/measures/video_count',
-           oc_stat_count_aggregation),
+           oc_stat_aggregation_count),
 
     ok = oc_stat_view:subscribe(
            "video_sum",
@@ -112,14 +112,14 @@ full(_Config) ->
            [#{sum_tag => value},
             type, category],
            'my.org/measures/video_size_sum',
-           oc_stat_sum_aggregation),
+           oc_stat_aggregation_sum),
 
     ok = oc_stat_view:subscribe(
            "last_video_size",
            "last processed video size",
            [#{ctag => value}],
            'my.org/measures/video_size_sum',
-           oc_stat_latest_aggregation),
+           oc_stat_aggregation_latest),
 
     Tags = #{type => "mpeg",
              category => "category1"},
@@ -135,7 +135,7 @@ full(_Config) ->
     ?assertMatch(?VD,
                  lists:sort(oc_stat:export())),
 
-    ?assertMatch(true, oc_stat_exporter:registered(oc_stat_pid_exporter)),
+    ?assertMatch(true, oc_stat_exporter:registered(oc_stat_exporter_pid)),
 
     receive
         {view_data, Thing} ->
@@ -152,7 +152,7 @@ prometheus_collector(_Config) ->
            [#{ctag => value},
             type],
            'my.org/measures/video_count',
-           oc_stat_count_aggregation),
+           oc_stat_aggregation_count),
 
     ok = oc_stat_view:subscribe(
            "video_sum",
@@ -160,14 +160,14 @@ prometheus_collector(_Config) ->
            [#{sum_tag => value},
             type, category],
            'my.org/measures/video_size_sum',
-           oc_stat_sum_aggregation),
+           oc_stat_aggregation_sum),
 
     ok = oc_stat_view:subscribe(
            "last_video_size",
            "last processed video size",
            [#{ctag => value}],
            'my.org/measures/video_size_sum',
-           oc_stat_latest_aggregation),
+           oc_stat_aggregation_latest),
 
     Tags = #{type => "mpeg",
              category => "category1"},
@@ -224,7 +224,7 @@ prometheus_collector(_Config) ->
                                                                      value = "mpeg"}],
                                                summary = #'Summary'{sample_count = 3,
                                                                     sample_sum = 6144}}]}],
-                 lists:sort(prom_collect_mf_to_list('_qwe_', oc_stat_prometheus_collector))).
+                 lists:sort(prom_collect_mf_to_list('_qwe_', oc_stat_exporter_prometheus))).
 
 prom_collect_mf_to_list(Collector) ->
     prom_collect_mf_to_list(default, Collector).

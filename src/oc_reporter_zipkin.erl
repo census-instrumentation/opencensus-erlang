@@ -17,7 +17,7 @@
 %%%------------------------------------------------------------------------
 
 
--module(oc_zipkin_reporter).
+-module(oc_reporter_zipkin).
 
 -include("opencensus.hrl").
 

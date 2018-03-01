@@ -1,4 +1,4 @@
--module(oc_stat_prometheus_collector).
+-module(oc_stat_exporter_prometheus).
 
 -export([collect_mf/2,
          deregister_cleanup/1]).

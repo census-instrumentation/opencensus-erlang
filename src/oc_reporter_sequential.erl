@@ -12,20 +12,27 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc A test reporter for sending trace spans to an Erlang PID as message.
+%% @doc This module allows sequential execution of multiple reporters.
 %% @end
 %%%-----------------------------------------------------------------------
--module(oc_pid_reporter).
+-module(oc_reporter_sequential).
 
--behaviour(oc_reporter).
+-behavior(oc_reporter).
 
 -export([init/1,
          report/2]).
 
-init(_) ->
-    application:get_env(opencensus, pid_reporter, #{}).
+-type reporter() :: atom().
+-type reporter_opts() :: term().
+-type opts() :: [{reporter(), reporter_opts()}].
 
-report(Spans, Opts) ->
-    Pid = maps:get(pid, Opts),
-    [Pid ! {span, Span} || Span <- Spans],
+%%-
+-spec init([{reporter(), reporter_opts()}]) -> opts().
+init(Config) ->
+    [{Reporter, Reporter:init(RConfig)} || {Reporter, RConfig} <- Config].
+
+%%-
+-spec report(nonempty_list(opencensus:spans()), opts()) -> ok.
+report(Spans, Config) ->
+    [Reporter:report(Spans, RConfig) || {Reporter, RConfig} <- Config],
     ok.

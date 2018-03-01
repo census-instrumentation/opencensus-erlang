@@ -26,19 +26,19 @@ end_per_suite(_Config) ->
 
 init_per_testcase(pid_reporter, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_pid_reporter, []}),
+    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(sequential_reporter, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_sequential_reporter, [{oc_pid_reporter, []},
-                                                                        {oc_pid_reporter, []}]}),
+    application:set_env(opencensus, reporter, {oc_reporter_sequential, [{oc_reporter_pid, []},
+                                                                        {oc_reporter_pid, []}]}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(zipkin_reporter, Config) ->
-    application:set_env(opencensus, reporter, {oc_zipkin_reporter, [{address, "http://ct-host:9411/endpoint"},
+    application:set_env(opencensus, reporter, {oc_reporter_zipkin, [{address, "http://ct-host:9411/endpoint"},
                                                                     {local_endpoint,
                                                                      #{<<"serviceName">> => "ct-service"}}]}),
     application:set_env(opencensus, sampler, {oc_sampler_always, []}),
