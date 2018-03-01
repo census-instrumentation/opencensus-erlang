@@ -39,16 +39,17 @@ end_per_testcase(_, _Config) ->
 with_span_tests(_Config) ->
     SpanName1 = <<"span-1">>,
     SpanName2 = <<"span-2">>,
-    ocp:with_child_span(SpanName1,
+    ocp:with_child_span(SpanName1, #{},
                         fun() ->
                           SpanCtx1 = ocp:current_span(),
                           TraceId = SpanCtx1#span_ctx.trace_id,
                           SpanId1 = SpanCtx1#span_ctx.span_id,
-                          ocp:with_child_span(SpanName2, fun() ->
-                                                           ?assertMatch(#span_ctx{span_id=SpanId2,
-                                                                                  trace_id=TraceId}
-                                                                        when SpanId2 =/= SpanId1, ocp:current_span())
-                                                         end)
+                          ocp:with_child_span(SpanName2, #{},
+                                              fun() ->
+                                                      ?assertMatch(#span_ctx{span_id=SpanId2,
+                                                                             trace_id=TraceId}
+                                                                   when SpanId2 =/= SpanId1, ocp:current_span())
+                                              end)
                         end),
     ?assertMatch(undefined, ocp:current_span()),
     ok.

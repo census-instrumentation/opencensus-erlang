@@ -17,7 +17,7 @@
 %% [https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md]
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_trace_context_binary).
+-module(oc_span_ctx_binary).
 
 -export([encode/1,
          decode/1]).
@@ -30,34 +30,34 @@
 -define(SPAN_ID_FIELD_NUM, 1).
 -define(TRACE_OPTIONS_FIELD_NUM, 2).
 
--spec encode(opencensus:span_ctx()) -> {ok, binary()} | {error, invalid}.
+-spec encode(opencensus:span_ctx()) -> maybe(binary()).
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId}) when TraceId =:= 0
                                        ; SpanId =:= 0 ->
-    {error, invalid};
+    undefined;
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId,
                  trace_options=TraceOptions}) ->
     Options = case TraceOptions band 1 of 1 -> <<1:8>>; _ -> <<0:8>> end,
-    {ok, <<?VERSION:8, 0:8, TraceId:128, 1:8, SpanId:64, 2:8, Options/binary>>}.
+    <<?VERSION:8, 0:8, TraceId:128, 1:8, SpanId:64, 2:8, Options/binary>>.
 
--spec decode(binary()) -> {ok, opencensus:span_ctx()} | {error, invalid}.
+-spec decode(binary()) -> maybe(opencensus:span_ctx()).
 decode(<<0:8/integer, VersionFormat/binary>>) ->
     decode_v0(VersionFormat, #span_ctx{}).
 
 decode_v0(<<>>, TraceContext) ->
-    {ok, TraceContext};
+    TraceContext;
 decode_v0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, _/binary>>, _)
   when TraceId =:= 0 ->
-    {error, invalid};
+    undefined;
 decode_v0(<<?TRACE_ID_FIELD_NUM:8/signed-integer, TraceId:128/integer, Rest/binary>>, TraceContext) ->
     decode_v0(Rest, TraceContext#span_ctx{trace_id=TraceId});
 decode_v0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, _/binary>>, _)
   when SpanId =:= 0 ->
-    {error, invalid};
+    undefined;
 decode_v0(<<?SPAN_ID_FIELD_NUM:8/signed-integer, SpanId:64/integer, Rest/binary>>, TraceContext) ->
     decode_v0(Rest, TraceContext#span_ctx{span_id=SpanId});
 decode_v0(<<?TRACE_OPTIONS_FIELD_NUM:8/signed-integer, TraceOptions:8/signed-integer, Rest/binary>>, TraceContext) ->
     decode_v0(Rest, TraceContext#span_ctx{trace_options=TraceOptions});
 decode_v0(_, TraceContext) ->
-    {ok, TraceContext}.
+    TraceContext.

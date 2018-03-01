@@ -70,15 +70,21 @@ with_child_span(Name) ->
 
 %%--------------------------------------------------------------------
 %% @doc
+%% Starts a new span with attributes as a child of the current span
+%% and replaces it.
+%% @end
+%%--------------------------------------------------------------------
+-spec with_child_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span_ctx()).
+with_child_span(Name, Attributes) ->
+    with_span(oc_trace:start_span(Name, get(?SPAN_CTX), Attributes)).
+
+%%--------------------------------------------------------------------
+%% @doc
 %% Starts a new span as a child of the current span and uses it as the
 %% current span while running the function `Fun`, finishing the span
 %% and resetting the current span context after the function finishes.
 %% @end
 %%--------------------------------------------------------------------
--spec with_child_span(unicode:unicode_binary(), fun()) -> maybe(opencensus:span_ctx()).
-with_child_span(Name, Fun) ->
-    with_child_span(Name, #{}, Fun).
-
 -spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> maybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes, Fun) ->
     CurrentSpan = get(?SPAN_CTX),
