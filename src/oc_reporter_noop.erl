@@ -15,7 +15,7 @@
 %% @doc A no-op reporter that does nothing.
 %% @end
 %%%-----------------------------------------------------------------------
--module(oc_noop_reporter).
+-module(oc_reporter_noop).
 
 -behaviour(oc_reporter).
 

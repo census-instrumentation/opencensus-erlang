@@ -1,4 +1,4 @@
--module(oc_stat_distribution_aggregation).
+-module(oc_stat_aggregation_distribution).
 
 -export([init/3,
          type/0,

@@ -25,7 +25,7 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(_, Config) ->
-    application:set_env(opencensus, reporter, {oc_pid_reporter, []}),
+    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
 
     {ok, _} = application:ensure_all_started(opencensus),
