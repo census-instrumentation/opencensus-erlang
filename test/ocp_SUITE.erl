@@ -41,17 +41,17 @@ with_span_tests(_Config) ->
     SpanName2 = <<"span-2">>,
     ocp:with_child_span(SpanName1, #{},
                         fun() ->
-                          SpanCtx1 = ocp:current_span(),
+                          SpanCtx1 = ocp:current_span_ctx(),
                           TraceId = SpanCtx1#span_ctx.trace_id,
                           SpanId1 = SpanCtx1#span_ctx.span_id,
                           ocp:with_child_span(SpanName2, #{},
                                               fun() ->
                                                       ?assertMatch(#span_ctx{span_id=SpanId2,
                                                                              trace_id=TraceId}
-                                                                   when SpanId2 =/= SpanId1, ocp:current_span())
+                                                                   when SpanId2 =/= SpanId1, ocp:current_span_ctx())
                                               end)
                         end),
-    ?assertMatch(undefined, ocp:current_span()),
+    ?assertMatch(undefined, ocp:current_span_ctx()),
     ok.
 
 multiple_child_spans(Config) ->
@@ -67,7 +67,7 @@ multiple_child_spans(Config) ->
     ocp:with_child_span(SpanName1),
     ocp:with_child_span(SpanName2, Attributes,
                         fun() ->
-                                [ChildSpanData] = ets:lookup(?SPAN_TAB, (ocp:current_span())#span_ctx.span_id),
+                                [ChildSpanData] = ets:lookup(?SPAN_TAB, (ocp:current_span_ctx())#span_ctx.span_id),
                                 ?assertMatch(Attributes, ChildSpanData#span.attributes)
                         end),
     ?OCP_FINISH(Tab).
@@ -93,9 +93,9 @@ attributes_test(Config) ->
     ?assertEqual({error, invalid_attribute}, ocp:put_attribute('attr-6', <<"value-6">>)),
     ?assertEqual({error, invalid_attribute}, ocp:put_attribute(<<"attr-7">>, 1.0)),
 
-    ChildSpanCtx = ocp:current_span(),
+    ChildSpanCtx = ocp:current_span_ctx(),
     ?OCP_FINISH(Tab),
-    ocp:with_span(SpanCtx),
+    ocp:with_span_ctx(SpanCtx),
 
     [FinishedChild] = ets:lookup(Tab, ChildSpanCtx#span_ctx.span_id),
     ?assertNot(maps:is_key(<<"attr-0">>, FinishedChild#span.attributes)),
