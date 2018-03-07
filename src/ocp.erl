@@ -76,7 +76,7 @@ with_child_span(Name) ->
 %%--------------------------------------------------------------------
 -spec with_child_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes) ->
-    with_span(oc_trace:start_span(Name, get(?SPAN_CTX), #{attributes => Attributes})).
+    with_span_ctx(oc_trace:start_span(Name, current_span_ctx(), #{attributes => Attributes})).
 
 %%--------------------------------------------------------------------
 %% @doc
