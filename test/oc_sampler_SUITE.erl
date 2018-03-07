@@ -55,7 +55,7 @@ never_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
-                         SpanContext#span_ctx.trace_options =:= 1
+                         oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
 
     ?assertEqual(0, length(L)).
@@ -65,7 +65,7 @@ always_sample(Config) ->
     L = lists:filter(fun(_) ->
                          %% include a test where 'undefined' is passed as the TC
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
-                         SpanContext#span_ctx.trace_options =:= 1
+                         oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
     ?assertEqual(Limit, length(L)).
 
@@ -73,7 +73,7 @@ probability_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
-                         SpanContext#span_ctx.trace_options =:= 1
+                         oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
     Length = length(L),
     ?assert(Length < Limit andalso Length > 0).
@@ -82,7 +82,7 @@ probability_zero_sample(Config) ->
     Limit = ?config(limit, Config),
     L = lists:filter(fun(_) ->
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
-                         SpanContext#span_ctx.trace_options =:= 1
+                         oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
     ?assertEqual(0, length(L)).
 
@@ -91,7 +91,7 @@ probability_hundred_sample(Config) ->
     L = lists:filter(fun(_) ->
                          %% include a test where an already generated id is passed as the TraceId
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
-                         SpanContext#span_ctx.trace_options =:= 1
+                         oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
     ?assertEqual(Limit, length(L)).
 
@@ -104,7 +104,7 @@ deterministic_probability(Config) ->
                     L = lists:filter(fun(TraceId) ->
                                          %% include a test where a TC record is passed as the TraceId
                                          SpanContext = oc_trace:start_span(<<"span">>, #span_ctx{trace_id=TraceId}),
-                                         SpanContext#span_ctx.trace_options =:= 1
+                                         oc_trace:is_enabled(SpanContext)
                                      end, TraceIds),
                     %% verify that every list of sampled is the same
                     ?assert(lists:all(fun(X) -> X =:= L end, Acc)),

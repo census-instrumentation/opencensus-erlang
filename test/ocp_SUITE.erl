@@ -76,11 +76,10 @@ attributes_test(Config) ->
     Tab = ?config(tid, Config),
     SpanName1 = <<"span-1">>,
 
-    ocp:with_child_span(SpanName1),
+    ocp:with_child_span(SpanName1, #{<<"attr-4">> => 5423}),
 
     ocp:put_attribute(<<"attr-0">>, <<"value-0">>),
     ocp:put_attributes(#{<<"attr-0">> => true,
-                         <<"attr-4">> => 5423,
                          <<"attr-5">> => <<"value-5">>}),
 
     ChildSpanName1 = <<"child-span-1">>,
@@ -114,4 +113,3 @@ attributes_test(Config) ->
     ?assertEqual(true, maps:get(<<"attr-0">>, FinishedSpan#span.attributes)),
     ?assertEqual(5423, maps:get(<<"attr-4">>, FinishedSpan#span.attributes)),
     ?assertEqual(<<"value-5">>, maps:get(<<"attr-5">>, FinishedSpan#span.attributes)).
-
