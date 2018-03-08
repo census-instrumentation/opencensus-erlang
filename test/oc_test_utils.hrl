@@ -13,7 +13,7 @@
 
 -define(OCP_FINISH(Tab),
         (fun() ->
-                 __SpanCtx = ocp:current_span(),
+                 __SpanCtx = ocp:current_span_ctx(),
                  ocp:finish_span(),
 
                  %% wait for span to be reported

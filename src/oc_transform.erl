@@ -58,7 +58,7 @@ trace_clauses([{clause, Line, H, G, B} | Cs], Name) ->
     CurrentSpan = make_varname("CurrentSpan", Line),
     StartSpan = [{match, Line, {var, Line, CurrentSpan},
                   {call, Line,
-                   {remote, Line, {atom, Line, ocp}, {atom, Line, current_span}},
+                   {remote, Line, {atom, Line, ocp}, {atom, Line, current_span_ctx}},
                    []}},
                  {call, Line,
                   {remote, Line, {atom, Line, ocp}, {atom, Line, with_child_span}},
@@ -67,7 +67,7 @@ trace_clauses([{clause, Line, H, G, B} | Cs], Name) ->
                    {remote, Line, {atom, Line, ocp}, {atom, Line, finish_span}},
                    []},
                   {call, Line,
-                   {remote, Line, {atom, Line, ocp}, {atom, Line, with_span}},
+                   {remote, Line, {atom, Line, ocp}, {atom, Line, with_span_ctx}},
                    [{var, Line, CurrentSpan}]}],
     Trace = StartSpan ++ [{'try', Line, B, [], [], FinishSpan}],
     [{clause, Line, H, G, Trace} | trace_clauses(Cs, Name)].

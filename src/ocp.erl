@@ -21,13 +21,13 @@
 
 -export([with_tags/1,
 
-         with_span/1,
+         with_span_ctx/1,
 
          with_child_span/1,
          with_child_span/2,
          with_child_span/3,
 
-         current_span/0,
+         current_span_ctx/0,
          current_tags/0,
 
          finish_span/0,
@@ -55,8 +55,8 @@ with_tags(Map) ->
 %% Replaces the span in the current context.
 %% @end
 %%--------------------------------------------------------------------
--spec with_span(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
-with_span(Span) ->
+-spec with_span_ctx(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
+with_span_ctx(Span) ->
     put(?SPAN_CTX, Span).
 
 %%--------------------------------------------------------------------
@@ -66,7 +66,7 @@ with_span(Span) ->
 %%--------------------------------------------------------------------
 -spec with_child_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span_ctx()).
 with_child_span(Name) ->
-    with_span(oc_trace:start_span(Name, get(?SPAN_CTX), #{})).
+    with_span_ctx(oc_trace:start_span(Name, current_span_ctx(), #{})).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -76,7 +76,7 @@ with_child_span(Name) ->
 %%--------------------------------------------------------------------
 -spec with_child_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes) ->
-    with_span(oc_trace:start_span(Name, get(?SPAN_CTX), Attributes)).
+    with_span_ctx(oc_trace:start_span(Name, current_span_ctx(), #{attributes => Attributes})).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -87,17 +87,17 @@ with_child_span(Name, Attributes) ->
 %%--------------------------------------------------------------------
 -spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> maybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes, Fun) ->
-    CurrentSpan = get(?SPAN_CTX),
-    NewSpan = oc_trace:start_span(Name, CurrentSpan, #{attributes => Attributes}),
-    put(?SPAN_CTX, NewSpan),
+    CurrentSpanCtx = current_span_ctx(),
+    NewSpanCtx = oc_trace:start_span(Name, CurrentSpanCtx, #{attributes => Attributes}),
+    with_span_ctx(NewSpanCtx),
     try Fun()
     after
-        oc_trace:finish_span(get(?SPAN_CTX)),
-        put(?SPAN_CTX, CurrentSpan)
+        oc_trace:finish_span(current_span_ctx()),
+        with_span_ctx(CurrentSpanCtx)
     end.
 
--spec current_span() -> maybe(opencensus:span_ctx()).
-current_span() ->
+-spec current_span_ctx() -> maybe(opencensus:span_ctx()).
+current_span_ctx() ->
     get(?SPAN_CTX).
 
 -spec current_tags() -> opencensus:tags().
@@ -116,7 +116,7 @@ current_tags() ->
 %%--------------------------------------------------------------------
 -spec finish_span() -> boolean().
 finish_span() ->
-    oc_trace:finish_span(get(?SPAN_CTX)).
+    oc_trace:finish_span(current_span_ctx()).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -127,7 +127,7 @@ finish_span() ->
 -spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value()) -> boolean() | {error, invalid_attribute}.
 put_attribute(Key, Value) when is_binary(Key)
                                , (is_binary(Value) orelse is_integer(Value) orelse is_boolean(Value)) ->
-    oc_trace:put_attribute(Key, Value, get(?SPAN_CTX));
+    oc_trace:put_attribute(Key, Value, current_span_ctx());
 put_attribute(_Key, _Value) ->
     {error, invalid_attribute}.
 
@@ -139,7 +139,7 @@ put_attribute(_Key, _Value) ->
 %%--------------------------------------------------------------------
 -spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()}) -> boolean().
 put_attributes(NewAttributes) ->
-    oc_trace:put_attributes(NewAttributes, get(?SPAN_CTX)).
+    oc_trace:put_attributes(NewAttributes, current_span_ctx()).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -149,11 +149,11 @@ put_attributes(NewAttributes) ->
 %%--------------------------------------------------------------------
 -spec add_time_event(opencensus:annotation() | opencensus:message_event()) -> boolean().
 add_time_event(TimeEvent) ->
-    oc_trace:add_time_event(TimeEvent, get(?SPAN_CTX)).
+    oc_trace:add_time_event(TimeEvent, current_span_ctx()).
 
 -spec add_time_event(wts:timestamp(), opencensus:annotation() | opencensus:message_event()) -> boolean().
 add_time_event(Timestamp, TimeEvent) ->
-    oc_trace:add_time_event(Timestamp, TimeEvent, get(?SPAN_CTX)).
+    oc_trace:add_time_event(Timestamp, TimeEvent, current_span_ctx()).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -162,7 +162,7 @@ add_time_event(Timestamp, TimeEvent) ->
 %%--------------------------------------------------------------------
 -spec set_status(integer(), unicode:unicode_binary()) -> boolean().
 set_status(Code, Message) ->
-    oc_trace:set_status(Code, Message, get(?SPAN_CTX)).
+    oc_trace:set_status(Code, Message, current_span_ctx()).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -171,4 +171,4 @@ set_status(Code, Message) ->
 %%--------------------------------------------------------------------
 -spec add_link(opencensus:link()) -> boolean().
 add_link(Link) ->
-    oc_trace:add_link(Link, get(?SPAN_CTX)).
+    oc_trace:add_link(Link, current_span_ctx()).
