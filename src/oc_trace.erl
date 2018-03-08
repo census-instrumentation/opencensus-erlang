@@ -22,7 +22,9 @@
 
 -export([from_ctx/1,
 
-         with_span/2,
+         current_span_ctx/1,
+
+         with_span_ctx/2,
          with_child_span/2,
          with_child_span/3,
 
@@ -64,15 +66,24 @@ from_ctx(Ctx) ->
 
 %%--------------------------------------------------------------------
 %% @doc
+%% Return the current span context in a `Ctx' or `undefined'.
+%% @end
+%%--------------------------------------------------------------------
+-spec current_span_ctx(ctx:t()) -> maybe(opencensus:span_ctx()).
+current_span_ctx(Ctx) ->
+    ctx:get(Ctx, ?SPAN_CTX, undefined).
+
+%%--------------------------------------------------------------------
+%% @doc
 %% Set the current span context in a context to `SpanCtx`. Or to a new
 %% span context with name `Name` that is the child of the span context
 %% in `Ctx`, if it exists.
 %% @end
 %%--------------------------------------------------------------------
--spec with_span(Ctx, SpanCtx) -> Ctx when
+-spec with_span_ctx(Ctx, SpanCtx) -> Ctx when
       Ctx :: ctx:t(),
       SpanCtx :: opencensus:span_ctx().
-with_span(Ctx, SpanCtx=#span_ctx{}) ->
+with_span_ctx(Ctx, SpanCtx=#span_ctx{}) ->
     ctx:with_value(Ctx, ?SPAN_CTX, SpanCtx).
 
 %%--------------------------------------------------------------------
@@ -85,7 +96,7 @@ with_span(Ctx, SpanCtx=#span_ctx{}) ->
       Ctx :: ctx:t(),
       Name :: unicode:unicode_binary().
 with_child_span(Ctx, Name) ->
-    ctx:with_value(Ctx, ?SPAN_CTX, new_span_(Name, ctx:get(Ctx, ?SPAN_CTX, undefined), false)).
+    with_span_ctx(Ctx, new_span_(Name, current_span_ctx(Ctx), false)).
 
 -spec with_child_span(Ctx, Name, Options) -> Ctx when
       Ctx :: ctx:t(),
@@ -94,7 +105,7 @@ with_child_span(Ctx, Name) ->
                    sampler => module(),
                    attributes => opencensus:attributes()}.
 with_child_span(Ctx, Name, Options) ->
-    ctx:with_value(Ctx, ?SPAN_CTX, start_span(Name, ctx:get(Ctx, ?SPAN_CTX, undefined), Options)).
+    with_span_ctx(Ctx, start_span(Name, current_span_ctx(Ctx), Options)).
 
 %%--------------------------------------------------------------------
 %% @doc
