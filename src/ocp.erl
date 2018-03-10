@@ -81,7 +81,7 @@ with_child_span(Name, Attributes) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new span as a child of the current span and uses it as the
-%% current span while running the function `Fun`, finishing the span
+%% current span while running the function `Fun', finishing the span
 %% and resetting the current span context after the function finishes.
 %% @end
 %%--------------------------------------------------------------------

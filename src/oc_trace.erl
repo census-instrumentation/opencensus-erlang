@@ -75,9 +75,9 @@ current_span_ctx(Ctx) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Set the current span context in a context to `SpanCtx`. Or to a new
+%% Set the current span context in a context to `SpanCtx'. Or to a new
 %% span context with name `Name` that is the child of the span context
-%% in `Ctx`, if it exists.
+%% in `Ctx', if it exists.
 %% @end
 %%--------------------------------------------------------------------
 -spec with_span_ctx(Ctx, SpanCtx) -> Ctx when
@@ -88,8 +88,8 @@ with_span_ctx(Ctx, SpanCtx=#span_ctx{}) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Create a child span with parent from the current context `Ctx`. And
-%% sets it as the current span context in `Ctx`.
+%% Create a child span with parent from the current context `Ctx'. And
+%% sets it as the current span context in `Ctx'.
 %% @end
 %%--------------------------------------------------------------------
 -spec with_child_span(Ctx, Name) -> Ctx when
