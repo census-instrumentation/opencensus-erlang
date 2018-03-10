@@ -31,10 +31,14 @@ export(Name, _Options) ->
                              Count = lists:foldl(fun({_Bound, C}, Acc) ->
                                                          C + Acc
                                                  end, 0, Buckets),
+                             Mean = case Count of
+                                        0 -> 0;
+                                        _ -> Sum / Count
+                                    end,
                              #{tags => maps:from_list(Tags),
                                value => #{count => Count,
                                           sum => Sum,
-                                          mean => Sum / Count,
+                                          mean => Mean,
                                           buckets => Buckets}}
                      end, prometheus_histogram:values(?PROM_REGISTRY, Name)),
     #{type => type(),
