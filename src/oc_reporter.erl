@@ -72,7 +72,7 @@ store_span(_) ->
 
 init(_Args) ->
     SendInterval = application:get_env(opencensus, send_interval_ms, 500),
-    {Reporter, ReporterOpts} = application:get_env(opencensus, reporter, {oc_noop_reporter, []}),
+    {Reporter, ReporterOpts} = application:get_env(opencensus, reporter, {oc_reporter_noop, []}),
     ReporterConfig = Reporter:init(ReporterOpts),
     Ref = erlang:send_after(SendInterval, self(), report_spans),
     {ok, #state{reporter=Reporter,
