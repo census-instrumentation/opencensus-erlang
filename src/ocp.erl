@@ -62,10 +62,12 @@
 -define(FUN_WITH_CTX(Fun),
         begin
             Context = current_span_ctx(),
+            Tags = current_tags(),
             fun () ->
                     Mfa = erlang:fun_info_mfa(Fun),
                     put('$initial_call', Mfa),
                     ocp:with_span_ctx(Context),
+                    ocp:with_tags(Tags),
                     erlang:apply(Fun, [])
             end
         end).
@@ -73,9 +75,11 @@
 -define(MFA_WITH_CTX(M, F, A),
         begin
             Context = current_span_ctx(),
+            Tags = current_tags(),
             fun () ->
                     put('$initial_call', {M, F, length(A)}),
                     ocp:with_span_ctx(Context),
+                    ocp:with_tags(Tags),
                     erlang:apply(M, F, A)
             end
         end).
@@ -215,7 +219,7 @@ add_link(Link) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn/1' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn(Fun) ->
@@ -224,7 +228,7 @@ spawn(Fun) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn/2' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn(Node, Fun) ->
@@ -233,7 +237,7 @@ spawn(Node, Fun) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn/3' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn(M, F, A) ->
@@ -242,7 +246,7 @@ spawn(M, F, A) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn/4' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn(Node, M, F, A) ->
@@ -251,7 +255,7 @@ spawn(Node, M, F, A) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_link/1' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_link(Fun) ->
@@ -260,7 +264,7 @@ spawn_link(Fun) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_link/2' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_link(Node, Fun) ->
@@ -269,7 +273,7 @@ spawn_link(Node, Fun) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_link/3' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_link(M, F, A) ->
@@ -278,7 +282,7 @@ spawn_link(M, F, A) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_link/4' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_link(Node, M, F, A) ->
@@ -287,7 +291,7 @@ spawn_link(Node, M, F, A) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_monitor/1' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_monitor(Fun) ->
@@ -296,7 +300,7 @@ spawn_monitor(Fun) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_monitor/3' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_monitor(M, F, A) ->
@@ -305,7 +309,7 @@ spawn_monitor(M, F, A) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_opt/2' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_opt(Fun, Opt) ->
@@ -314,7 +318,7 @@ spawn_opt(Fun, Opt) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_opt/3' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_opt(Node, Fun, Opt) ->
@@ -323,7 +327,7 @@ spawn_opt(Node, Fun, Opt) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_opt/4' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_opt(M, F, A, Opt) ->
@@ -332,7 +336,7 @@ spawn_opt(M, F, A, Opt) ->
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts a new process using `erlang:spawn_opt/5' with current_span_ctx
-%% from the calling process.
+%% and current_tags from the calling process.
 %% @end
 %%--------------------------------------------------------------------
 spawn_opt(Node, M, F, A, Opt) ->

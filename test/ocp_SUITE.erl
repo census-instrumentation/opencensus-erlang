@@ -125,6 +125,10 @@ spawns_tests(_Config) ->
     RootSpanCtx = oc_trace:start_span("Root", undefined),
     ocp:with_span_ctx(RootSpanCtx),
 
+    Tags = oc_tags:new(#{type => "mpeg",
+                         category => "category1"}),
+    ocp:with_tags(Tags),
+
 
     ocp:spawn(spawn_fn()),
     receive_context(),
@@ -189,14 +193,16 @@ spawn_fn() ->
     end.
 
 spawn_fn(Self) ->
-    Self ! {context, ocp:current_span_ctx()}.
+    Self ! {context, ocp:current_span_ctx(), ocp:current_tags()}.
 
 receive_context() ->
     RootSpanCtx = ocp:current_span_ctx(),
+    Tags = ocp:current_tags(),
 
     receive
-        {context, FCtx} ->
-            ?assertMatch(RootSpanCtx, FCtx)
+        {context, FCtx, FTags} ->
+            ?assertMatch(RootSpanCtx, FCtx),
+            ?assertEqual(Tags, FTags)
     after
         6000 ->
             ct:fail("Spawn* failed")
