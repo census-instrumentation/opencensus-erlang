@@ -13,7 +13,10 @@
 -include("oc_test_utils.hrl").
 
 all() ->
-    [with_span_tests, multiple_child_spans, attributes_test].
+    [with_span_tests,
+     multiple_child_spans,
+     attributes_test,
+     spawns_tests].
 
 init_per_suite(Config) ->
     application:load(opencensus),
@@ -41,15 +44,16 @@ with_span_tests(_Config) ->
     SpanName2 = <<"span-2">>,
     ocp:with_child_span(SpanName1, #{},
                         fun() ->
-                          SpanCtx1 = ocp:current_span_ctx(),
-                          TraceId = SpanCtx1#span_ctx.trace_id,
-                          SpanId1 = SpanCtx1#span_ctx.span_id,
-                          ocp:with_child_span(SpanName2, #{},
-                                              fun() ->
-                                                      ?assertMatch(#span_ctx{span_id=SpanId2,
-                                                                             trace_id=TraceId}
-                                                                   when SpanId2 =/= SpanId1, ocp:current_span_ctx())
-                                              end)
+                                SpanCtx1 = ocp:current_span_ctx(),
+                                TraceId = SpanCtx1#span_ctx.trace_id,
+                                SpanId1 = SpanCtx1#span_ctx.span_id,
+                                ocp:with_child_span(SpanName2, #{},
+                                                    fun() ->
+                                                            ?assertMatch(#span_ctx{span_id=SpanId2,
+                                                                                   trace_id=TraceId}
+                                                                         when SpanId2 =/= SpanId1,
+                                                                              ocp:current_span_ctx())
+                                                    end)
                         end),
     ?assertMatch(undefined, ocp:current_span_ctx()),
     ok.
@@ -113,3 +117,105 @@ attributes_test(Config) ->
     ?assertEqual(true, maps:get(<<"attr-0">>, FinishedSpan#span.attributes)),
     ?assertEqual(5423, maps:get(<<"attr-4">>, FinishedSpan#span.attributes)),
     ?assertEqual(<<"value-5">>, maps:get(<<"attr-5">>, FinishedSpan#span.attributes)).
+
+spawns_tests(_Config) ->
+    erlang:process_flag(trap_exit, true),
+
+    Self = self(),
+    RootSpanCtx = oc_trace:start_span("Root", undefined),
+    ocp:with_span_ctx(RootSpanCtx),
+
+
+    ocp:spawn(spawn_fn()),
+    receive_context(),
+
+    ocp:spawn(node(), spawn_fn()),
+    receive_context(),
+
+    ocp:spawn(?MODULE, spawn_fn, [Self]),
+    receive_context(),
+
+    ocp:spawn(node(), ?MODULE, spawn_fn, [Self]),
+    receive_context(),
+
+
+    Pid1 = ocp:spawn_link(spawn_fn()),
+    receive_context(),
+    receive_exit(Pid1),
+
+    Pid2 = ocp:spawn_link(node(), spawn_fn()),
+    receive_context(),
+    receive_exit(Pid2),
+
+    Pid3 = ocp:spawn_link(?MODULE, spawn_fn, [Self]),
+    receive_context(),
+    receive_exit(Pid3),
+
+    Pid4 = ocp:spawn_link(node(), ?MODULE, spawn_fn, [Self]),
+    receive_context(),
+    receive_exit(Pid4),
+
+
+    PM1 = ocp:spawn_monitor(spawn_fn()),
+    receive_context(),
+    receive_down(PM1),
+
+    PM2 = ocp:spawn_monitor(spawn_fn()),
+    receive_context(),
+    receive_down(PM2),
+
+
+    PM3 = ocp:spawn_opt(spawn_fn(), [monitor]),
+    receive_context(),
+    receive_down(PM3),
+
+    PM4 = ocp:spawn_opt(node(), spawn_fn(), [monitor]),
+    receive_context(),
+    receive_down(PM4),
+
+    PM5 = ocp:spawn_opt(?MODULE, spawn_fn, [Self], [monitor]),
+    receive_context(),
+    receive_down(PM5),
+
+    PM6 = ocp:spawn_opt(node(), ?MODULE, spawn_fn, [Self], [monitor]),
+    receive_context(),
+    receive_down(PM6).
+
+spawn_fn() ->
+    Self = self(),
+
+    fun () ->
+            spawn_fn(Self)
+    end.
+
+spawn_fn(Self) ->
+    Self ! {context, ocp:current_span_ctx()}.
+
+receive_context() ->
+    RootSpanCtx = ocp:current_span_ctx(),
+
+    receive
+        {context, FCtx} ->
+            ?assertMatch(RootSpanCtx, FCtx)
+    after
+        6000 ->
+            ct:fail("Spawn* failed")
+    end.
+
+receive_exit(From) ->
+    receive
+        {'EXIT', From, normal} ->
+            ok
+    after
+        6000 ->
+            ct:fail("Exit receive failed")
+    end.
+
+receive_down({Pid, MRef}) ->
+    receive
+        {'DOWN', MRef, process, Pid, normal} ->
+            ok
+    after
+        6000 ->
+            ct:fail("Down receive failed")
+    end.
