@@ -26,10 +26,14 @@ add_sample(Name, Tags, Value, _Options) ->
 
 export(Name, _Options) ->
     Rows = lists:map(fun({Tags, Count, Sum}) ->
+                             Mean = case Count of
+                                        0 -> 0;
+                                        _ -> Sum / Count
+                                    end,
                              #{tags => maps:from_list(Tags),
                                value => #{count => Count,
                                           sum => Sum,
-                                          mean => Sum / Count}}
+                                          mean => Mean}}
                      end, prometheus_summary:values(?PROM_REGISTRY, Name)),
     #{type => type(),
       rows => Rows}.
