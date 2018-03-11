@@ -37,9 +37,52 @@
          add_time_event/1,
          add_time_event/2,
          add_link/1,
-         set_status/2]).
+         set_status/2,
+
+         spawn/1,
+         spawn/2,
+         spawn/3,
+         spawn/4,
+
+         spawn_link/1,
+         spawn_link/2,
+         spawn_link/3,
+         spawn_link/4,
+
+         spawn_monitor/1,
+         spawn_monitor/3,
+
+         spawn_opt/2,
+         spawn_opt/3,
+         spawn_opt/4,
+         spawn_opt/5]).
 
 -include("opencensus.hrl").
+
+-define(FUN_WITH_CTX(Fun),
+        begin
+            Context = current_span_ctx(),
+            Tags = current_tags(),
+            fun () ->
+                    Mfa = erlang:fun_info_mfa(Fun),
+                    put('$initial_call', Mfa),
+                    ocp:with_span_ctx(Context),
+                    ocp:with_tags(Tags),
+                    erlang:apply(Fun, [])
+            end
+        end).
+
+-define(MFA_WITH_CTX(M, F, A),
+        begin
+            Context = current_span_ctx(),
+            Tags = current_tags(),
+            fun () ->
+                    put('$initial_call', {M, F, length(A)}),
+                    ocp:with_span_ctx(Context),
+                    ocp:with_tags(Tags),
+                    erlang:apply(M, F, A)
+            end
+        end).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -56,8 +99,8 @@ with_tags(Map) ->
 %% @end
 %%--------------------------------------------------------------------
 -spec with_span_ctx(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
-with_span_ctx(Span) ->
-    put(?SPAN_CTX, Span).
+with_span_ctx(SpanCtx) ->
+    put(?SPAN_CTX, SpanCtx).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -172,3 +215,129 @@ set_status(Code, Message) ->
 -spec add_link(opencensus:link()) -> boolean().
 add_link(Link) ->
     oc_trace:add_link(Link, current_span_ctx()).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn/1' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn(Fun) ->
+    erlang:spawn(?FUN_WITH_CTX(Fun)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn/2' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn(Node, Fun) ->
+    erlang:spawn(Node, ?FUN_WITH_CTX(Fun)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn/3' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn(M, F, A) ->
+    erlang:spawn(?MFA_WITH_CTX(M, F, A)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn/4' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn(Node, M, F, A) ->
+    erlang:spawn(Node, ?MFA_WITH_CTX(M, F, A)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_link/1' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_link(Fun) ->
+    erlang:spawn_link(?FUN_WITH_CTX(Fun)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_link/2' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_link(Node, Fun) ->
+    erlang:spawn_link(Node, ?FUN_WITH_CTX(Fun)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_link/3' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_link(M, F, A) ->
+    erlang:spawn_link(?MFA_WITH_CTX(M, F, A)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_link/4' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_link(Node, M, F, A) ->
+    erlang:spawn_link(Node, ?MFA_WITH_CTX(M, F, A)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_monitor/1' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_monitor(Fun) ->
+    erlang:spawn_monitor(?FUN_WITH_CTX(Fun)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_monitor/3' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_monitor(M, F, A) ->
+    erlang:spawn_monitor(?MFA_WITH_CTX(M, F, A)).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_opt/2' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_opt(Fun, Opt) ->
+    erlang:spawn_opt(?FUN_WITH_CTX(Fun), Opt).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_opt/3' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_opt(Node, Fun, Opt) ->
+    erlang:spawn_opt(Node, ?FUN_WITH_CTX(Fun), Opt).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_opt/4' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_opt(M, F, A, Opt) ->
+    erlang:spawn_opt(?MFA_WITH_CTX(M, F, A), Opt).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts a new process using `erlang:spawn_opt/5' with current_span_ctx
+%% and current_tags from the calling process.
+%% @end
+%%--------------------------------------------------------------------
+spawn_opt(Node, M, F, A, Opt) ->
+    erlang:spawn_opt(Node, ?MFA_WITH_CTX(M, F, A), Opt).
