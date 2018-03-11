@@ -33,8 +33,8 @@
 
 -include("opencensus.hrl").
 
--type key()   :: atom() | unicode:latin1_charlist().
--type value() :: unicode:latin1_charlist().
+-type key()   :: atom() | binary() | unicode:latin1_charlist().
+-type value() :: binary() | unicode:latin1_charlist().
 -type tags()  :: #{key() => value()}.
 
 -spec new() -> tags().
@@ -75,11 +75,15 @@ put(Key, Value, Tags) ->
 
 verify_key(Key) when is_atom(Key) ->
   verify_key(atom_to_list(Key));
+verify_key(Key) when is_binary(Key) ->
+  verify_key(binary_to_list(Key));
 verify_key(Key) ->
     KeyLength = erlang:length(Key),
     KeyLength > 0 andalso KeyLength < 256 andalso
         io_lib:printable_latin1_list(Key).
 
+verify_value(Value) when is_binary(Value) ->
+  verify_value(binary_to_list(Value));
 verify_value(Value) ->
     erlang:length(Value) < 256 andalso io_lib:printable_latin1_list(Value).
 

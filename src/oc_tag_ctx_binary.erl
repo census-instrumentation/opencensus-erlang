@@ -28,14 +28,16 @@
 
 -spec encode(#{}) -> {ok, iolist()} | {error, any()}.
 encode(TagContext) ->
-    try maps:fold(fun(Key, Value, {Size, Acc}) when Size < ?SIZE_LIMIT ->
+    try maps:fold(fun(Key0, Value0, {Size, Acc}) when Size < ?SIZE_LIMIT ->
+                          Key = normalize_proto_string(Key0),
                           KeySize = length(Key),
+                          Value = normalize_proto_string(Value0),
                           ValueSize = length(Value),
                           EncodedKeySize = encode_varint(KeySize),
                           EncodedValueSize = encode_varint(ValueSize),
                           {Size+KeySize+ValueSize+size(EncodedKeySize)+size(EncodedValueSize),
-                            [Acc | [<<?TAG_CONTEXT_FIELD_ID:8/integer>>, EncodedKeySize,
-                                    Key, EncodedValueSize, Value]]};
+                           [Acc | [<<?TAG_CONTEXT_FIELD_ID:8/integer>>, EncodedKeySize,
+                                   Key, EncodedValueSize, Value]]};
                      (_, _, _)->
                           throw({?MODULE, encoding_too_large})
                   end, {0, [<<?VERSION:8/integer>>]}, TagContext) of
@@ -45,6 +47,13 @@ encode(TagContext) ->
         throw:Reason ->
             {error, Reason}
     end.
+
+normalize_proto_string(PS) when is_atom(PS) ->
+    atom_to_list(PS);
+normalize_proto_string(PS) when is_binary(PS) ->
+    binary_to_list(PS);
+normalize_proto_string(PS) ->
+    PS.
 
 -spec decode(binary()) -> {ok, #{}} | {error, any()}.
 decode(<<?VERSION:8/integer, TagContext/binary>>) ->

@@ -46,7 +46,7 @@ encode(#span_ctx{trace_id=TraceId,
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
     [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
 
--spec decode(iolist() | binary()) -> maybe(opencensus:span_ctx()).
+-spec decode(iodata()) -> maybe(opencensus:span_ctx()).
 decode(TraceContext) when is_list(TraceContext) ->
     decode(list_to_binary(TraceContext));
 decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, _/binary>>) when TraceId =:= ?ZERO_TRACEID
