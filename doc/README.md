@@ -2,7 +2,7 @@
 
 # OpenCensus Erlang library #
 
-__Version:__ 0.3.0
+__Version:__ 0.2.0
 
 ## Erlang stats collection and distributed tracing framework
 
@@ -16,13 +16,13 @@ __Version:__ 0.3.0
 
 Add as dependency to `rebar.config`:
 
-```erlang
+```
 {deps, [opencensus]}.
 ```
 
 Or to use the latest from git master branch:
 
-```erlang
+```
 {deps, [{opencensus, {git, "https://github.com/census-instrumentation/opencensus-erlang.git", {branch, "master"}}}]}.
 ```
 
@@ -37,7 +37,7 @@ Span data is stored and manipulated in an ETS table. Span context must be tracke
 
 With `ocp` the span context is tracked in the current process`s process dictionary.
 
-```erlang
+```
 some_fun() ->
   ocp:with_child_span(<<"some_fun/0">>,
                       fun() ->
@@ -49,13 +49,13 @@ some_fun() ->
 
 The parse transform provides an attribute to decorate functions with that will start a span, wrap the contents in a `try` and finish the span in an `after` clause. Add the parse transform to the compile opts in `rebar.config`:
 
-```erlang
+```
 {erl_opts, [{parse_transform, oc_transform}]}.
 ```
 
 And use:
 
-```erlang
+```
 -span([]).
 function_to_trace() ->
   ...
@@ -71,7 +71,7 @@ Since the tranformed functions use the process dictionary to store the context y
 
 In this example a function is passed a `ctx` variable `Ctx` that some instrumented library could have set the span context based on the incoming metadata of a request, like HTTP headers. The `oc_trace:new_span` function will check `Ctx` for a span context and create a child span of that span context if it exists, otherwise a root span will be created. We can pass the span context to another function, we could also createa a new `ctx` to pass (`oc_trace:with_span(Ctx, SpanCtx)`), to be further updated or have new children created:
 
-```erlang
+```
 handler(Ctx, NextHandler) ->
   SpanCtx = oc_trace:with_child_span(Ctx, <<"span-name">>),
   try
@@ -94,7 +94,7 @@ The module `oc_span` has the functional span data manipulation functions, meanin
 
 A span has a map of attributes providing details about the span. The key is a binary string and the value of the attribute can be a binary string, integer, or boolean.
 
-```erlang
+```
 Span1 = oc_trace:put_attribute(<<"/instance_id">>, <<"my-instance">>, SpanCtx),
 ```
 
@@ -104,7 +104,7 @@ A time event is a timestamped annotation with user-supplied key-value pairs or a
 
 The `message_event` consists of a type, identifier and size of the message. `Id` is an identifier for the event's message that can be used to match `SENT` and `RECEIVED` `message_event`s. For example, this field could represent a sequence ID for a streaming RPC. It is recommended to be unique within a Span. If `CompressedSize` is `0` it is assumed to be the same as `UncompressedSize`.
 
-```erlang
+```
 Event = opencensus:message_event(?MESSAGE_EVENT_TYPE_SENT, Id, UncompressedSize, CompressedSize)
 oc_trace:add_time_event(Event, SpanCtx),
 ```
@@ -113,7 +113,7 @@ oc_trace:add_time_event(Event, SpanCtx),
 
 Links are useful in cases like a job queue. A job is created with a span context and when run wants to report a new span. The job isn't a direct child of the span that inserted it into the queue, but it is related. The job creates a link to the span that created it.
 
-```erlang
+```
 SpanCtx = oc_trace:with_child_span(Ctx, <<"running job">>),
 Link = oc_trace:link(?LINK_TYPE_PARENT_LINKED_SPAN, TraceId, ParentSpanId, #{}),
 oc_trace:add_link(Link, SpanCtx),
@@ -143,23 +143,23 @@ oc_trace:finish_span(SpanCtx).
 
 #### <a name="Tags">Tags</a> ####
 
-```erlang
+```
 Ctx1 = oc_tags:new_ctx(Ctx, #{"method" => "GET"})
 ```
 
-```erlang
+```
 Tags = oc_tags:from_ctx(Ctx)
 ```
 
 ### Development
 
-```sh
+```
 $ rebar3 compile
 ```
 
 Running tests:
 
-```sh
+```
 $ rebar3 ct
 ```
 
@@ -167,7 +167,48 @@ $ rebar3 ct
 
 Language independent interface types for Census are found in the `opencensus-proto` repo. The opencensus Erlang app provides functionality for converting from the apps internal representation to the standard protobuf interface. Below are the steps to update the Erlang module and header for encoding and decoding the protobufs:
 
-```sh
+```
 $ git clone https://github.com/census-instrumentation/opencensus-proto priv/opencensus-proto
 $ rebar3 protobuf compile
 ```
+
+
+
+## Modules ##
+
+
+<table width="100%" border="0" summary="list of modules">
+<tr><td><a href="oc_reporter.md" class="module">oc_reporter</a></td></tr>
+<tr><td><a href="oc_reporter_noop.md" class="module">oc_reporter_noop</a></td></tr>
+<tr><td><a href="oc_reporter_sequential.md" class="module">oc_reporter_sequential</a></td></tr>
+<tr><td><a href="oc_reporter_zipkin.md" class="module">oc_reporter_zipkin</a></td></tr>
+<tr><td><a href="oc_sampler.md" class="module">oc_sampler</a></td></tr>
+<tr><td><a href="oc_sampler_always.md" class="module">oc_sampler_always</a></td></tr>
+<tr><td><a href="oc_sampler_never.md" class="module">oc_sampler_never</a></td></tr>
+<tr><td><a href="oc_sampler_probability.md" class="module">oc_sampler_probability</a></td></tr>
+<tr><td><a href="oc_server.md" class="module">oc_server</a></td></tr>
+<tr><td><a href="oc_span.md" class="module">oc_span</a></td></tr>
+<tr><td><a href="oc_span_ctx_binary.md" class="module">oc_span_ctx_binary</a></td></tr>
+<tr><td><a href="oc_span_ctx_header.md" class="module">oc_span_ctx_header</a></td></tr>
+<tr><td><a href="oc_stat.md" class="module">oc_stat</a></td></tr>
+<tr><td><a href="oc_stat_aggregation.md" class="module">oc_stat_aggregation</a></td></tr>
+<tr><td><a href="oc_stat_aggregation_count.md" class="module">oc_stat_aggregation_count</a></td></tr>
+<tr><td><a href="oc_stat_aggregation_distribution.md" class="module">oc_stat_aggregation_distribution</a></td></tr>
+<tr><td><a href="oc_stat_aggregation_latest.md" class="module">oc_stat_aggregation_latest</a></td></tr>
+<tr><td><a href="oc_stat_aggregation_sum.md" class="module">oc_stat_aggregation_sum</a></td></tr>
+<tr><td><a href="oc_stat_config.md" class="module">oc_stat_config</a></td></tr>
+<tr><td><a href="oc_stat_exporter.md" class="module">oc_stat_exporter</a></td></tr>
+<tr><td><a href="oc_stat_exporter_prometheus.md" class="module">oc_stat_exporter_prometheus</a></td></tr>
+<tr><td><a href="oc_stat_view.md" class="module">oc_stat_view</a></td></tr>
+<tr><td><a href="oc_std_encoder.md" class="module">oc_std_encoder</a></td></tr>
+<tr><td><a href="oc_tag_ctx_binary.md" class="module">oc_tag_ctx_binary</a></td></tr>
+<tr><td><a href="oc_tag_ctx_header.md" class="module">oc_tag_ctx_header</a></td></tr>
+<tr><td><a href="oc_tags.md" class="module">oc_tags</a></td></tr>
+<tr><td><a href="oc_trace.md" class="module">oc_trace</a></td></tr>
+<tr><td><a href="oc_trace_pb.md" class="module">oc_trace_pb</a></td></tr>
+<tr><td><a href="oc_transform.md" class="module">oc_transform</a></td></tr>
+<tr><td><a href="ocp.md" class="module">ocp</a></td></tr>
+<tr><td><a href="opencensus.md" class="module">opencensus</a></td></tr>
+<tr><td><a href="opencensus_app.md" class="module">opencensus_app</a></td></tr>
+<tr><td><a href="opencensus_sup.md" class="module">opencensus_sup</a></td></tr></table>
+

@@ -1,3 +1,5 @@
+doc/*.html
+!doc/tpl.html
 priv/opencensus-proto
 .rebar3
 _*

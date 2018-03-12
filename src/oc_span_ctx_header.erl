@@ -12,9 +12,8 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc Functions to support the http header format of the tracecontext-spec
+%% @doc Functions to support the http header format of the tracecontext spec
 %% Implements the spec found here
-%% [https://github.com/TraceContext/tracecontext-spec/blob/018cd514b/HTTP_HEADER_FORMAT.md]
 %% @end
 %%%-------------------------------------------------------------------------
 -module(oc_span_ctx_header).
