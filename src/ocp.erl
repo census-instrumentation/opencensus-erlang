@@ -159,7 +159,11 @@ current_tags() ->
 %%--------------------------------------------------------------------
 -spec finish_span() -> boolean().
 finish_span() ->
-    oc_trace:finish_span(current_span_ctx()).
+    CurrentCtx = current_span_ctx(),
+    ParentCtx = oc_trace:parent_span_ctx(CurrentCtx),
+    Ret = oc_trace:finish_span(CurrentCtx),
+    with_span_ctx(ParentCtx),
+    Ret.
 
 %%--------------------------------------------------------------------
 %% @doc

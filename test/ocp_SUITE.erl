@@ -74,7 +74,15 @@ multiple_child_spans(Config) ->
                                 [ChildSpanData] = ets:lookup(?SPAN_TAB, (ocp:current_span_ctx())#span_ctx.span_id),
                                 ?assertMatch(Attributes, ChildSpanData#span.attributes)
                         end),
-    ?OCP_FINISH(Tab).
+    ?OCP_FINISH(Tab),
+
+    ocp:with_child_span(SpanName1),
+    Ctx1 = ocp:current_span_ctx(),
+    ocp:with_child_span(SpanName2),
+    Ctx2 = ocp:current_span_ctx(),
+    ?assertNotMatch(Ctx1, Ctx2),
+    ocp:finish_span(),
+    ?assertEqual(Ctx1, ocp:current_span_ctx()).
 
 attributes_test(Config) ->
     Tab = ?config(tid, Config),

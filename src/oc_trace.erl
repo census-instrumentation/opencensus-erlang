@@ -23,6 +23,7 @@
 -export([from_ctx/1,
 
          current_span_ctx/1,
+         parent_span_ctx/1,
 
          with_span_ctx/2,
          with_child_span/2,
@@ -72,6 +73,19 @@ from_ctx(Ctx) ->
 -spec current_span_ctx(ctx:t()) -> maybe(opencensus:span_ctx()).
 current_span_ctx(Ctx) ->
     ctx:get(Ctx, ?SPAN_CTX, undefined).
+
+
+-spec parent_span_ctx(maybe(opencensus:span_ctx() | opencensus:span())) ->
+                             maybe(opencensus:span_ctx()).
+parent_span_ctx(#span_ctx{span_id=SpanId}) ->
+    parent_span_ctx_for_span_id(SpanId);
+parent_span_ctx(#span{parent_span_id=undefined}) ->
+    undefined;
+parent_span_ctx(#span{parent_span_id=ParentId}) ->
+    span_ctx_for_span_id(ParentId);
+parent_span_ctx(undefined) ->
+    undefined.
+
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -312,3 +326,22 @@ lookup_and_replace(#span_ctx{span_id=SpanId,
     end;
 lookup_and_replace(_, _) ->
     true.
+
+parent_span_ctx_for_span_id(SpanId) ->
+    case ets:lookup(?SPAN_TAB, SpanId) of
+        [] ->
+            undefined;
+        [#span{parent_span_id=ParentSpanId}] ->
+            span_ctx_for_span_id(ParentSpanId)
+    end.
+
+span_ctx_for_span_id(SpanId) ->
+    case ets:lookup(?SPAN_TAB, SpanId) of
+        [] ->
+            undefined;
+        [#span{trace_id=TraceId,
+               trace_options=TraceOptions}] ->
+            #span_ctx{trace_id=TraceId,
+                      span_id=SpanId,
+                      trace_options=TraceOptions}
+    end.
