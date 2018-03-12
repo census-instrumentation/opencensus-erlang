@@ -1,16 +1,27 @@
 * {
     box-sizing: border-box;
 }
+
+.docs {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overlay: hidden;
+}
+
 /* The sidebar menu */
 .sidenav {
-    height: 100%; /* Full-height: remove this if you want "auto" height */
+    /* height: 100%; */ /* Full-height: remove this if you want "auto" height */
     max-width: 260px; /* Set the width of the sidebar */
     float: left;
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
     width: 25%;
-    overflow-y: scroll;
+    position: absolute;
+    bottom: 0;
+    top:0;
+    overflow-y: auto;
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 20px;
 }
@@ -32,10 +43,18 @@
 /* Style page content */
 .main {
     padding: 0px 10px;
-    width: 75%;
+    width: 100%;
     float: left;
     padding:30px;
-    margin:15px;
+    /* margin:15px; */
+    overflow-y: auto;
+    position: absolute;
+    bottom: 0;
+    top:0;
+}
+
+.content {
+    margin-left: 300px;
 }
 
 .logo img {
@@ -46,8 +65,10 @@
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-width: 750px) {
-    .sidenav {padding-top: 15px; float: left; overflow-y: visible;overflow-x: visible;}
+@media screen and (max-width: 550px) {
+    .sidenav {padding-top: 15px; float: left; overflow-y: visible;overflow-x: visible;position:relative;}
+    .main {position: relative;}
+    .content {margin-left: 0px;}
     .sidenav a {font-size: 18px;}
 }
 
@@ -127,6 +148,7 @@ html {
  */
 
 body {
+    height: 100%;
     margin: 0;
 }
 
@@ -473,6 +495,7 @@ display: inline;
 /* Github css */
 
 html,body {
+    height: 100%;
     margin: auto;
     color:black;
 }
@@ -486,6 +509,7 @@ p{margin:1em 0}
 /* a{color:#4183c4;text-decoration:none} */
 
 body {
+    overlay: hidden;
     background-color:#fff;
     font-size:14px;
     line-height:1.6
