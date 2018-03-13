@@ -1,0 +1,17 @@
+{application, helloworld,
+ [{description, "Example OpenCensus application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { helloworld_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    opencensus
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.
