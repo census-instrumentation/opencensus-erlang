@@ -131,33 +131,27 @@ zipkin_reporter(_Config) ->
 
         receive
             {ok, Content} ->
-                [#{<<"annotations">> := [],
-                   <<"debug">> := false,
-                   <<"duration">> := _,
-                   <<"id">> := ChildSpanId,
-                   <<"kind">> := <<"SERVER">>,
-                   <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
-                   <<"name">> := <<"span-name">>,
-                   <<"parentId">> := ParentSpanId,
-                   <<"shared">> := false,
-                   <<"tags">> :=
-                       #{<<"attr1">> := <<"val1">>,
-                         <<"attr_as_function">> := <<"val2">>},
-                   <<"timestamp">> := _,
-                   <<"traceId">> := ParentTraceId},
-                 #{<<"annotations">> := [],
-                   <<"debug">> := false,
-                   <<"duration">> := _,
-                   <<"id">> := ParentSpanId,
-                   <<"kind">> := <<"SERVER">>,
-                   <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
-                   <<"name">> := <<"Parent">>,
-                   <<"parentId">> := null,
-                   <<"shared">> := false,
-                   <<"tags">> := #{},
-                   <<"timestamp">> := _,
-                   <<"traceId">> := ParentTraceId}]
-                    = lists:sort(jsx:decode(Content, [return_maps]))
+                ?assertMatch([#{<<"annotations">> := [],
+                                <<"debug">> := false,
+                                <<"id">> := ParentSpanId,
+                                <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
+                                <<"name">> := <<"Parent">>,
+                                <<"shared">> := false,
+                                <<"tags">> := #{},
+                                <<"traceId">> := ParentTraceId},
+                              #{<<"annotations">> := [],
+                                <<"debug">> := false,
+                                <<"id">> := ChildSpanId,
+                                <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
+                                <<"name">> := <<"span-name">>,
+                                <<"parentId">> := ParentSpanId,
+                                <<"shared">> := false,
+                                <<"tags">> :=
+                                    #{<<"attr1">> := <<"val1">>,
+                                      <<"attr_as_function">> := <<"val2">>},
+                                <<"timestamp">> := _,
+                                <<"traceId">> := ParentTraceId}],
+                             jsx:decode(Content, [return_maps]))
 
         after
             6000 -> ct:fail("Zipking reporter doesn't work")

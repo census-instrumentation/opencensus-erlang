@@ -110,7 +110,7 @@ with_span_ctx(Ctx, SpanCtx=#span_ctx{}) ->
       Ctx :: ctx:t(),
       Name :: unicode:unicode_binary().
 with_child_span(Ctx, Name) ->
-    with_span_ctx(Ctx, new_span_(Name, current_span_ctx(Ctx), false)).
+    with_span_ctx(Ctx, new_span_(Name, current_span_ctx(Ctx), ?SPAN_KIND_UNSPECIFIED, false)).
 
 -spec with_child_span(Ctx, Name, Options) -> Ctx when
       Ctx :: ctx:t(),
@@ -127,7 +127,7 @@ with_child_span(Ctx, Name, Options) ->
 %% @end
 %%--------------------------------------------------------------------
 start_span(Name, SpanCtx) ->
-    new_span_(Name, SpanCtx, false).
+    new_span_(Name, SpanCtx, ?SPAN_KIND_UNSPECIFIED, false).
 
 -spec start_span(Name, SpanCtx, Options) -> SpanCtx when
       Name :: unicode:unicode_binary(),
@@ -138,33 +138,35 @@ start_span(Name, SpanCtx) ->
 start_span(Name, SpanCtx, Options) ->
     RemoteParent = maps:get(remote_parent, Options, false),
     Attributes = maps:get(attributes, Options, #{}),
+    Kind = maps:get(kind, Options, ?SPAN_KIND_UNSPECIFIED),
 
     %% TODO: support overriding the sampler
     _Sampler = maps:get(sampler, Options, undefined),
 
-    SpanCtx1 = new_span_(Name, SpanCtx, RemoteParent),
+    SpanCtx1 = new_span_(Name, SpanCtx, Kind, RemoteParent),
     put_attributes(Attributes, SpanCtx1),
     SpanCtx1.
 
 %% if parent is undefined, first run sampler
-new_span_(Name, undefined, _) ->
+new_span_(Name, undefined, Kind, _) ->
     TraceId = opencensus:generate_trace_id(),
     Span = #span_ctx{trace_id=TraceId,
                      trace_options=0},
     TraceOptions = update_trace_options(should_sample, Span),
-    new_span_(Name, Span#span_ctx{trace_options=TraceOptions}, false);
+    new_span_(Name, Span#span_ctx{trace_options=TraceOptions}, Kind, false);
 %% if parent is remote, first run sampler
-new_span_(Name, Span=#span_ctx{trace_id=TraceId}, RemoteParent) when RemoteParent =:= true ->
+new_span_(Name, Span=#span_ctx{trace_id=TraceId}, Kind, RemoteParent) when RemoteParent =:= true ->
     TraceOptions = update_trace_options(should_sample, Span),
     new_span_(Name, #span_ctx{trace_id=TraceId,
-                              trace_options=TraceOptions}, false);
+                              trace_options=TraceOptions}, Kind, false);
 new_span_(Name, Parent=#span_ctx{trace_id=TraceId,
-                                 span_id=ParentSpanId}, _RemoteParent) ->
+                                 span_id=ParentSpanId}, Kind, _RemoteParent) ->
     SpanId = opencensus:generate_span_id(),
     ets:insert(?SPAN_TAB, #span{trace_id=TraceId,
                                 span_id=SpanId,
                                 start_time=wts:timestamp(),
                                 parent_span_id=ParentSpanId,
+                                kind=Kind,
                                 name=Name,
                                 attributes=#{}}),
     Parent#span_ctx{span_id=SpanId}.

@@ -55,17 +55,10 @@ report(Spans, {Address, LocalEndpoint}) ->
     end.
 
 zipkin_span(Span, LocalEndpoint) ->
-
-    ParentId = case Span#span.parent_span_id of
-                   undefined -> null;
-                   Id -> iolist_to_binary(io_lib:format("~16.16.0b", [Id]))
-               end,
-    #{
+    (optional_fields(Span))#{
        <<"traceId">> => iolist_to_binary(io_lib:format("~32.16.0b", [Span#span.trace_id])),
        <<"name">> => iolist_to_binary(Span#span.name),
-       <<"parentId">> => ParentId,
        <<"id">> => iolist_to_binary(io_lib:format("~16.16.0b", [Span#span.span_id])),
-       <<"kind">> => <<"SERVER">>, %% TODO: get from attributes?
        <<"timestamp">> => wts:to_absolute(Span#span.start_time),
        <<"duration">> => wts:duration(Span#span.start_time, Span#span.end_time),
        <<"debug">> => false, %% TODO: get from attributes?
@@ -78,6 +71,8 @@ zipkin_span(Span, LocalEndpoint) ->
 
 to_tag(_Name, Value) when is_function(Value) ->
     Value();
+to_tag(_Name, Value) when is_list(Value) ->
+    list_to_binary(Value);
 to_tag(_Name, Value) ->
     Value.
 
@@ -91,3 +86,24 @@ zipkin_address(Options) ->
 
 local_endpoint(Options) ->
     proplists:get_value(local_endpoint, Options, ?DEFAULT_LOCAL_ENDPOINT).
+
+optional_fields(Span) ->
+    lists:foldl(fun(Field, Acc) ->
+                        case span_field(Field, Span) of
+                            undefined ->
+                                Acc;
+                            Value ->
+                                maps:put(Field, Value, Acc)
+                        end
+                end, #{}, [<<"kind">>, <<"parentId">>]).
+
+span_field(<<"parentId">>, #span{parent_span_id=undefined}) ->
+    undefined;
+span_field(<<"parentId">>, #span{parent_span_id=ParentId}) ->
+    iolist_to_binary(io_lib:format("~16.16.0b", [ParentId]));
+span_field(<<"kind">>, #span{kind=?SPAN_KIND_UNSPECIFIED}) ->
+    undefined;
+span_field(<<"kind">>, #span{kind=?SPAN_KIND_SERVER}) ->
+    <<"SERVER">>;
+span_field(<<"kind">>, #span{kind=?SPAN_KIND_CLIENT}) ->
+    <<"CLIENT">>.
