@@ -26,6 +26,10 @@
 -define(LINK_TYPE_CHILD_LINKED_SPAN, 'CHILD_LINKED_SPAN').
 -define(LINK_TYPE_PARENT_LINKED_SPAN, 'PARENT_LINKED_SPAN').
 
+-define(SPAN_KIND_UNSPECIFIED, 'SPAN_KIND_UNSPECIFIED').
+-define(SPAN_KIND_SERVER, 'SERVER').
+-define(SPAN_KIND_CLIENT, 'CLIENT').
+
 -type maybe(T) :: T | undefined.
 
 -record(span_ctx, {
@@ -51,6 +55,8 @@
 
           %% 8-bit integer, lowest bit is if it is sampled
           trace_options = 1                       :: integer() | undefined,
+
+          kind = ?SPAN_KIND_UNSPECIFIED           :: opencensus:span_kind(),
 
           start_time                              :: wts:timestamp(),
           end_time                                :: wts:timestamp() | undefined,

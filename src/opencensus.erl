@@ -47,6 +47,7 @@
 -type attribute_value()    :: any().
 -type attributes()         :: #{unicode:unicode_binary() => attribute_value()}.
 -type annotation()         :: #annotation{}.
+-type span_kind()          :: ?SPAN_KIND_UNSPECIFIED | ?SPAN_KIND_SERVER | ?SPAN_KIND_CLIENT.
 -type message_event()      :: #message_event{}.
 -type message_event_type() :: ?MESSAGE_EVENT_TYPE_UNSPECIFIED | ?MESSAGE_EVENT_TYPE_SENT | ?MESSAGE_EVENT_TYPE_RECEIVED.
 -type time_events()        :: [{wts:timestamp(), annotation() | message_event()}].
