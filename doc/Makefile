@@ -10,7 +10,7 @@ PANDOC=pandoc
 PANDOC_HTML_OPTIONS=--standalone --highlight-style=tango --template tpl.html -f gfm --to html5
 
 %.html : %.md
-	pandoc $(PANDOC_HTML_OPTIONS) -o $@ $<
+	$(PANDOC) $(PANDOC_HTML_OPTIONS) -o $@ $<
 
 
 .PHONY: all clean
@@ -18,4 +18,4 @@ PANDOC_HTML_OPTIONS=--standalone --highlight-style=tango --template tpl.html -f 
 all : $(EXPORTED_DOCS)
 
 clean:
-	- $(RM) $(EXPORTED_DOCS)
+	- $(RM) -f $(EXPORTED_DOCS)

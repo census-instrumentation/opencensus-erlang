@@ -22,6 +22,16 @@
 
 
 
+### <a name="type-opencensus.proto.trace.Span.SpanKind">'opencensus.proto.trace.Span.SpanKind'()</a> ###
+
+
+<pre><code>
+'opencensus.proto.trace.Span.SpanKind'() = SPAN_KIND_UNSPECIFIED | SERVER | CLIENT
+</code></pre>
+
+
+
+
 ### <a name="type-opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type">'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'()</a> ###
 
 
@@ -284,7 +294,7 @@ u_int_64_value_pb() = #u_int_64_value_pb{}
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#enum_symbol_by_value_opencensus.proto.trace.Span.Link.Type-1">'enum_symbol_by_value_opencensus.proto.trace.Span.Link.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1">'enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type-1">'enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1">'enum_value_by_symbol_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#decode_msg-2">decode_msg/2</a></td><td></td></tr><tr><td valign="top"><a href="#decode_msg-3">decode_msg/3</a></td><td></td></tr><tr><td valign="top"><a href="#encode_msg-1">encode_msg/1</a></td><td></td></tr><tr><td valign="top"><a href="#encode_msg-2">encode_msg/2</a></td><td></td></tr><tr><td valign="top"><a href="#enum_symbol_by_value-2">enum_symbol_by_value/2</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol-2">enum_value_by_symbol/2</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_enum_def-1">fetch_enum_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_msg_def-1">fetch_msg_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_rpc_def-2">fetch_rpc_def/2</a></td><td></td></tr><tr><td valign="top"><a href="#find_enum_def-1">find_enum_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#find_msg_def-1">find_msg_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#find_rpc_def-2">find_rpc_def/2</a></td><td></td></tr><tr><td valign="top"><a href="#get_enum_names-0">get_enum_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_group_names-0">get_group_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_defs-0">get_msg_defs/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_names-0">get_msg_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_or_group_names-0">get_msg_or_group_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_package_name-0">get_package_name/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_rpc_names-1">get_rpc_names/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_service_def-1">get_service_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_service_names-0">get_service_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#gpb_version_as_list-0">gpb_version_as_list/0</a></td><td></td></tr><tr><td valign="top"><a href="#gpb_version_as_string-0">gpb_version_as_string/0</a></td><td></td></tr><tr><td valign="top"><a href="#merge_msgs-2">merge_msgs/2</a></td><td></td></tr><tr><td valign="top"><a href="#merge_msgs-3">merge_msgs/3</a></td><td></td></tr><tr><td valign="top"><a href="#verify_msg-1">verify_msg/1</a></td><td></td></tr><tr><td valign="top"><a href="#verify_msg-2">verify_msg/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#enum_symbol_by_value_opencensus.proto.trace.Span.Link.Type-1">'enum_symbol_by_value_opencensus.proto.trace.Span.Link.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_symbol_by_value_opencensus.proto.trace.Span.SpanKind-1">'enum_symbol_by_value_opencensus.proto.trace.Span.SpanKind'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1">'enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type-1">'enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol_opencensus.proto.trace.Span.SpanKind-1">'enum_value_by_symbol_opencensus.proto.trace.Span.SpanKind'/1</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1">'enum_value_by_symbol_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/1</a></td><td></td></tr><tr><td valign="top"><a href="#decode_msg-2">decode_msg/2</a></td><td></td></tr><tr><td valign="top"><a href="#decode_msg-3">decode_msg/3</a></td><td></td></tr><tr><td valign="top"><a href="#encode_msg-1">encode_msg/1</a></td><td></td></tr><tr><td valign="top"><a href="#encode_msg-2">encode_msg/2</a></td><td></td></tr><tr><td valign="top"><a href="#enum_symbol_by_value-2">enum_symbol_by_value/2</a></td><td></td></tr><tr><td valign="top"><a href="#enum_value_by_symbol-2">enum_value_by_symbol/2</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_enum_def-1">fetch_enum_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_msg_def-1">fetch_msg_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#fetch_rpc_def-2">fetch_rpc_def/2</a></td><td></td></tr><tr><td valign="top"><a href="#find_enum_def-1">find_enum_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#find_msg_def-1">find_msg_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#find_rpc_def-2">find_rpc_def/2</a></td><td></td></tr><tr><td valign="top"><a href="#get_enum_names-0">get_enum_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_group_names-0">get_group_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_defs-0">get_msg_defs/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_names-0">get_msg_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_msg_or_group_names-0">get_msg_or_group_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_package_name-0">get_package_name/0</a></td><td></td></tr><tr><td valign="top"><a href="#get_rpc_names-1">get_rpc_names/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_service_def-1">get_service_def/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_service_names-0">get_service_names/0</a></td><td></td></tr><tr><td valign="top"><a href="#gpb_version_as_list-0">gpb_version_as_list/0</a></td><td></td></tr><tr><td valign="top"><a href="#gpb_version_as_string-0">gpb_version_as_string/0</a></td><td></td></tr><tr><td valign="top"><a href="#merge_msgs-2">merge_msgs/2</a></td><td></td></tr><tr><td valign="top"><a href="#merge_msgs-3">merge_msgs/3</a></td><td></td></tr><tr><td valign="top"><a href="#verify_msg-1">verify_msg/1</a></td><td></td></tr><tr><td valign="top"><a href="#verify_msg-2">verify_msg/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -297,6 +307,12 @@ u_int_64_value_pb() = #u_int_64_value_pb{}
 
 `enum_symbol_by_value_opencensus.proto.trace.Span.Link.Type(X1) -> any()`
 
+<a name="enum_symbol_by_value_opencensus.proto.trace.Span.SpanKind-1"></a>
+
+### 'enum_symbol_by_value_opencensus.proto.trace.Span.SpanKind'/1 ###
+
+`enum_symbol_by_value_opencensus.proto.trace.Span.SpanKind(X1) -> any()`
+
 <a name="enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1"></a>
 
 ### 'enum_symbol_by_value_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/1 ###
@@ -308,6 +324,12 @@ u_int_64_value_pb() = #u_int_64_value_pb{}
 ### 'enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type'/1 ###
 
 `enum_value_by_symbol_opencensus.proto.trace.Span.Link.Type(X1) -> any()`
+
+<a name="enum_value_by_symbol_opencensus.proto.trace.Span.SpanKind-1"></a>
+
+### 'enum_value_by_symbol_opencensus.proto.trace.Span.SpanKind'/1 ###
+
+`enum_value_by_symbol_opencensus.proto.trace.Span.SpanKind(X1) -> any()`
 
 <a name="enum_value_by_symbol_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type-1"></a>
 
@@ -332,7 +354,7 @@ u_int_64_value_pb() = #u_int_64_value_pb{}
 ### encode_msg/1 ###
 
 <pre><code>
-encode_msg(Msg::#message_event_pb{} | #truncatable_string_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #bool_value_pb{} | #u_int_64_value_pb{} | #module_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #stack_trace_pb{} | #link_pb{} | #int_64_value_pb{} | #bytes_value_pb{} | #u_int_32_value_pb{} | #float_value_pb{} | #double_value_pb{} | #time_events_pb{} | #status_pb{} | #links_pb{} | #span_pb{} | #string_value_pb{} | #int_32_value_pb{}) -&gt; binary()
+encode_msg(Msg::#bool_value_pb{} | #message_event_pb{} | #truncatable_string_pb{} | #module_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #float_value_pb{} | #int_32_value_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #status_pb{} | #u_int_32_value_pb{} | #link_pb{} | #stack_trace_pb{} | #double_value_pb{} | #links_pb{} | #u_int_64_value_pb{} | #time_events_pb{} | #span_pb{}) -&gt; binary()
 </code></pre>
 <br />
 
@@ -341,7 +363,7 @@ encode_msg(Msg::#message_event_pb{} | #truncatable_string_pb{} | #attribute_valu
 ### encode_msg/2 ###
 
 <pre><code>
-encode_msg(Msg::#message_event_pb{} | #truncatable_string_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #bool_value_pb{} | #u_int_64_value_pb{} | #module_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #stack_trace_pb{} | #link_pb{} | #int_64_value_pb{} | #bytes_value_pb{} | #u_int_32_value_pb{} | #float_value_pb{} | #double_value_pb{} | #time_events_pb{} | #status_pb{} | #links_pb{} | #span_pb{} | #string_value_pb{} | #int_32_value_pb{}, Opts::list()) -&gt; binary()
+encode_msg(Msg::#bool_value_pb{} | #message_event_pb{} | #truncatable_string_pb{} | #module_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #float_value_pb{} | #int_32_value_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #status_pb{} | #u_int_32_value_pb{} | #link_pb{} | #stack_trace_pb{} | #double_value_pb{} | #links_pb{} | #u_int_64_value_pb{} | #time_events_pb{} | #span_pb{}, Opts::list()) -&gt; binary()
 </code></pre>
 <br />
 

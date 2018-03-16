@@ -36,7 +36,7 @@ name() = atom() | binary() | string()
 
 
 <pre><code>
-view_data() = #{name =&gt; <a href="#type-name">name()</a>, description =&gt; <a href="#type-description">description()</a>, ctags =&gt; <a href="oc_tags.md#type-tags">oc_tags:tags()</a>, data =&gt; <a href="oc_stat_aggregation.md#type-data">oc_stat_aggregation:data()</a>}
+view_data() = #{name =&gt; <a href="#type-name">name()</a>, description =&gt; <a href="#type-description">description()</a>, ctags =&gt; <a href="oc_tags.md#type-tags">oc_tags:tags()</a>, tags =&gt; [<a href="oc_tags.md#type-key">oc_tags:key()</a>], data =&gt; <a href="oc_stat_aggregation.md#type-data">oc_stat_aggregation:data()</a>}
 </code></pre>
 
 <a name="index"></a>
