@@ -31,6 +31,7 @@
 -type view_data() :: #{name := name(),
                        description := description(),
                        ctags := oc_tags:tags(),
+                       tags := [oc_tags:key()],
                        data := oc_stat_aggregation:data()}.
 
 
@@ -81,8 +82,7 @@ register(Name, Description, Tags, Measure, Aggregation, Subscribed) ->
             {AggregationModule, AggregationOptions} = NAggregation,
             {_, Keys} = NTags,
             %% TODO: transaction?
-            %% HACK: Keys reversed because tag_value reverses
-            NAggregationOptions = AggregationModule:init(Name, lists:reverse(Keys), AggregationOptions),
+            NAggregationOptions = AggregationModule:init(Name, Keys, AggregationOptions),
             ets:insert(?MODULE, {Measure, Name, Subscribed, Description, NTags,
                                  {AggregationModule, NAggregationOptions}})
     end,
@@ -118,10 +118,11 @@ add_sample({_Measure, Name, _Subscribed, _Description, ViewTags, Aggregation}, C
 -spec export(tuple()) -> view_data().
 export({_Measure, Name, _, Description, ViewTags, Aggregation}) ->
     {AggregationModule, AggregationOptions} = Aggregation,
-    {CTags, _Keys} = ViewTags,
+    {CTags, Keys} = ViewTags,
     #{name => Name,
       description => Description,
       ctags => CTags,
+      tags => lists:reverse(Keys),
       data => AggregationModule:export(Name, AggregationOptions)}.
 
 normalize_aggregation({Module, Options}) ->

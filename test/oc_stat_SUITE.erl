@@ -10,16 +10,18 @@
 -define(VD, [#{name := "last_video_size",
                description := "last processed video size",
                ctags := #{ctag := value},
+               tags := [],
                data := #{type := latest,
-                         rows := [#{tags := #{},
+                         rows := [#{tags := [],
                                     value := 1024}]}},
              #{name := "video_size",
                description :=
                    "number of videos processed processed over time",
                ctags := #{ctag := value},
+               tags := [],
                data := #{type := distribution,
                          rows :=
-                             [#{tags := #{},
+                             [#{tags := [],
                                 value := #{buckets := [{0, 0},
                                                        {65536, 3},
                                                        {4294967296, 0},
@@ -31,15 +33,16 @@
                description :=
                    "number of videos processed processed over time",
                ctags := #{ctag := value},
+               tags := [type],
                data := #{type := count,
-                         rows := [#{tags := #{"type" := "mpeg"},
+                         rows := [#{tags := ["mpeg"],
                                     value := 3}]}},
              #{name := "video_sum",
                description := "video_size_sum",
                ctags := #{sum_tag := value},
+               tags := [category, type],
                data := #{type := sum,
-                         rows := [#{tags := #{"category" := "category1",
-                                              "type" := "mpeg"},
+                         rows := [#{tags := ["category1", "mpeg"],
                                     value := #{count := 3,
                                                mean := 2048.0,
                                                sum := 6144}}]}}]).
@@ -76,7 +79,7 @@ init_per_testcase(_Name, Config) ->
 
 end_per_testcase(_, _Config) ->
     ok = application:stop(opencensus),
-    ok = application:stop(prometheus),
+    ok = application:stop(counters),
     ok.
 
 %% ===================================================================

@@ -7,33 +7,36 @@
 
 -behavior(oc_stat_aggregation).
 
--include("opencensus.hrl").
-
-init(Name, Keys, Options) ->
-    prometheus_summary:declare([{name, Name},
-                                {registry, ?PROM_REGISTRY},
-                                {help, ""},
-                                {labels, Keys}]),
+init(_Name, _Keys, Options) ->
     Options.
 
 type() ->
     sum.
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
-add_sample(Name, Tags, Value, _Options) ->
-    prometheus_summary:observe(?PROM_REGISTRY, Name, Tags, Value),
-    ok.
+add_sample(Name, Tags, Value, Options) ->
+    case counters_sum:observe(Name, Tags, Value) of
+        unknown ->
+            case counters_sum:new(Name, Tags, 1, Value) of
+                ok -> ok;
+                false ->
+                    add_sample(Name, Tags, Value, Options)
+            end;
+        _ ->
+            ok
+    end.
 
 export(Name, _Options) ->
-    Rows = lists:map(fun({Tags, Count, Sum}) ->
-                             Mean = case Count of
-                                        0 -> 0;
-                                        _ -> Sum / Count
-                                    end,
-                             #{tags => maps:from_list(Tags),
-                               value => #{count => Count,
-                                          sum => Sum,
-                                          mean => Mean}}
-                     end, prometheus_summary:values(?PROM_REGISTRY, Name)),
+    Rows = maps:values(maps:map(fun(Tags, {Count, Sum}) ->
+                                        Mean = case Count of
+                                                   0 -> 0;
+                                                   _ -> Sum / Count
+                                               end,
+                                        #{tags => Tags,
+                                          value => #{count => Count,
+                                                     sum => Sum,
+                                                     mean => Mean}}
+                                end,
+                                counters_sum:value(Name))),
     #{type => type(),
       rows => Rows}.
