@@ -27,7 +27,7 @@ Finish a span, setting the end_time.</td></tr><tr><td valign="top"><a href="#fro
 Return the span context, if it exists, from Ctx.</td></tr><tr><td valign="top"><a href="#is_enabled-1">is_enabled/1</a></td><td>
 Returns true if trace is enabled.</td></tr><tr><td valign="top"><a href="#link-4">link/4</a></td><td>
 Create a Link which can be added to a Span.</td></tr><tr><td valign="top"><a href="#message_event-4">message_event/4</a></td><td>
-Create a MessageEvent.</td></tr><tr><td valign="top"><a href="#put_attribute-3">put_attribute/3</a></td><td>
+Create a MessageEvent.</td></tr><tr><td valign="top"><a href="#parent_span_ctx-1">parent_span_ctx/1</a></td><td></td></tr><tr><td valign="top"><a href="#put_attribute-3">put_attribute/3</a></td><td>
 Put an attribute (a key/value pair) in the attribute map of a span.</td></tr><tr><td valign="top"><a href="#put_attributes-2">put_attributes/2</a></td><td>
 Merge a map of attributes with the current attributes of a span.</td></tr><tr><td valign="top"><a href="#set_status-3">set_status/3</a></td><td>
 Set Status.</td></tr><tr><td valign="top"><a href="#start_span-2">start_span/2</a></td><td>
@@ -149,6 +149,15 @@ message_event(MessageEventType::<a href="opencensus.md#type-message_event_type">
 <br />
 
 Create a MessageEvent.
+
+<a name="parent_span_ctx-1"></a>
+
+### parent_span_ctx/1 ###
+
+<pre><code>
+parent_span_ctx(Span_ctx::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a> | <a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; <a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>)
+</code></pre>
+<br />
 
 <a name="put_attribute-3"></a>
 

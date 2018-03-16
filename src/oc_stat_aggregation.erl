@@ -2,7 +2,7 @@
 
 -export_types(data/0).
 
--type data_rows(AggregationValue) :: [#{tags := oc_tags:tags(),
+-type data_rows(AggregationValue) :: [#{tags := tv(),
                                         value := AggregationValue}].
 
 -type data(Type, AggregationValue) :: #{type := Type,
@@ -18,7 +18,8 @@
                                      sum := number(),
                                      buckets := [{number, non_neg_integer()}]}).
 
--type keys()  :: [oc_tags:key()].
+-type keys() :: [oc_tags:key()].
+-type tv()   :: [oc_tags:value()].
 
 -callback init(oc_stat_view:name(), keys(), any()) -> any().
 

@@ -9,7 +9,7 @@
     inets,
     wts,
     ctx,
-    prometheus
+    counters
    ]},
   {modules, []},
   {env, [{send_interval_ms, 500}]},

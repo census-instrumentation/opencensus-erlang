@@ -181,6 +181,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_reporter.md" class="module">oc_reporter</a></td></tr>
 <tr><td><a href="oc_reporter_noop.md" class="module">oc_reporter_noop</a></td></tr>
 <tr><td><a href="oc_reporter_sequential.md" class="module">oc_reporter_sequential</a></td></tr>
+<tr><td><a href="oc_reporter_stdout.md" class="module">oc_reporter_stdout</a></td></tr>
 <tr><td><a href="oc_reporter_zipkin.md" class="module">oc_reporter_zipkin</a></td></tr>
 <tr><td><a href="oc_sampler.md" class="module">oc_sampler</a></td></tr>
 <tr><td><a href="oc_sampler_always.md" class="module">oc_sampler_always</a></td></tr>
@@ -198,7 +199,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_stat_aggregation_sum.md" class="module">oc_stat_aggregation_sum</a></td></tr>
 <tr><td><a href="oc_stat_config.md" class="module">oc_stat_config</a></td></tr>
 <tr><td><a href="oc_stat_exporter.md" class="module">oc_stat_exporter</a></td></tr>
-<tr><td><a href="oc_stat_exporter_prometheus.md" class="module">oc_stat_exporter_prometheus</a></td></tr>
+<tr><td><a href="oc_stat_exporter_stdout.md" class="module">oc_stat_exporter_stdout</a></td></tr>
 <tr><td><a href="oc_stat_view.md" class="module">oc_stat_view</a></td></tr>
 <tr><td><a href="oc_std_encoder.md" class="module">oc_std_encoder</a></td></tr>
 <tr><td><a href="oc_tag_ctx_binary.md" class="module">oc_tag_ctx_binary</a></td></tr>

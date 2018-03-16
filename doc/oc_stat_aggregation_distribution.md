@@ -29,7 +29,7 @@ add_sample(Name::<a href="oc_stat_view.md#type-name">oc_stat_view:name()</a>, Ta
 
 ### export/2 ###
 
-`export(Name, Options) -> any()`
+`export(Name, Buckets) -> any()`
 
 <a name="init-3"></a>
 

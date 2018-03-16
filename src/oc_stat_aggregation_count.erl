@@ -9,25 +9,30 @@
 
 -export_types([value/0]).
 
-init(Name, Keys, Options) ->
-    prometheus_counter:declare([{name, Name},
-                                {registry, ?PROM_REGISTRY},
-                                {help, ""},
-                                {labels, Keys}]),
+init(_Name, _Keys, Options) ->
     Options.
 
 type() ->
     count.
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
-add_sample(Name, Tags, Value, _Options) ->
-    prometheus_counter:inc(?PROM_REGISTRY, Name, Tags, Value),
-    ok.
+add_sample(Name, Tags, Value, Options) ->
+    case counters_simple:inc(Name, Tags, Value) of
+        unknown ->
+            case counters_simple:new(Name, Tags, Value) of
+                ok -> ok;
+                false ->
+                    add_sample(Name, Tags, Value, Options)
+            end;
+        _ ->
+            ok
+    end.
 
 export(Name, _Options) ->
-    Rows = lists:map(fun({Tags, Value}) ->
-                             #{tags => maps:from_list(Tags),
-                               value => Value}
-                     end, prometheus_counter:values(?PROM_REGISTRY, Name)),
+    Rows = maps:values(maps:map(fun(Tags, Value) ->
+                                        #{tags => Tags,
+                                          value => Value}
+                                end,
+                                counters_simple:value(Name))),
     #{type => type(),
       rows => Rows}.

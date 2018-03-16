@@ -9,13 +9,8 @@
 
 -include("opencensus.hrl").
 
-init(Name, Keys, Options) ->
-    Buckets = prometheus_buckets:new(proplists:get_value(buckets, Options, default)),
-    prometheus_histogram:declare([{name, Name},
-                                  {registry, ?PROM_REGISTRY},
-                                  {help, ""},
-                                  {labels, Keys},
-                                  {buckets, Buckets}]),
+init(_Name, _Keys, Options) ->
+    Buckets = counters_buckets:new(proplists:get_value(buckets, Options, default)),
     Buckets.
 
 type() ->
@@ -23,23 +18,40 @@ type() ->
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 add_sample(Name, Tags, Value, Buckets) ->
-    Position = prometheus_buckets:position(Buckets, Value),
-    prometheus_histogram:pobserve(?PROM_REGISTRY, Name, Tags, Buckets, Position, Value).
+    Bound = counters_buckets:bound(Buckets, Value),
+    case counters_distribution:observe(Name, Tags, Bound, Value) of
+        unknown ->
+            case counters_distribution:new(Name, Tags, Bound, 1, Value) of
+                ok -> ok;
+                false ->
+                    add_sample(Name, Tags, Value, Buckets)
+            end;
+        _ ->
+            ok
+    end.
 
-export(Name, _Options) ->
-    Rows = lists:map(fun({Tags, Buckets, Sum}) ->
-                             Count = lists:foldl(fun({_Bound, C}, Acc) ->
-                                                         C + Acc
-                                                 end, 0, Buckets),
-                             Mean = case Count of
-                                        0 -> 0;
-                                        _ -> Sum / Count
-                                    end,
-                             #{tags => maps:from_list(Tags),
-                               value => #{count => Count,
-                                          sum => Sum,
-                                          mean => Mean,
-                                          buckets => Buckets}}
-                     end, prometheus_histogram:values(?PROM_REGISTRY, Name)),
+export(Name, Buckets) ->
+    Rows = maps:values(
+             maps:map(fun(Tags, BMap) ->
+                              {Count, Sum} = maps:fold(fun(_Bound, {C, S}, {Ca, Sa}) ->
+                                                               {Ca + C, Sa + S}
+                                                       end, {0, 0}, BMap),
+
+                              BucketsE = [begin
+                                              {C, _} = maps:get(Bound, BMap, {0, 0}),
+                                              {Bound, C}
+                                          end || Bound <- Buckets],
+
+                              Mean = case Count of
+                                         0 -> 0;
+                                         _ -> Sum / Count
+                                     end,
+                              #{tags => Tags,
+                                value => #{count => Count,
+                                           sum => Sum,
+                                           mean => Mean,
+                                           buckets => BucketsE}}
+                      end,
+                      counters_distribution:value(Name))),
     #{type => type(),
       rows => Rows}.

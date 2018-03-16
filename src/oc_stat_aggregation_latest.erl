@@ -7,27 +7,30 @@
 
 -behavior(oc_stat_aggregation).
 
--include("opencensus.hrl").
-
-init(Name, Keys, Options) ->
-    prometheus_gauge:declare([{name, Name},
-                              {registry, ?PROM_REGISTRY},
-                              {help, ""},
-                              {labels, Keys}]),
+init(_Name, _Keys, Options) ->
     Options.
 
 type() ->
     latest.
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
-add_sample(Name, Tags, Value, _Options) ->
-    prometheus_gauge:set(?PROM_REGISTRY, Name, Tags, Value),
-    ok.
+add_sample(Name, Tags, Value, Options) ->
+    case counters_counter:set(Name, Tags, Value) of
+        unknown ->
+            case counters_counter:new(Name, Tags, Value) of
+                ok -> ok;
+                false ->
+                    add_sample(Name, Tags, Value, Options)
+            end;
+        _ ->
+            ok
+    end.
 
 export(Name, _Options) ->
-    Rows = lists:map(fun({Tags, Value}) ->
-                             #{tags => maps:from_list(Tags),
-                               value => Value}
-                     end, prometheus_gauge:values(?PROM_REGISTRY, Name)),
+    Rows = maps:values(maps:map(fun(Tags, Value) ->
+                                        #{tags => Tags,
+                                          value => Value}
+                                end,
+                                counters_counter:value(Name))),
     #{type => type(),
       rows => Rows}.
