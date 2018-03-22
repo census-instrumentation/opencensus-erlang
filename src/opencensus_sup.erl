@@ -34,7 +34,7 @@ init([]) ->
 
     ok = oc_stat_view:'__init_backend__'(),
 
-    oc_stat_view:batch_subscribe(oc_stat_config:views()),
+    oc_stat_view:preload(oc_stat_config:views()),
 
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
@@ -50,6 +50,13 @@ init([]) ->
                  type => worker,
                  modules => [oc_stat_exporter]},
 
+    ViewServer = #{id => oc_stat_view,
+                   start => {oc_stat_view, start_link, []},
+                   restart => permanent,
+                   shutdown => 1000,
+                   type => worker,
+                   modules => [oc_stat_view]},
+
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},
                     restart => permanent,
@@ -59,4 +66,4 @@ init([]) ->
 
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, Exporter, TraceServer]}}.
+            period => 5}, [Reporter, Exporter, ViewServer, TraceServer]}}.

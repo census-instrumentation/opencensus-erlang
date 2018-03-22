@@ -49,6 +49,7 @@
 
 all() ->
     [
+     operations,
      full
     ].
 
@@ -61,11 +62,11 @@ end_per_suite(_Config) ->
 
 init_per_testcase(full, Config) ->
     Views = [#{
-                name => "video_size",
-                description => "number of videos processed processed over time",
-                tags => [#{ctag => value}],
-                measure => 'my.org/measures/video_size_sum',
-                aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
+               name => "video_size",
+               description => "number of videos processed processed over time",
+               tags => [#{ctag => value}],
+               measure => 'my.org/measures/video_size_sum',
+               aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
               }],
 
     Exporters = [{oc_stat_exporter_pid, self()}],
@@ -86,29 +87,67 @@ end_per_testcase(_, _Config) ->
 %% TESTS
 %% ===================================================================
 
+operations(_Config) ->
+    View = oc_stat_view:new(
+             "video_count",
+             'my.org/measures/video_count',
+             "number of videos processed processed over time",
+             [#{ctag => value},
+              type],
+             {oc_stat_aggregation_pid, self()}),
+
+    {ok, RView} = oc_stat_view:register(View),
+    receive
+        aggregation_init -> ok
+    after 5000 ->
+            ct:fail("aggregation init wasn't called on register")
+    end,
+    true = oc_stat_view:is_registered(RView),
+    false = oc_stat_view:is_subscribed(RView),
+
+    {ok, SView} = oc_stat_view:subscribe(RView),
+    true = oc_stat_view:is_subscribed(RView),
+
+    {ok, UView} = oc_stat_view:unsubscribe(SView),
+    false = oc_stat_view:is_subscribed(UView),
+    receive
+        aggregation_clear_rows -> ok
+    after 5000 ->
+            ct:fail("aggregation data wasn't cleared on unsubscribe")
+    end,
+
+    {ok, RView} = oc_stat_view:register(View),
+    {ok, SView} = oc_stat_view:subscribe(RView),
+    ok = oc_stat_view:deregister(View),
+    receive
+        aggregation_clear_rows -> ok
+    after 5000 ->
+            ct:fail("aggregation data wasn't cleared on deregister")
+    end.
+
 full(_Config) ->
-    ok = oc_stat_view:subscribe(
-           "video_count",
-           "number of videos processed processed over time",
-           [#{ctag => value},
-            type],
-           'my.org/measures/video_count',
-           oc_stat_aggregation_count),
+    {ok, _} = oc_stat_view:subscribe(
+                "video_count",
+                'my.org/measures/video_count',
+                "number of videos processed processed over time",
+                [#{ctag => value},
+                 type],
+                oc_stat_aggregation_count),
 
-    ok = oc_stat_view:subscribe(
-           "video_sum",
-           "video_size_sum",
-           [#{sum_tag => value},
-            type, category],
-           'my.org/measures/video_size_sum',
-           oc_stat_aggregation_sum),
+    {ok, _} = oc_stat_view:subscribe(
+                "video_sum",
+                'my.org/measures/video_size_sum',
+                "video_size_sum",
+                [#{sum_tag => value},
+                 type, category],
+                oc_stat_aggregation_sum),
 
-    ok = oc_stat_view:subscribe(
-           "last_video_size",
-           "last processed video size",
-           [#{ctag => value}],
-           'my.org/measures/video_size_sum',
-           oc_stat_aggregation_latest),
+    {ok, _} = oc_stat_view:subscribe(
+                "last_video_size",
+                'my.org/measures/video_size_sum',
+                "last processed video size",
+                [#{ctag => value}],
+                oc_stat_aggregation_latest),
 
     Tags = #{type => "mpeg",
              category => "category1"},
@@ -132,3 +171,7 @@ full(_Config) ->
     after 10000 ->
             ?assertMatch(?VD, timeout)
     end.
+
+maps_to_sorted_lists(Maps) ->
+    List = [{maps:get(name, Map), maps:to_list(Map)} || Map <- Maps],
+    [Map1 || {_, Map1} <- lists:keysort(1, List)].

@@ -3,7 +3,8 @@
 -export([init/3,
          type/0,
          add_sample/4,
-         export/2]).
+         export/2,
+         clear_rows/2]).
 
 -behavior(oc_stat_aggregation).
 
@@ -34,3 +35,7 @@ export(Name, _Options) ->
                                 counters_counter:value(Name))),
     #{type => type(),
       rows => Rows}.
+
+clear_rows(Name, _Options) ->
+    counters_counter:remove(Name),
+    ok.
