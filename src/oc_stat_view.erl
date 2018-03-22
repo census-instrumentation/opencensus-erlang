@@ -89,7 +89,7 @@ new(Name, Measure, Description, Tags, Aggregation) ->
 register(Name, Measure, Description, Tags, Aggregation) ->
     register(new(Name, Measure, Description, Tags, Aggregation)).
 
--spec register(view()) -> {ok, #view{}} | {error, any()}.
+-spec register(view()) -> {ok, view()} | {error, any()}.
 register(#view{}=View) ->
     gen_server:call(?MODULE, {register, View}).
 
@@ -115,7 +115,7 @@ subscribe(Name, Measure, Description, Tags, Aggregation) ->
     {ok, SView} = subscribe(RView),
     {ok, SView}.
 
--spec subscribe(name() | view()) -> {ok, #view{}} | {error, any()}.
+-spec subscribe(name() | view()) -> {ok, view()} | {error, any()}.
 subscribe(#view{name=Name}) ->
     subscribe(Name);
 subscribe(Name) ->
