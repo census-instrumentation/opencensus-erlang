@@ -1,3 +1,16 @@
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+%%
+%% @doc
+%% View allows users to aggregate the recorded Measurements.
+%% Views need to be passed to the subscribe function to be before data will be
+%% collected and sent to exporters.
+%% @end
 -module(oc_stat_view).
 
 -export([new/1,
@@ -69,10 +82,17 @@
 -type view()        :: #view{}.
 -type v_s()         :: #v_s{}.
 
+%% @doc
+%% Creates a View from a map.
+%% @end
 new(Map) when is_map(Map) ->
     new(maps:get(name, Map), maps:get(measure, Map), maps:get(description, Map),
         maps:get(tags, Map, []), maps:get(aggregation, Map)).
 
+%% @doc
+%% Creates a View. This view needs to be registered and subscribed to a measure
+%% in order to start aggregating data.
+%% @end
 new(Name, Measure, Description, Tags, Aggregation) ->
     {CTags, Keys} = normalize_tags(Tags),
     {AggregationModule, AggregationOptions} = normalize_aggregation(Aggregation),
@@ -86,19 +106,32 @@ new(Name, Measure, Description, Tags, Aggregation) ->
           aggregation_options=AggregationOptions}.
 
 
+%% @doc
+%% Registers the view created from arguments.
+%% @end
 register(Name, Measure, Description, Tags, Aggregation) ->
     register(new(Name, Measure, Description, Tags, Aggregation)).
 
+%% @doc
+%% Registers the view. Aggregation initialized with AggregationOptions.
+%% @end
 -spec register(view()) -> {ok, view()} | {error, any()}.
 register(#view{}=View) ->
     gen_server:call(?MODULE, {register, View}).
 
+%% @doc
+%% Deregisters the view. If subscribed, unsubscribes and therefore
+%% existing aggregation data cleared.
+%% @end
 -spec deregister(name() | view()) -> ok.
 deregister(#view{name=Name}) ->
     deregister(Name);
 deregister(Name) ->
     gen_server:call(?MODULE, {deregister, Name}).
 
+%% @doc
+%% Returns true if the view is registered.
+%% @end
 -spec is_registered(name() | view()) -> boolean().
 is_registered(#view{name=Name}) ->
     is_registered(Name);
@@ -110,23 +143,36 @@ is_registered(Name) ->
             true
     end.
 
+%% @doc
+%% A shortcut. Creates, Registers, and Subscribes a view in one call.
+%% @end
 subscribe(Name, Measure, Description, Tags, Aggregation) ->
     {ok, RView} = register(new(Name, Measure, Description, Tags, Aggregation)),
     {ok, SView} = subscribe(RView),
     {ok, SView}.
 
+%% @doc
+%% Subscribe the View, When subscribed, a view can aggregate measure data and export it.
+%% @end
 -spec subscribe(name() | view()) -> {ok, view()} | {error, any()}.
 subscribe(#view{name=Name}) ->
     subscribe(Name);
 subscribe(Name) ->
     gen_server:call(?MODULE, {subscribe, Name}).
 
+%% @doc
+%% Unsubscribes the View. When unsubscribed a view no longer aggregates measure data
+%% and exports it. Also all existing aggregation data cleared.
+%% @end
 -spec unsubscribe(name() | view()) -> ok.
 unsubscribe(#view{name=Name}) ->
     unsubscribe(Name);
 unsubscribe(Name) ->
     gen_server:call(?MODULE, {unsubscribe, Name}).
 
+%% @doc
+%% Returns true if the view is exporting data by subscription.
+%% @end
 -spec is_subscribed(name() | view()) -> boolean().
 is_subscribed(#view{name=Name}) ->
     is_subscribed(Name);
@@ -138,6 +184,10 @@ is_subscribed(Name) ->
             false
     end.
 
+%% @doc
+%% Loads and subscribes views from the `List' in one shot.
+%% Usually used for loading views from configuration on app start.
+%% @end
 preload(List) ->
     [begin
          NV = new(V),
@@ -150,6 +200,7 @@ preload(List) ->
          end
      end || V <- List].
 
+%% @private
 measure_views(Measure) ->
     case ets:lookup(?MEASURES_TABLE, Measure) of
         [#measure{subs=Subs}] ->
@@ -157,6 +208,7 @@ measure_views(Measure) ->
         _ -> []
     end.
 
+%% @private
 -spec add_sample(v_s(), oc_tags:tags(), number()) -> ok.
 add_sample(ViewSub, ContextTags, Value) ->
     TagValues = tag_values(ContextTags, ViewSub#v_s.tags),
@@ -164,9 +216,13 @@ add_sample(ViewSub, ContextTags, Value) ->
     AM:add_sample(ViewSub#v_s.name, TagValues, Value, ViewSub#v_s.aggregation_options),
     ok.
 
+%% @private
 all_subscribed() ->
     ets:match_object(?VIEWS_TABLE, #view{subscribed=true, _='_'}).
 
+%% @doc
+%% Returns a snapshot of the View's data.
+%% @end
 -spec export(view()) -> view_data().
 export(#view{name=Name, description=Description,
              ctags=CTags, tags=Keys,
