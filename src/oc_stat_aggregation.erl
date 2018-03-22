@@ -28,3 +28,5 @@
 -callback add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
 
 -callback export(oc_stat_view:name(), any()) -> data().
+
+-callback clear_rows(oc_stat_view:name(), any()) -> ok.

@@ -5,7 +5,8 @@
 -export([init/3,
          type/0,
          add_sample/4,
-         export/2]).
+         export/2,
+         clear_rows/2]).
 
 -export_types([value/0]).
 
@@ -36,3 +37,7 @@ export(Name, _Options) ->
                                 counters_simple:value(Name))),
     #{type => type(),
       rows => Rows}.
+
+clear_rows(Name, _Options) ->
+    counters_simple:remove(Name),
+    ok.

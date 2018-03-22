@@ -151,7 +151,7 @@ zipkin_reporter(_Config) ->
                                       <<"attr_as_function">> := <<"val2">>},
                                 <<"timestamp">> := _,
                                 <<"traceId">> := ParentTraceId}],
-                             jsx:decode(Content, [return_maps]))
+                             lists:sort(jsx:decode(Content, [return_maps])))
 
         after
             6000 -> ct:fail("Zipking reporter doesn't work")

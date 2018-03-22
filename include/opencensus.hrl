@@ -118,5 +118,6 @@
           message :: unicode:unicode_binary()
          }).
 
--type measure_name() :: atom() | binary() | string().
--type aggregation() :: atom().
+-type measure_name()        :: atom() | binary() | string().
+-type aggregation()         :: module().
+-type aggregation_options() :: any().
