@@ -1,10 +1,18 @@
 
 
 # Module oc_stat_aggregation_count #
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
-<a name="index"></a>
+Count indicates that data collected and aggregated
+with this method will be turned into a count value.
+
+<a name="description"></a>
+
+## Description ##
+For example, total number of accepted requests can be
+aggregated by using Count.<a name="index"></a>
 
 ## Function Index ##
 

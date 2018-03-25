@@ -1,8 +1,12 @@
 
 
 # Module oc_stat_aggregation_distribution #
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
+
+Distribution indicates that the desired aggregation is
+a histogram distribution.
 
 <a name="index"></a>
 

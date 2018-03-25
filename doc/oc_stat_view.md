@@ -71,7 +71,7 @@ Creates a View from a map.</td></tr><tr><td valign="top"><a href="#new-5">new/5<
 Creates a View.</td></tr><tr><td valign="top"><a href="#preload-1">preload/1</a></td><td>
 Loads and subscribes views from the <code>List</code> in one shot.</td></tr><tr><td valign="top"><a href="#register-1">register/1</a></td><td>
 Registers the view.</td></tr><tr><td valign="top"><a href="#register-5">register/5</a></td><td>
-Registers the view created from arguments.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#subscribe-1">subscribe/1</a></td><td>
+Registers the view created from arguments.</td></tr><tr><td valign="top"><a href="#register_measure-3">register_measure/3</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#subscribe-1">subscribe/1</a></td><td>
 Subscribe the View, When subscribed, a view can aggregate measure data and export it.</td></tr><tr><td valign="top"><a href="#subscribe-5">subscribe/5</a></td><td>
 A shortcut.</td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr><tr><td valign="top"><a href="#unsubscribe-1">unsubscribe/1</a></td><td>
 Unsubscribes the View.</td></tr></table>
@@ -206,6 +206,12 @@ Registers the view. Aggregation initialized with AggregationOptions.
 `register(Name, Measure, Description, Tags, Aggregation) -> any()`
 
 Registers the view created from arguments.
+
+<a name="register_measure-3"></a>
+
+### register_measure/3 ###
+
+`register_measure(Name, Description, Unit) -> any()`
 
 <a name="start_link-0"></a>
 

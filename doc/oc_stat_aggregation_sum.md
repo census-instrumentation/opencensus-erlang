@@ -1,10 +1,18 @@
 
 
 # Module oc_stat_aggregation_sum #
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
-<a name="index"></a>
+Sum indicates that data collected and aggregated
+with this method will be summed up.
+
+<a name="description"></a>
+
+## Description ##
+For example, accumulated request bytes can be aggregated by using
+Sum.<a name="index"></a>
 
 ## Function Index ##
 

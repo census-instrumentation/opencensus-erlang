@@ -200,6 +200,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_stat_config.md" class="module">oc_stat_config</a></td></tr>
 <tr><td><a href="oc_stat_exporter.md" class="module">oc_stat_exporter</a></td></tr>
 <tr><td><a href="oc_stat_exporter_stdout.md" class="module">oc_stat_exporter_stdout</a></td></tr>
+<tr><td><a href="oc_stat_measure.md" class="module">oc_stat_measure</a></td></tr>
 <tr><td><a href="oc_stat_view.md" class="module">oc_stat_view</a></td></tr>
 <tr><td><a href="oc_std_encoder.md" class="module">oc_std_encoder</a></td></tr>
 <tr><td><a href="oc_tag_ctx_binary.md" class="module">oc_tag_ctx_binary</a></td></tr>
