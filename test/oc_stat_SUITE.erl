@@ -50,6 +50,7 @@
 all() ->
     [
      operations,
+     views_and_measures,
      full
     ].
 
@@ -124,6 +125,32 @@ operations(_Config) ->
     after 5000 ->
             ct:fail("aggregation data wasn't cleared on deregister")
     end.
+
+views_and_measures(_Config) ->
+    Tags = #{type => "mpeg",
+             category => "category1"},
+    Ctx = oc_tags:new_ctx(ctx:new(), Tags),
+
+    ?assertError({unknown_measure, 'my.org/measures/video_count'},
+                 oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
+
+    oc_stat_measure:new('my.org/measures/video_count', "", ""),
+
+    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
+
+    ?assertError({unknown_measure, 'my.org/measures/video_size'},
+                 oc_stat:record(Ctx, 'my.org/measures/video_size', 1)),
+
+    {ok, _} = oc_stat_view:subscribe(
+                "video_sum",
+                'my.org/measures/video_size',
+                "video_size_sum",
+                [#{sum_tag => value},
+                 type, category],
+                oc_stat_aggregation_sum),
+
+    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_size', 10)).
+
 
 full(_Config) ->
     {ok, _} = oc_stat_view:subscribe(

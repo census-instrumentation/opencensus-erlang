@@ -1,3 +1,9 @@
+%%%------------------------------------------------------------------------
+%% Copyright 2018, OpenCensus Authors
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
 %% http://www.apache.org/licenses/LICENSE-2.0
 %%
 %% Unless required by applicable law or agreed to in writing, software
@@ -11,6 +17,7 @@
 %% Views need to be passed to the subscribe function to be before data will be
 %% collected and sent to exporters.
 %% @end
+%%%-----------------------------------------------------------------------
 -module(oc_stat_view).
 
 -export([new/1,
@@ -23,6 +30,8 @@
          subscribe/1,
          unsubscribe/1,
          is_subscribed/1]).
+
+-export([register_measure/3]).
 
 -export([preload/1]).
 
@@ -41,7 +50,9 @@
 
 -export_types([name/0,
                description/0,
-               view_data/0]).
+               view/0,
+               view_data/0,
+               measure/0]).
 
 -export(['__init_backend__'/0]).
 
@@ -67,8 +78,10 @@
               aggregation         :: aggregation(),
               aggregation_options :: aggregation_options()}).
 
--record(measure, {name :: name(),
-                  subs :: [#v_s{}]}).
+-record(measure, {name :: oc_stat_measure:name(),
+                  description :: oc_stat_measure:description(),
+                  unit :: oc_stat_measure:unit(),
+                  subs = [] :: [#v_s{}]}).
 
 -record(state, {}).
 
@@ -184,6 +197,15 @@ is_subscribed(Name) ->
             false
     end.
 
+register_measure(Name, Description, Unit) ->
+    case ets:lookup(?MEASURES_TABLE, Name) of
+        [Measure] -> Measure;
+        _ -> gen_server:call(?MODULE, {register_measure,
+                                       #measure{name=Name,
+                                                description=Description,
+                                                unit=Unit}})
+    end.
+
 %% @doc
 %% Loads and subscribes views from the `List' in one shot.
 %% Usually used for loading views from configuration on app start.
@@ -205,7 +227,7 @@ measure_views(Measure) ->
     case ets:lookup(?MEASURES_TABLE, Measure) of
         [#measure{subs=Subs}] ->
             Subs;
-        _ -> []
+        _ -> erlang:error({unknown_measure, Measure})
     end.
 
 %% @private
@@ -276,7 +298,7 @@ handle_call({subscribe, Name}, _From,  State) ->
         unknown ->
             {reply, {error, {unknown_view, Name}}, State}
     end;
-handle_call({unsubscribe, Name}, _From,  State) ->
+handle_call({unsubscribe, Name}, _From, State) ->
     case view_by_name(Name) of
         {ok, View} ->
             case unsubscribe_(View) of
@@ -285,6 +307,14 @@ handle_call({unsubscribe, Name}, _From,  State) ->
             end;
         unknown ->
             {reply, {error, {unknown_view, Name}}, State}
+    end;
+handle_call({register_measure, #measure{name=Name}=Measure}, _From, State) ->
+    case ets:lookup(?MEASURES_TABLE, Name) of
+        [OldMeasure] ->
+            {reply, {ok, OldMeasure}, State};
+        [] ->
+            ets:insert(?MEASURES_TABLE, Measure),
+            {reply, {ok, Measure}, State}
     end;
 handle_call(_, _From, State) ->
     {noreply, State}.
