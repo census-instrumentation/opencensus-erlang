@@ -6,7 +6,7 @@
           oc_span_ctx_binary,oc_span_ctx_header,oc_stat,oc_stat_aggregation,
           oc_stat_aggregation_count,oc_stat_aggregation_distribution,
           oc_stat_aggregation_latest,oc_stat_aggregation_sum,oc_stat_config,
-          oc_stat_exporter,oc_stat_exporter_stdout,oc_stat_view,
-          oc_std_encoder,oc_tag_ctx_binary,oc_tag_ctx_header,oc_tags,oc_trace,
-          oc_trace_pb,oc_transform,ocp,opencensus,opencensus_app,
-          opencensus_sup]}.
+          oc_stat_exporter,oc_stat_exporter_stdout,oc_stat_measure,
+          oc_stat_view,oc_std_encoder,oc_tag_ctx_binary,oc_tag_ctx_header,
+          oc_tags,oc_trace,oc_trace_pb,oc_transform,ocp,opencensus,
+          opencensus_app,opencensus_sup]}.

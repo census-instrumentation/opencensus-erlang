@@ -1,8 +1,11 @@
 
 
 # Module oc_stat_aggregation_latest #
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
+
+Latest indicates that only last data point is saved.
 
 <a name="index"></a>
 
