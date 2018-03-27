@@ -21,5 +21,9 @@
 
 -export([should_sample/3]).
 
-should_sample(_TraceId, _SpanId, _Enabled) ->
-    erlang:error("Please start opencensus app first").
+should_sample(TraceId, _SpanId, _Enabled) ->
+    case TraceId of
+        _ when TraceId < 0 -> true;
+        _ when TraceId == 0 -> false;
+        _ -> erlang:error("Please start opencensus app first")
+    end.
