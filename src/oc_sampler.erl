@@ -25,6 +25,8 @@
 -export([init/1,
          should_sample/3]).
 
+-dialyzer({nowarn_function, should_sample/3}).
+
 -include_lib("syntax_tools/include/merl.hrl").
 
 -callback init(term()) -> term().

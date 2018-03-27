@@ -51,6 +51,8 @@
 
          set_status/3]).
 
+-dialyzer({nowarn_function, update_trace_options/2}).
+
 -include("opencensus.hrl").
 
 %% sampling bit is the first bit in 8-bit trace options
