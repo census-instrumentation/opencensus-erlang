@@ -185,6 +185,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_reporter_zipkin.md" class="module">oc_reporter_zipkin</a></td></tr>
 <tr><td><a href="oc_sampler.md" class="module">oc_sampler</a></td></tr>
 <tr><td><a href="oc_sampler_always.md" class="module">oc_sampler_always</a></td></tr>
+<tr><td><a href="oc_sampler_impl.md" class="module">oc_sampler_impl</a></td></tr>
 <tr><td><a href="oc_sampler_never.md" class="module">oc_sampler_never</a></td></tr>
 <tr><td><a href="oc_sampler_probability.md" class="module">oc_sampler_probability</a></td></tr>
 <tr><td><a href="oc_server.md" class="module">oc_server</a></td></tr>
