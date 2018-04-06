@@ -27,8 +27,8 @@
 %% If there are any tags in the context, measurements will be tagged with them.
 -spec record(ctx:t() | oc_tags:tags(), measure_name(), number()) -> ok.
 record(Tags, MeasureName, Value) when is_map(Tags) ->
-    [oc_stat_view:add_sample(ViewSub, Tags, Value)
-     || ViewSub <- oc_stat_view:measure_views(MeasureName)],
+    Module = oc_stat_view:measure_module(MeasureName),
+    Module:record(Tags, Value),
     ok;
 record(Ctx, MeasureName, Value)->
     Tags = oc_tags:from_ctx(Ctx),

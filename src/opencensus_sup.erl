@@ -32,10 +32,6 @@ start_link() ->
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
-    ok = oc_stat_view:'__init_backend__'(),
-
-    oc_stat_view:preload(oc_stat_config:views()),
-
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
                  restart => permanent,

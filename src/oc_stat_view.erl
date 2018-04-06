@@ -35,8 +35,10 @@
 
 -export([preload/1]).
 
--export([measure_views/1,
+-export([measure_module/1,
          add_sample/3,
+         gen_add_sample/1,
+         tag_values/2,
          all_subscribed/0,
          export/1]).
 
@@ -79,9 +81,9 @@
               aggregation_options :: aggregation_options()}).
 
 -record(measure, {name :: oc_stat_measure:name(),
+                  module :: module(),
                   description :: oc_stat_measure:description(),
-                  unit :: oc_stat_measure:unit(),
-                  subs = [] :: [#v_s{}]}).
+                  unit :: oc_stat_measure:unit()}).
 
 -record(state, {}).
 
@@ -202,6 +204,7 @@ register_measure(Name, Description, Unit) ->
         [Measure] -> Measure;
         _ -> gen_server:call(?MODULE, {register_measure,
                                        #measure{name=Name,
+                                                module=oc_stat_measure:module_name(Name),
                                                 description=Description,
                                                 unit=Unit}})
     end.
@@ -223,10 +226,10 @@ preload(List) ->
      end || V <- List].
 
 %% @private
-measure_views(Measure) ->
+measure_module(Measure) ->
     case ets:lookup(?MEASURES_TABLE, Measure) of
-        [#measure{subs=Subs}] ->
-            Subs;
+        [#measure{module=Module}] ->
+            Module;
         _ -> erlang:error({unknown_measure, Measure})
     end.
 
@@ -237,6 +240,20 @@ add_sample(ViewSub, ContextTags, Value) ->
     AM = ViewSub#v_s.aggregation,
     AM:add_sample(ViewSub#v_s.name, TagValues, Value, ViewSub#v_s.aggregation_options),
     ok.
+
+%% @private
+gen_add_sample(ViewSub) ->
+    TagsA = erl_parse:abstract(ViewSub#v_s.tags),
+    ViewNameA = erl_parse:abstract(ViewSub#v_s.name),
+    AggregationModuleA = erl_parse:abstract(ViewSub#v_s.aggregation),
+    AggregationOptionsA = erl_parse:abstract(ViewSub#v_s.aggregation_options),
+
+    {call, 1, {remote, 1, AggregationModuleA, {atom, 1, add_sample}},
+     [ViewNameA,
+      {call, 1, {remote, 1, {atom, 1, oc_stat_view}, {atom, 1, tag_values}},
+       [{var, 1, 'ContextTags'}, TagsA]},
+      {var, 1, 'Value'},
+      AggregationOptionsA]}.
 
 %% @private
 all_subscribed() ->
@@ -262,6 +279,9 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 init(_Args) ->
+    process_flag(trap_exit, true),
+    ok = '__init_backend__'(),
+    preload(oc_stat_config:views()),
     {ok, #state{}}.
 
 handle_call({register, #view{measure=Measure,
@@ -314,6 +334,7 @@ handle_call({register_measure, #measure{name=Name}=Measure}, _From, State) ->
             {reply, {ok, OldMeasure}, State};
         [] ->
             ets:insert(?MEASURES_TABLE, Measure),
+            oc_stat_measure:regen_record(Name, []),
             {reply, {ok, Measure}, State}
     end;
 handle_call(_, _From, State) ->
@@ -329,6 +350,8 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 terminate(_, _) ->
+    [oc_stat_measure:delete_measure(M#measure.name) ||
+        M <- ets:tab2list(?MEASURES_TABLE)],
     ok.
 
 %% private
@@ -371,9 +394,11 @@ subscribe_(#view{measure=Measure,
     case ets:lookup(?MEASURES_TABLE, Measure) of
         [] ->
             ets:insert(?MEASURES_TABLE, #measure{name=Measure,
-                                                 subs=[VS]});
-        [#measure{subs=Subs}=M] ->
-            swap(?MEASURES_TABLE, M, M#measure{subs=[VS | Subs]})
+                                                 module=oc_stat_measure:module_name(Measure)}),
+            oc_stat_measure:regen_record(Measure, [VS]);
+        [#measure{module=Module}] ->
+            Subs = Module:subs(),
+            oc_stat_measure:regen_record(Measure, [VS | Subs])
     end,
     mark_view_as_subscribed_(View),
     ok.
@@ -392,8 +417,9 @@ unsubscribe_(#view{measure=Measure,
     case ets:lookup(?MEASURES_TABLE, Measure) of
         [] ->
             ok;
-        [#measure{subs=Subs}=M] ->
-            swap(?MEASURES_TABLE, M, M#measure{subs=lists:delete(VS, Subs)})
+        [#measure{module=Module}] ->
+            Subs = Module:subs(),
+            oc_stat_measure:regen_record(Measure, lists:delete(VS, Subs))
     end,
     mark_view_as_unsubscribed_(View),
     #view{aggregation=AggregationModule,

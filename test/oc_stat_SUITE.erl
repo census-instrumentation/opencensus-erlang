@@ -95,7 +95,7 @@ operations(_Config) ->
              "number of videos processed processed over time",
              [#{ctag => value},
               type],
-             {oc_stat_aggregation_pid, self()}),
+             {oc_stat_aggregation_pid, pid_to_list(self())}),
 
     {ok, RView} = oc_stat_view:register(View),
     receive
