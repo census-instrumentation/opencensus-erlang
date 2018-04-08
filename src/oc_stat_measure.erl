@@ -20,23 +20,44 @@
 %%%-----------------------------------------------------------------------
 -module(oc_stat_measure).
 
+%% user api
 -export([new/3,
+         exists/1]).
+
+%% codegen
+-export([measure_module/1,
          module_name/1,
          maybe_module_name/1,
          regen_record/2,
          delete_measure/1,
-         prepare_tags/1]).
+         prepare_tags_/1]).
+
+%% unsafe api, needs snychronization
+-export([register_/1,
+         add_subscription_/2,
+         remove_subscription_/2,
+         terminate_/0]).
+
+-export(['__init_backend__'/0]).
 
 -export([parse_transform/2]).
 
 -export_types([name/0,
                description/0,
-               unit/0]).
+               unit/0,
+               measure/0]).
 
--type name() :: atom() | binary() | string().
+-record(measure, {name        :: name(),
+                  module      :: module(),
+                  description :: description(),
+                  unit        :: unit()}).
+
+-type name()        :: atom() | binary() | string().
 -type description() :: binary() | string().
--type unit() :: atom().
+-type unit()        :: atom().
+-type measure()     :: #measure{}.
 
+-define(MEASURES_TABLE, ?MODULE).
 
 %% @doc
 %% Creates and registers a measure. If a measure with the same name
@@ -44,8 +65,85 @@
 %% @end
 -spec new(name(), description(), unit()) -> oc_stat_view:measure().
 new(Name, Description, Unit) ->
-    oc_stat_view:register_measure(Name, Description, Unit).
+    gen_server:call(oc_stat, {measure_register,
+                              #measure{name=Name,
+                                       module=oc_stat_measure:module_name(Name),
+                                       description=Description,
+                                       unit=Unit}}).
+%% @doc
+%% Returns a measure with the `Name' or `false'..
+%% @end
+-spec exists(name()) -> measure() | false.
+exists(Name) ->
+    case ets:lookup(?MEASURES_TABLE, Name) of
+        [Measure] ->
+            Measure;
+        _ -> false
+    end.
 
+%% =============================================================================
+%% internal
+%% =============================================================================
+
+%% @private
+register_(#measure{name=Name}=Measure) ->
+    case exists(Name) of
+        false ->
+            insert_measure_(Measure);
+        OldMeasure ->
+            OldMeasure
+    end.
+
+%% @private
+insert_measure_(#measure{name=Name}=Measure) ->
+    ets:insert(?MEASURES_TABLE, Measure),
+    regen_record(Name, []),
+    Measure.
+
+%% @private
+add_subscription_(Name, VS) ->
+    case exists(Name) of
+        false ->
+            {error, {unknown_measure, Name}};
+        #measure{module=Module} ->
+            Subs = Module:subs(),
+            regen_record(Name, [VS | Subs]),
+            ok
+    end.
+
+%% @private
+remove_subscription_(Name, VS) ->
+    case exists(Name) of
+        false ->
+            ok;
+        #measure{module=Module} ->
+            Subs = Module:subs(),
+            regen_record(Name, lists:delete(VS, Subs)),
+            ok
+    end.
+
+%% @private
+terminate_() ->
+    [delete_measure(M) || M <- ets:tab2list(?MEASURES_TABLE)].
+
+%% @private
+'__init_backend__'() ->
+    ?MEASURES_TABLE = ets:new(?MEASURES_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
+    ok.
+
+%% =============================================================================
+%% codegen
+%% =============================================================================
+
+%% @private
+measure_module(Name) ->
+    case ets:lookup(?MEASURES_TABLE, Name) of
+        [#measure{module=Module}] ->
+            Module;
+        _ -> erlang:error({unknown_measure, Name})
+    end.
+
+%% @private
 -spec module_name(name()) -> module().
 module_name(Name) when is_atom(Name) ->
     list_to_atom(module_name_str(Name)).
@@ -66,9 +164,9 @@ maybe_module_name(Name) ->
 regen_record(Name, VSs) ->
     regen_module(Name, gen_add_sample_calls(VSs), erl_parse:abstract(VSs)).
 
-delete_measure(Name) ->
+delete_measure(#measure{name=Name, module=Module}) ->
     ErrorA = erl_parse:abstract({unknown_measure, Name}),
-    regen_module(Name,
+    regen_module(Module,
                  gen_add_sample_calls([])
                  ++ [{call, 1,
                       {remote, 1, {atom, 1, erlang}, {atom, 1, error}},
@@ -77,13 +175,7 @@ delete_measure(Name) ->
                   {remote, 1, {atom, 1, erlang}, {atom, 1, error}},
                   [ErrorA]}).
 
-prepare_tags(Tags) when is_map(Tags) ->
-    Tags;
-prepare_tags(Ctx) ->
-    oc_tags:from_ctx(Ctx).
-
-regen_module(Name, RecordBody, Subs) ->
-    ModuleName = module_name(Name),
+regen_module(ModuleName, RecordBody, Subs) ->
     ModuleNameStr = atom_to_list(ModuleName),
     {ok, Module, Binary} =
         compile:forms(
@@ -126,6 +218,7 @@ walk_ast(Form) ->
 walk_clauses(Acc, []) ->
     lists:reverse(Acc);
 walk_clauses(Acc, [{clause, Line, Arguments, Guards, Body}|Rest]) ->
+    reset_gensym(),
     walk_clauses([{clause, Line, Arguments, Guards, walk_body([], Body)}|Acc], Rest).
 
 walk_body(Acc, []) ->
@@ -135,17 +228,13 @@ walk_body(Acc, [H|R]) ->
 
 transform_statement({call, Line,
                      {remote, _, {atom, _, oc_stat}, {atom, _, record}},
-                     [Tags, {atom, _, MeasureName}, Value]}=_Stmt) ->
-    measure_module_record_call(Line, Tags, MeasureName, Value);
+                     [Tags, {cons, _, _, _} = Measurements]}=_Stmt) ->
+    gen_record_calls(Line, Tags, erl_syntax:list_elements(Measurements));
 transform_statement({call, Line,
                      {remote, _, {atom, _, oc_stat}, {atom, _, record}},
-                     [Tags,  Measures0]}=_Stmt) ->
-
-    Measures = erl_syntax:list_elements(Measures0),
-    %% TODO: prepare tags first
-    {block, Line,
-     [measure_module_record_call(Line, Tags, MeasureName, Value)
-      || {tuple, _, [{atom, _, MeasureName}, Value]} <- Measures]};
+                     [Tags, {MType, _, _}=Measurement, Value]}=_Stmt)
+  when is_atom(MType) orelse is_binary(MType) orelse is_list(MType) ->
+    gen_record_calls(Line, Tags, [{tuple, Line, [Measurement, Value]}]);
 transform_statement(Stmt) when is_tuple(Stmt) ->
     list_to_tuple(transform_statement(tuple_to_list(Stmt)));
 transform_statement(Stmt) when is_list(Stmt) ->
@@ -153,7 +242,51 @@ transform_statement(Stmt) when is_list(Stmt) ->
 transform_statement(Stmt) ->
     Stmt.
 
-measure_module_record_call(Line, Tags, MeasureName, Value) ->
+measure_module_record_call(Line, MeasureName, GTags, Value) ->
     {call, Line,
      {remote, Line, {atom, Line, module_name(MeasureName)}, {atom, Line, record}},
-     [{call, Line, {remote, Line, {atom, Line, ?MODULE}, {atom, Line, prepare_tags}}, [Tags]}, Value]}.
+     [GTags, Value]}.
+
+%% =============================================================================
+%% private
+%% =============================================================================
+
+gen_record_calls(Line, Tags, Measurements) ->
+    CTags = {var, Line, gensym("CTags")},
+    GTags = {var, Line, gensym("GTags")},
+    {block, Line,
+     [{match, Line, CTags, Tags},
+      {match, Line, GTags, gen_prepare_tags(Line, CTags)}]
+     ++
+         [measure_module_record_call(Line, MeasureName, GTags, Value)
+          || {tuple, _, [{atom, _, MeasureName}, Value]} <- Measurements]}.
+
+gen_prepare_tags(Line, CTags) ->
+    {'case',  Line, CTags,
+     [{clause, Line,
+       [{var, Line, '_'}],
+       [[{call, Line, {atom, Line, is_map}, [CTags]}]],
+       [{var, Line, CTags}]},
+      {clause, Line,
+       [{var, Line, '_'}],
+       [],
+       [{call, Line,
+         {remote, Line, {atom, Line, oc_tags}, {atom, Line, from_ctx}},
+         [CTags]}]}]}.
+
+prepare_tags_(Name) ->
+    try qwe:qwe() of
+        Res -> Res
+    catch
+        error:undef ->
+            erlang:error({unknown_measure, Name})
+    end.
+
+gensym(Name) ->
+    put(oc_gensym_counter, get(oc_gensym_counter) + 1),
+    list_to_atom(
+      lists:flatten(
+        io_lib:format("$oc_gen_~s_~i$", [Name, get(oc_gensym_counter)]))).
+
+reset_gensym() ->
+    put(oc_gensym_counter, 0).

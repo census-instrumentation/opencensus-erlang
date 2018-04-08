@@ -29,26 +29,20 @@
          subscribe/5,
          subscribe/1,
          unsubscribe/1,
-         is_subscribed/1]).
-
--export([register_measure/3]).
+         is_subscribed/1,
+         export/1]).
 
 -export([preload/1]).
 
--export([measure_module/1,
-         add_sample/3,
-         gen_add_sample/1,
-         tag_values/2,
-         all_subscribed/0,
-         export/1]).
+%% unsafe api, needs snychronization
+-export([register_/1,
+         deregister_/1,
+         subscribe_/1,
+         unsubscribe_/1]).
 
--export([start_link/0,
-         init/1,
-         handle_call/3,
-         handle_cast/2,
-         handle_info/2,
-         code_change/3,
-         terminate/2]).
+-export([gen_add_sample_/1,
+         tag_values_/2,
+         all_subscribed_/0]).
 
 -export_types([name/0,
                description/0,
@@ -66,26 +60,19 @@
 -define(VIEWS_TABLE, ?MODULE).
 -define(MEASURES_TABLE, oc_stat_view_subs).
 
--record(view, {name                :: name() | '_',
-               measure             :: measure_name() | '_',
-               subscribed          :: boolean(),
-               description         :: description() | '_',
-               ctags               :: oc_tags:tags() | '_',
-               tags                :: [oc_tags:key()] | '_',
-               aggregation         :: aggregation() | '_',
-               aggregation_options :: aggregation_options() | '_'}).
+-record(view, {name                        :: name() | '_',
+               measure                     :: measure_name() | '_',
+               subscribed          = false :: boolean(),
+               description         = ""    :: description() | '_',
+               ctags               = #{}   :: oc_tags:tags() | '_',
+               tags                = []    :: [oc_tags:key()] | '_',
+               aggregation                 :: aggregation() | '_',
+               aggregation_options = []    :: aggregation_options() | '_'}).
 
 -record(v_s, {name                :: name(),
               tags                :: [oc_tags:key()],
               aggregation         :: aggregation(),
               aggregation_options :: aggregation_options()}).
-
--record(measure, {name :: oc_stat_measure:name(),
-                  module :: module(),
-                  description :: oc_stat_measure:description(),
-                  unit :: oc_stat_measure:unit()}).
-
--record(state, {}).
 
 -type name()        :: atom() | binary() | string().
 -type description() :: binary() | string().
@@ -114,7 +101,6 @@ new(Name, Measure, Description, Tags, Aggregation) ->
     #view{name=Name,
           measure=Measure,
           description=Description,
-          subscribed=false,
           ctags=CTags,
           tags=Keys,
           aggregation=AggregationModule,
@@ -132,7 +118,7 @@ register(Name, Measure, Description, Tags, Aggregation) ->
 %% @end
 -spec register(view()) -> {ok, view()} | {error, any()}.
 register(#view{}=View) ->
-    gen_server:call(?MODULE, {register, View}).
+    gen_server:call(?STAT_SERVER, {view_register, View}).
 
 %% @doc
 %% Deregisters the view. If subscribed, unsubscribes and therefore
@@ -142,7 +128,7 @@ register(#view{}=View) ->
 deregister(#view{name=Name}) ->
     deregister(Name);
 deregister(Name) ->
-    gen_server:call(?MODULE, {deregister, Name}).
+    gen_server:call(?STAT_SERVER, {view_deregister, Name}).
 
 %% @doc
 %% Returns true if the view is registered.
@@ -173,7 +159,7 @@ subscribe(Name, Measure, Description, Tags, Aggregation) ->
 subscribe(#view{name=Name}) ->
     subscribe(Name);
 subscribe(Name) ->
-    gen_server:call(?MODULE, {subscribe, Name}).
+    gen_server:call(?STAT_SERVER, {view_subscribe, Name}).
 
 %% @doc
 %% Unsubscribes the View. When unsubscribed a view no longer aggregates measure data
@@ -183,7 +169,7 @@ subscribe(Name) ->
 unsubscribe(#view{name=Name}) ->
     unsubscribe(Name);
 unsubscribe(Name) ->
-    gen_server:call(?MODULE, {unsubscribe, Name}).
+    gen_server:call(?STAT_SERVER, {view_unsubscribe, Name}).
 
 %% @doc
 %% Returns true if the view is exporting data by subscription.
@@ -197,16 +183,6 @@ is_subscribed(Name) ->
             Subscribed;
         _ ->
             false
-    end.
-
-register_measure(Name, Description, Unit) ->
-    case ets:lookup(?MEASURES_TABLE, Name) of
-        [Measure] -> Measure;
-        _ -> gen_server:call(?MODULE, {register_measure,
-                                       #measure{name=Name,
-                                                module=oc_stat_measure:module_name(Name),
-                                                description=Description,
-                                                unit=Unit}})
     end.
 
 %% @doc
@@ -225,40 +201,6 @@ preload(List) ->
          end
      end || V <- List].
 
-%% @private
-measure_module(Measure) ->
-    case ets:lookup(?MEASURES_TABLE, Measure) of
-        [#measure{module=Module}] ->
-            Module;
-        _ -> erlang:error({unknown_measure, Measure})
-    end.
-
-%% @private
--spec add_sample(v_s(), oc_tags:tags(), number()) -> ok.
-add_sample(ViewSub, ContextTags, Value) ->
-    TagValues = tag_values(ContextTags, ViewSub#v_s.tags),
-    AM = ViewSub#v_s.aggregation,
-    AM:add_sample(ViewSub#v_s.name, TagValues, Value, ViewSub#v_s.aggregation_options),
-    ok.
-
-%% @private
-gen_add_sample(ViewSub) ->
-    TagsA = erl_parse:abstract(ViewSub#v_s.tags),
-    ViewNameA = erl_parse:abstract(ViewSub#v_s.name),
-    AggregationModuleA = erl_parse:abstract(ViewSub#v_s.aggregation),
-    AggregationOptionsA = erl_parse:abstract(ViewSub#v_s.aggregation_options),
-
-    {call, 1, {remote, 1, AggregationModuleA, {atom, 1, add_sample}},
-     [ViewNameA,
-      {call, 1, {remote, 1, {atom, 1, oc_stat_view}, {atom, 1, tag_values}},
-       [{var, 1, 'ContextTags'}, TagsA]},
-      {var, 1, 'Value'},
-      AggregationOptionsA]}.
-
-%% @private
-all_subscribed() ->
-    ets:match_object(?VIEWS_TABLE, #view{subscribed=true, _='_'}).
-
 %% @doc
 %% Returns a snapshot of the View's data.
 %% @end
@@ -273,167 +215,136 @@ export(#view{name=Name, description=Description,
       tags => lists:reverse(Keys),
       data => AggregationModule:export(Name, AggregationOptions)}.
 
-%% gen_server implementation
+%% =============================================================================
+%% internal
+%% =============================================================================
 
-start_link() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+%% @private
+gen_add_sample_(ViewSub) ->
+    TagsA = erl_parse:abstract(ViewSub#v_s.tags),
+    ViewNameA = erl_parse:abstract(ViewSub#v_s.name),
+    AggregationModuleA = erl_parse:abstract(ViewSub#v_s.aggregation),
+    AggregationOptionsA = erl_parse:abstract(ViewSub#v_s.aggregation_options),
 
-init(_Args) ->
-    process_flag(trap_exit, true),
-    ok = '__init_backend__'(),
-    preload(oc_stat_config:views()),
-    {ok, #state{}}.
+    {call, 1, {remote, 1, AggregationModuleA, {atom, 1, add_sample}},
+     [ViewNameA,
+      {call, 1, {remote, 1, {atom, 1, oc_stat_view}, {atom, 1, tag_values}},
+       [{var, 1, 'ContextTags'}, TagsA]},
+      {var, 1, 'Value'},
+      AggregationOptionsA]}.
 
-handle_call({register, #view{measure=Measure,
-                             name=Name,
-                             description=Description,
-                             ctags=CTags,
-                             tags=Keys,
-                             aggregation=AggregationModule}=View}, _From, State) ->
+%% @private
+all_subscribed_() ->
+    ets:match_object(?VIEWS_TABLE, #view{subscribed=true, _='_'}).
+
+%% @private
+register_(#view{name=Name}=View) ->
+    SView = View#view{subscribed=true},
     case ets:lookup(?VIEWS_TABLE, Name) of
-        [#view{measure=Measure,
-               name=Name,
-               description=Description,
-               ctags=CTags,
-               tags=Keys,
-               aggregation=AggregationModule}=OldView] ->
-            {reply, {ok, OldView}, State};
+        [View] ->
+            {ok, View};
+        [SView] ->
+            {ok, SView};
         [_] ->
-            {reply, {error, {already_exists, Name}}, State};
+            {error, {view_already_exists, Name}};
         _ ->
-            {reply, register_(View), State}
-    end;
-handle_call({deregister, Name}, _From, State) ->
+            try init_view_aggregation(View) of
+                IView ->
+                    ets:insert(?VIEWS_TABLE, IView),
+                    {ok, IView}
+            catch
+                _:Error ->
+                    clear_view_aggregation(View),
+                    {error, Error}
+            end
+    end.
+
+%% @private
+deregister_(Name) ->
     case ets:take(?VIEWS_TABLE, Name) of
         [] -> ok;
         [View] -> unsubscribe_(View)
-    end,
-    {reply, ok, State};
-handle_call({subscribe, Name}, _From,  State) ->
-    case view_by_name(Name) of
-        {ok, View} ->
-            case subscribe_(View) of
-                ok -> {reply, {ok, View#view{subscribed=true}}, State}
-            end;
-        unknown ->
-            {reply, {error, {unknown_view, Name}}, State}
-    end;
-handle_call({unsubscribe, Name}, _From, State) ->
-    case view_by_name(Name) of
-        {ok, View} ->
-            case unsubscribe_(View) of
-                ok ->
-                    {reply, {ok, View#view{subscribed=false}}, State}
-            end;
-        unknown ->
-            {reply, {error, {unknown_view, Name}}, State}
-    end;
-handle_call({register_measure, #measure{name=Name}=Measure}, _From, State) ->
-    case ets:lookup(?MEASURES_TABLE, Name) of
-        [OldMeasure] ->
-            {reply, {ok, OldMeasure}, State};
-        [] ->
-            ets:insert(?MEASURES_TABLE, Measure),
-            oc_stat_measure:regen_record(Name, []),
-            {reply, {ok, Measure}, State}
-    end;
-handle_call(_, _From, State) ->
-    {noreply, State}.
-
-handle_cast(_, State) ->
-    {noreply, State}.
-
-handle_info(_, State) ->
-    {noreply, State}.
-
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
-
-terminate(_, _) ->
-    [oc_stat_measure:delete_measure(M#measure.name) ||
-        M <- ets:tab2list(?MEASURES_TABLE)],
-    ok.
-
-%% private
-
-register_(#view{measure=Measure,
-                name=Name,
-                description=Description,
-                ctags=CTags,
-                tags=Keys,
-                aggregation=AggregationModule,
-                aggregation_options=AggregationOptions}) ->
-    NAggregationOptions = AggregationModule:init(Name, Keys, AggregationOptions),
-    try
-        NView = #view{measure=Measure,
-                      name=Name,
-                      subscribed=false,
-                      description=Description,
-                      ctags=CTags,
-                      tags=Keys,
-                      aggregation=AggregationModule,
-                      aggregation_options=NAggregationOptions},
-        ets:insert(?VIEWS_TABLE, NView),
-        {ok, NView}
-    catch
-        _:Error -> AggregationModule:clear_rows(Name, NAggregationOptions),
-                   {error, Error}
     end.
 
+%% @private
 subscribe_(#view{subscribed=true}) ->
     ok;
-subscribe_(#view{measure=Measure,
-                 name=Name,
-                 tags=Keys,
-                 aggregation=AggregationModule,
-                 aggregation_options=AggregationOptions}=View) ->
-    VS = #v_s{name=Name,
-              tags=Keys,
-              aggregation=AggregationModule,
-              aggregation_options=AggregationOptions},
-    case ets:lookup(?MEASURES_TABLE, Measure) of
-        [] ->
-            ets:insert(?MEASURES_TABLE, #measure{name=Measure,
-                                                 module=oc_stat_measure:module_name(Measure)}),
-            oc_stat_measure:regen_record(Measure, [VS]);
-        [#measure{module=Module}] ->
-            Subs = Module:subs(),
-            oc_stat_measure:regen_record(Measure, [VS | Subs])
-    end,
-    mark_view_as_subscribed_(View),
-    ok.
+subscribe_(#view{measure=Measure}=View) ->
+    VS =vs_from_view(View),
+    case oc_stat_measure:add_subscription_(Measure, VS) of
+        ok ->
+            {ok, mark_view_as_subscribed_(View)};
+        Error ->
+            Error
+    end;
+subscribe_(Name) ->
+    case view_by_name(Name) of
+        {ok, View} ->
+            subscribe_(View);
+        unknown ->
+            {error, {unknown_view, Name}}
+    end.
 
+%% @private
 unsubscribe_(#view{subscribed=false}) ->
     ok;
-unsubscribe_(#view{measure=Measure,
-                   name=Name,
+unsubscribe_(#view{measure=Measure}=View) ->
+    VS = vs_from_view(View),
+    oc_stat_measure:remove_subscription_(Measure, VS),
+    UView = mark_view_as_unsubscribed_(View),
+    clear_view_aggregation(View),
+    {ok, UView};
+unsubscribe_(Name) ->
+    case view_by_name(Name) of
+        {ok, View} ->
+            unsubscribe_(View);
+        unknown ->
+            {error, {unknown_view, Name}}
+    end.
+
+%% @private
+tag_values_(Tags, Keys) ->
+    lists:foldl(fun(Key, Acc) ->
+                        [maps:get(Key, Tags, undefined) | Acc]
+                end, [], Keys).
+
+%% @private
+'__init_backend__'() ->
+    ?VIEWS_TABLE = ets:new(?VIEWS_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
+    ok.
+
+%% =============================================================================
+%% private
+%% =============================================================================
+
+-spec vs_from_view(view()) -> v_s().
+vs_from_view(#view{name=Name,
                    tags=Keys,
                    aggregation=AggregationModule,
-                   aggregation_options=AggregationOptions}=View) ->
-    VS = #v_s{name=Name,
-              tags=Keys,
-              aggregation=AggregationModule,
-              aggregation_options=AggregationOptions},
-    case ets:lookup(?MEASURES_TABLE, Measure) of
-        [] ->
-            ok;
-        [#measure{module=Module}] ->
-            Subs = Module:subs(),
-            oc_stat_measure:regen_record(Measure, lists:delete(VS, Subs))
-    end,
-    mark_view_as_unsubscribed_(View),
-    #view{aggregation=AggregationModule,
-          aggregation_options=AggregationOptions} = View,
-    AggregationModule:clear_rows(Name, AggregationOptions),
-    ok.
+                   aggregation_options=AggregationOptions}) ->
+    #v_s{name=Name,
+         tags=Keys,
+         aggregation=AggregationModule,
+         aggregation_options=AggregationOptions}.
+
+init_view_aggregation(#view{name=Name,
+                            tags=Keys,
+                            aggregation=AggregationModule,
+                            aggregation_options=AggregationOptions} = View) ->
+    NAggregationOptions = AggregationModule:init(Name, Keys, AggregationOptions),
+    View#view{subscribed=false,
+              aggregation_options=NAggregationOptions}.
+
+clear_view_aggregation(#view{name=Name,
+                             aggregation=AggregationModule,
+                             aggregation_options=AggregationOptions}) ->
+    AggregationModule:clear_rows(Name, AggregationOptions).
 
 mark_view_as_subscribed_(View) ->
     swap(?VIEWS_TABLE, View, View#view{subscribed=true}).
 
 mark_view_as_unsubscribed_(View) ->
     swap(?VIEWS_TABLE, View, View#view{subscribed=false}).
-
-%% privates
 
 swap(Where, What, With) ->
     ets:select_replace(Where, [{What, [], [{const, With}]}]).
@@ -461,13 +372,3 @@ normalize_tags([First|Rest], {Map, List}) when is_map(First) ->
     normalize_tags(Rest, {maps:merge(Map, First), List});
 normalize_tags([First|Rest], {Map, List}) when is_atom(First) ->
     normalize_tags(Rest, {Map, [First | List]}).
-
-tag_values(Tags, Keys) ->
-    lists:foldl(fun(Key, Acc) ->
-                        [maps:get(Key, Tags, undefined) | Acc]
-                end, [], Keys).
-
-'__init_backend__'() ->
-    ?VIEWS_TABLE = ets:new(?VIEWS_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
-    ?MEASURES_TABLE = ets:new(?MEASURES_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
-    ok.
