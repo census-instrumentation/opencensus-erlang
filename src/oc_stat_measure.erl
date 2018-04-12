@@ -29,8 +29,7 @@
          module_name/1,
          maybe_module_name/1,
          regen_record/2,
-         delete_measure/1,
-         prepare_tags_/1]).
+         delete_measure/1]).
 
 %% unsafe api, needs snychronization
 -export([register_/1,
@@ -95,9 +94,9 @@ register_(#measure{name=Name}=Measure) ->
     end.
 
 %% @private
-insert_measure_(#measure{name=Name}=Measure) ->
+insert_measure_(#measure{module=Module}=Measure) ->
     ets:insert(?MEASURES_TABLE, Measure),
-    regen_record(Name, []),
+    regen_record(Module, []),
     Measure.
 
 %% @private
@@ -107,7 +106,7 @@ add_subscription_(Name, VS) ->
             {error, {unknown_measure, Name}};
         #measure{module=Module} ->
             Subs = Module:subs(),
-            regen_record(Name, [VS | Subs]),
+            regen_record(Module, [VS | Subs]),
             ok
     end.
 
@@ -118,7 +117,7 @@ remove_subscription_(Name, VS) ->
             ok;
         #measure{module=Module} ->
             Subs = Module:subs(),
-            regen_record(Name, lists:delete(VS, Subs)),
+            regen_record(Module, lists:delete(VS, Subs)),
             ok
     end.
 
@@ -145,7 +144,7 @@ measure_module(Name) ->
 
 %% @private
 -spec module_name(name()) -> module().
-module_name(Name) when is_atom(Name) ->
+module_name(Name) ->
     list_to_atom(module_name_str(Name)).
 
 module_name_str(Name) when is_atom(Name) ->
@@ -161,8 +160,8 @@ name_template(Name) ->
 maybe_module_name(Name) ->
     list_to_existing_atom(module_name_str(Name)).
 
-regen_record(Name, VSs) ->
-    regen_module(Name, gen_add_sample_calls(VSs), erl_parse:abstract(VSs)).
+regen_record(ModuleName, VSs) ->
+    regen_module(ModuleName, gen_add_sample_calls(VSs), erl_parse:abstract(VSs)).
 
 delete_measure(#measure{name=Name, module=Module}) ->
     ErrorA = erl_parse:abstract({unknown_measure, Name}),
@@ -203,7 +202,7 @@ gen_add_sample_calls([]) ->
     [{match, 1, {var, 1, '_'}, {var, 1, 'ContextTags'}},
      {match, 1, {var, 1, '_'}, {var, 1, 'Value'}}];
 gen_add_sample_calls(VSs) ->
-    lists:map(fun oc_stat_view:gen_add_sample/1, VSs).
+    lists:map(fun oc_stat_view:gen_add_sample_/1, VSs).
 
 parse_transform(Forms, _Options) ->
     HiForms = lists:map(fun walk_ast/1, Forms),
@@ -242,11 +241,6 @@ transform_statement(Stmt) when is_list(Stmt) ->
 transform_statement(Stmt) ->
     Stmt.
 
-measure_module_record_call(Line, MeasureName, GTags, Value) ->
-    {call, Line,
-     {remote, Line, {atom, Line, module_name(MeasureName)}, {atom, Line, record}},
-     [GTags, Value]}.
-
 %% =============================================================================
 %% private
 %% =============================================================================
@@ -259,14 +253,30 @@ gen_record_calls(Line, Tags, Measurements) ->
       {match, Line, GTags, gen_prepare_tags(Line, CTags)}]
      ++
          [measure_module_record_call(Line, MeasureName, GTags, Value)
-          || {tuple, _, [{atom, _, MeasureName}, Value]} <- Measurements]}.
+          || {tuple, _, [{_, _, MeasureName}, Value]} <- Measurements]}.
+
+measure_module_record_call(Line, MeasureName, GTags, Value) ->
+    {'try', Line,
+     [{call, Line,
+       {remote, Line, {atom, Line, module_name(MeasureName)}, {atom, Line, record}},
+       [GTags, Value]}],
+     [{clause, Line, [{var, Line, '_'}], [], [{atom, 279, 'ok'}]}],
+     [{clause, Line,
+       [{tuple, Line,
+         [{atom, Line, error}, {atom, Line, undef}, {var, Line, '_'}]}],
+       [],
+       [{call, Line,
+         {remote, Line, {atom, Line, erlang}, {atom, Line, error}},
+         [{tuple, Line,
+           [{atom, Line, unknown_measure}, erl_parse:abstract(MeasureName)]}]}]}],
+     []}.
 
 gen_prepare_tags(Line, CTags) ->
     {'case',  Line, CTags,
      [{clause, Line,
        [{var, Line, '_'}],
        [[{call, Line, {atom, Line, is_map}, [CTags]}]],
-       [{var, Line, CTags}]},
+       [CTags]},
       {clause, Line,
        [{var, Line, '_'}],
        [],
@@ -274,19 +284,11 @@ gen_prepare_tags(Line, CTags) ->
          {remote, Line, {atom, Line, oc_tags}, {atom, Line, from_ctx}},
          [CTags]}]}]}.
 
-prepare_tags_(Name) ->
-    try qwe:qwe() of
-        Res -> Res
-    catch
-        error:undef ->
-            erlang:error({unknown_measure, Name})
-    end.
-
 gensym(Name) ->
     put(oc_gensym_counter, get(oc_gensym_counter) + 1),
     list_to_atom(
       lists:flatten(
-        io_lib:format("$oc_gen_~s_~i$", [Name, get(oc_gensym_counter)]))).
+        io_lib:format("$oc_gen_~s_~B$", [Name, get(oc_gensym_counter)]))).
 
 reset_gensym() ->
     put(oc_gensym_counter, 0).

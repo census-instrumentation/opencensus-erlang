@@ -35,7 +35,7 @@
 
 -define(RECORD(Tags, MeasureName, Value),
         begin
-            Module = oc_stat_view:measure_module(MeasureName),
+            Module = oc_stat_measure:measure_module(MeasureName),
             Module:record(Tags, Value),
             ok
         end).
@@ -60,7 +60,7 @@ record(Ctx, Measures) ->
 %% @doc Exports view_data of all subscribed views
 -spec export() -> oc_stat_view:view_data().
 export() ->
-    [oc_stat_view:export(View) || View <- oc_stat_view:all_subscribed()].
+    [oc_stat_view:export(View) || View <- oc_stat_view:all_subscribed_()].
 
 %% gen_server implementation
 
@@ -73,12 +73,13 @@ init(_Args) ->
     process_flag(trap_exit, true),
     ok = oc_stat_view:'__init_backend__'(),
     ok = oc_stat_measure:'__init_backend__'(),
-    ok = oc_stat_view:preload(),
     {ok, #state{}}.
 
 %% @private
 handle_call({measure_register, Measure}, _From, State) ->
     {reply, oc_stat_measure:register_(Measure), State};
+handle_call({view_register_subscribe, View}, _From, State) ->
+    {reply, oc_stat_view:register_subscribe_(View), State};
 handle_call({view_register, View}, _From, State) ->
     {reply, oc_stat_view:register_(View), State};
 handle_call({view_deregister, Name}, _From, State) ->

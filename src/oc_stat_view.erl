@@ -32,10 +32,11 @@
          is_subscribed/1,
          export/1]).
 
--export([preload/1]).
+%% -export([preload/1]).
 
 %% unsafe api, needs snychronization
 -export([register_/1,
+         register_subscribe_/1,
          deregister_/1,
          subscribe_/1,
          unsubscribe_/1]).
@@ -148,14 +149,16 @@ is_registered(Name) ->
 %% A shortcut. Creates, Registers, and Subscribes a view in one call.
 %% @end
 subscribe(Name, Measure, Description, Tags, Aggregation) ->
-    {ok, RView} = register(new(Name, Measure, Description, Tags, Aggregation)),
-    {ok, SView} = subscribe(RView),
-    {ok, SView}.
+    View = new(Name, Measure, Description, Tags, Aggregation),
+    gen_server:call(?STAT_SERVER, {view_register_subscribe, View}).
 
 %% @doc
 %% Subscribe the View, When subscribed, a view can aggregate measure data and export it.
 %% @end
--spec subscribe(name() | view()) -> {ok, view()} | {error, any()}.
+-spec subscribe(name() | view() | map()) -> {ok, view()} | {error, any()}.
+subscribe(Map) when is_map(Map) ->
+    View = new(Map),
+    gen_server:call(?STAT_SERVER, {view_register_subscribe, View});
 subscribe(#view{name=Name}) ->
     subscribe(Name);
 subscribe(Name) ->
@@ -185,21 +188,21 @@ is_subscribed(Name) ->
             false
     end.
 
-%% @doc
-%% Loads and subscribes views from the `List' in one shot.
-%% Usually used for loading views from configuration on app start.
-%% @end
-preload(List) ->
-    [begin
-         NV = new(V),
-         case register_(NV) of
-             {ok, RV} ->
-                 subscribe_(RV);
-             {error, Error} ->
-                 %% TODO: should it crash?
-                 error_logger:info_msg("Unable to preload view ~p. Error is ~p", [NV#view.name, Error])
-         end
-     end || V <- List].
+%% %% @doc
+%% %% Loads and subscribes views from the `List' in one shot.
+%% %% Usually used for loading views from configuration on app start.
+%% %% @end
+%% preload(List) ->
+%%     [begin
+%%          NV = new(V),
+%%          case register_(NV) of
+%%              {ok, RV} ->
+%%                  subscribe_(RV);
+%%              {error, Error} ->
+%%                  %% TODO: should it crash?
+%%                  error_logger:info_msg("Unable to preload view ~p. Error is ~p", [NV#view.name, Error])
+%%          end
+%%      end || V <- List].
 
 %% @doc
 %% Returns a snapshot of the View's data.
@@ -228,7 +231,7 @@ gen_add_sample_(ViewSub) ->
 
     {call, 1, {remote, 1, AggregationModuleA, {atom, 1, add_sample}},
      [ViewNameA,
-      {call, 1, {remote, 1, {atom, 1, oc_stat_view}, {atom, 1, tag_values}},
+      {call, 1, {remote, 1, {atom, 1, oc_stat_view}, {atom, 1, tag_values_}},
        [{var, 1, 'ContextTags'}, TagsA]},
       {var, 1, 'Value'},
       AggregationOptionsA]}.
@@ -238,7 +241,12 @@ all_subscribed_() ->
     ets:match_object(?VIEWS_TABLE, #view{subscribed=true, _='_'}).
 
 %% @private
-register_(#view{name=Name}=View) ->
+register_(#view{measure=Measure}=View) ->
+    register_(oc_stat_measure:exists(Measure), View).
+
+register_(false, #view{measure=Measure}) ->
+    {error, {unknown_measure, Measure}};
+register_(_, #view{name=Name}=View) ->
     SView = View#view{subscribed=true},
     case ets:lookup(?VIEWS_TABLE, Name) of
         [View] ->
@@ -259,6 +267,14 @@ register_(#view{name=Name}=View) ->
             end
     end.
 
+register_subscribe_(View) ->
+    case register_(View) of
+        {ok, V} ->
+            subscribe_(V);
+        Error ->
+            Error
+    end.
+
 %% @private
 deregister_(Name) ->
     case ets:take(?VIEWS_TABLE, Name) of
@@ -270,7 +286,7 @@ deregister_(Name) ->
 subscribe_(#view{subscribed=true}) ->
     ok;
 subscribe_(#view{measure=Measure}=View) ->
-    VS =vs_from_view(View),
+    VS = vs_from_view(View),
     case oc_stat_measure:add_subscription_(Measure, VS) of
         ok ->
             {ok, mark_view_as_subscribed_(View)};
@@ -341,10 +357,14 @@ clear_view_aggregation(#view{name=Name,
     AggregationModule:clear_rows(Name, AggregationOptions).
 
 mark_view_as_subscribed_(View) ->
-    swap(?VIEWS_TABLE, View, View#view{subscribed=true}).
+    SView = View#view{subscribed=true},
+    swap(?VIEWS_TABLE, View, SView),
+    SView.
 
 mark_view_as_unsubscribed_(View) ->
-    swap(?VIEWS_TABLE, View, View#view{subscribed=false}).
+    UView = View#view{subscribed=false},
+    swap(?VIEWS_TABLE, View, UView),
+    UView.
 
 swap(Where, What, With) ->
     ets:select_replace(Where, [{What, [], [{const, With}]}]).

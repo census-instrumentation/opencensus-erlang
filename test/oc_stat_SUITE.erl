@@ -49,8 +49,9 @@
 
 all() ->
     [
-     operations,
      views_and_measures,
+     operations,
+     parse_transform,
      full
     ].
 
@@ -62,17 +63,8 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(full, Config) ->
-    Views = [#{
-               name => "video_size",
-               description => "number of videos processed processed over time",
-               tags => [#{ctag => value}],
-               measure => 'my.org/measures/video_size_sum',
-               aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
-              }],
-
     Exporters = [{oc_stat_exporter_pid, self()}],
-
-    application:set_env(opencensus, stat, [{views, Views}, {exporters, Exporters}]),
+    application:set_env(opencensus, stat, [{exporters, Exporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(_Name, Config) ->
@@ -88,7 +80,74 @@ end_per_testcase(_, _Config) ->
 %% TESTS
 %% ===================================================================
 
+views_and_measures(_Config) ->
+    Tags = #{type => "mpeg",
+             category => "category1"},
+    Ctx = oc_tags:new_ctx(ctx:new(), Tags),
+
+    ?assertError({unknown_measure, 'my.org/measures/video_count'},
+                 oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
+
+    oc_stat_measure:new('my.org/measures/video_count', "", ""),
+
+    %% can record measure without views
+    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
+
+    ?assertError({unknown_measure, 'my.org/measures/video_size'},
+                 oc_stat:record(Ctx, 'my.org/measures/video_size', 1)),
+
+    ?assertMatch({error, {unknown_measure, 'my.org/measures/video_size'}},
+                 oc_stat_view:subscribe(
+                   "video_sum",
+                   'my.org/measures/video_size',
+                   "video_size_sum",
+                   [#{sum_tag => value},
+                    type, category],
+                   oc_stat_aggregation_sum)),
+
+    ?assertMatch({error, {unknown_measure, 'my.org/measures/video_size'}},
+                 oc_stat_view:register(
+                   "video_sum",
+                   'my.org/measures/video_size',
+                   "video_size_sum",
+                   [#{sum_tag => value},
+                    type, category],
+                   oc_stat_aggregation_sum)),
+
+    ?assertMatch({error, {unknown_view, "video_sum"}},
+                 oc_stat_view:subscribe(
+                   "video_sum")),
+
+    oc_stat_measure:new('my.org/measures/video_size', "", ""),
+
+    {ok, _} = oc_stat_view:subscribe(
+                "video_sum",
+                'my.org/measures/video_size',
+                "video_size_sum",
+                [#{sum_tag => value},
+                 type, category],
+                oc_stat_aggregation_sum),
+
+    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_size', 10)),
+
+    ok = application:stop(opencensus),
+    {ok, _} = application:ensure_all_started(opencensus),
+
+    ?assertMatch({error, {unknown_measure, 'my.org/measures/video_size'}},
+                 oc_stat_view:subscribe(
+                   "video_sum",
+                   'my.org/measures/video_size',
+                   "video_size_sum",
+                   [#{sum_tag => value},
+                    type, category],
+                   oc_stat_aggregation_sum)),
+
+    ?assertError({unknown_measure, 'my.org/measures/video_size'},
+                 oc_stat:record(Ctx, 'my.org/measures/video_size', 1)).
+
 operations(_Config) ->
+    oc_stat_measure:new('my.org/measures/video_count', "", ""),
+
     View = oc_stat_view:new(
              "video_count",
              'my.org/measures/video_count',
@@ -126,33 +185,25 @@ operations(_Config) ->
             ct:fail("aggregation data wasn't cleared on deregister")
     end.
 
-views_and_measures(_Config) ->
-    Tags = #{type => "mpeg",
-             category => "category1"},
-    Ctx = oc_tags:new_ctx(ctx:new(), Tags),
+parse_transform(_Config) ->
+    ?assertError({unknown_measure, "qwe"},
+                 oc_stat_pt_user:record_non_existing()),
 
-    ?assertError({unknown_measure, 'my.org/measures/video_count'},
-                 oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
-
-    oc_stat_measure:new('my.org/measures/video_count', "", ""),
-
-    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_count', 1)),
-
-    ?assertError({unknown_measure, 'my.org/measures/video_size'},
-                 oc_stat:record(Ctx, 'my.org/measures/video_size', 1)),
-
-    {ok, _} = oc_stat_view:subscribe(
-                "video_sum",
-                'my.org/measures/video_size',
-                "video_size_sum",
-                [#{sum_tag => value},
-                 type, category],
-                oc_stat_aggregation_sum),
-
-    ?assertMatch(ok, oc_stat:record(Ctx, 'my.org/measures/video_size', 10)).
-
+    oc_stat_measure:new('my.org/measures/video_size', "", "").
 
 full(_Config) ->
+    oc_stat_measure:new('my.org/measures/video_size', "", ""),
+    oc_stat_measure:new('my.org/measures/video_count', "", ""),
+
+    {ok, _} = oc_stat_view:subscribe(
+                #{
+                  name => "video_size",
+                  description => "number of videos processed processed over time",
+                  tags => [#{ctag => value}],
+                  measure => 'my.org/measures/video_size',
+                  aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
+                 }),
+
     {ok, _} = oc_stat_view:subscribe(
                 "video_count",
                 'my.org/measures/video_count',
@@ -163,7 +214,7 @@ full(_Config) ->
 
     {ok, _} = oc_stat_view:subscribe(
                 "video_sum",
-                'my.org/measures/video_size_sum',
+                'my.org/measures/video_size',
                 "video_size_sum",
                 [#{sum_tag => value},
                  type, category],
@@ -171,7 +222,7 @@ full(_Config) ->
 
     {ok, _} = oc_stat_view:subscribe(
                 "last_video_size",
-                'my.org/measures/video_size_sum',
+                'my.org/measures/video_size',
                 "last processed video size",
                 [#{ctag => value}],
                 oc_stat_aggregation_latest),
@@ -182,10 +233,10 @@ full(_Config) ->
 
     oc_stat:record(Ctx, 'my.org/measures/video_count', 1),
     oc_stat:record(Tags, [{'my.org/measures/video_count', 1},
-                          {'my.org/measures/video_size_sum', 1024}]),
-    oc_stat:record(Tags, 'my.org/measures/video_size_sum', 4096),
+                          {'my.org/measures/video_size', 1024}]),
+    oc_stat:record(Tags, 'my.org/measures/video_size', 4096),
     oc_stat:record(Ctx, [{'my.org/measures/video_count', 1},
-                         {'my.org/measures/video_size_sum', 1024}]),
+                         {'my.org/measures/video_size', 1024}]),
 
     ?assertMatch(?VD,
                  lists:sort(oc_stat:export())),
