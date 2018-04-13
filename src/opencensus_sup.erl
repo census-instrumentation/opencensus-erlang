@@ -32,10 +32,6 @@ start_link() ->
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
-    ok = oc_stat_view:'__init_backend__'(),
-
-    oc_stat_view:preload(oc_stat_config:views()),
-
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
                  restart => permanent,
@@ -50,12 +46,12 @@ init([]) ->
                  type => worker,
                  modules => [oc_stat_exporter]},
 
-    ViewServer = #{id => oc_stat_view,
-                   start => {oc_stat_view, start_link, []},
+    ViewServer = #{id => oc_stat,
+                   start => {oc_stat, start_link, []},
                    restart => permanent,
                    shutdown => 1000,
                    type => worker,
-                   modules => [oc_stat_view]},
+                   modules => [oc_stat]},
 
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},

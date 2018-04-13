@@ -121,3 +121,5 @@
 -type measure_name()        :: atom() | binary() | string().
 -type aggregation()         :: module().
 -type aggregation_options() :: any().
+
+-define(STAT_SERVER, oc_stat).

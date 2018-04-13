@@ -8,9 +8,10 @@
 
 -behavior(oc_stat_aggregation).
 
-init(_Name, _Keys, Pid) ->
+init(_Name, _Keys, Pid0) ->
+    Pid = list_to_pid(Pid0),
     Pid ! aggregation_init,
-    Pid.
+    Pid0.
 
 type() ->
     pid.
@@ -23,6 +24,7 @@ export(_Name, _Options) ->
     #{type=>type(),
       rows=>[]}.
 
-clear_rows(_Name, Pid) ->
+clear_rows(_Name, Pid0) ->
+    Pid = list_to_pid(Pid0),
     Pid ! aggregation_clear_rows,
     ok.
