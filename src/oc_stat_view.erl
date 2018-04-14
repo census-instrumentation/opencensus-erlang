@@ -110,12 +110,20 @@ new(Name, Measure, Description, Tags, Aggregation) ->
 
 %% @doc
 %% Registers the view created from arguments.
+%%
+%% Returns `{error, {unknown_measure, Measure}}' if `Measure' is unknown.<br/>
+%% Returns `{error, {view_already_exists, Name}}' if a
+%% view with `Name' already registered.
 %% @end
 register(Name, Measure, Description, Tags, Aggregation) ->
     register(new(Name, Measure, Description, Tags, Aggregation)).
 
 %% @doc
 %% Registers the view. Aggregation initialized with AggregationOptions.
+%%
+%% Returns `{error, {unknown_measure, Measure}}' if `Measure' is unknown.<br/>
+%% Returns `{error, {view_already_exists, Name}}' if a
+%% view with `Name' already registered.
 %% @end
 -spec register(view()) -> {ok, view()} | {error, any()}.
 register(#view{}=View) ->
@@ -124,6 +132,8 @@ register(#view{}=View) ->
 %% @doc
 %% Deregisters the view. If subscribed, unsubscribes and therefore
 %% existing aggregation data cleared.
+%%
+%% Returns `{error, {unknown_view, Name}}' if the view is unknown.
 %% @end
 -spec deregister(name() | view()) -> ok.
 deregister(#view{name=Name}) ->
@@ -146,7 +156,9 @@ is_registered(Name) ->
     end.
 
 %% @doc
-%% A shortcut. Creates, Registers, and Subscribes a view in one call.
+%% A shortcut: Creates, Registers, and Subscribes a view in one call.
+%%
+%% Returns `{error, {unknown_measure, Measure}}' if `Measure' is unknown.
 %% @end
 subscribe(Name, Measure, Description, Tags, Aggregation) ->
     View = new(Name, Measure, Description, Tags, Aggregation),
@@ -154,6 +166,8 @@ subscribe(Name, Measure, Description, Tags, Aggregation) ->
 
 %% @doc
 %% Subscribe the View, When subscribed, a view can aggregate measure data and export it.
+%%
+%% Returns `{error, {unknown_view, Name}}' if `Name' view is unknown.
 %% @end
 -spec subscribe(name() | view() | map()) -> {ok, view()} | {error, any()}.
 subscribe(Map) when is_map(Map) ->
@@ -167,6 +181,8 @@ subscribe(Name) ->
 %% @doc
 %% Unsubscribes the View. When unsubscribed a view no longer aggregates measure data
 %% and exports it. Also all existing aggregation data cleared.
+%%
+%% Returns `{error, {unknown_view, Name}}' if `Name' view is unknown.
 %% @end
 -spec unsubscribe(name() | view()) -> ok.
 unsubscribe(#view{name=Name}) ->
@@ -267,6 +283,7 @@ register_(_, #view{name=Name}=View) ->
             end
     end.
 
+%% @private
 register_subscribe_(View) ->
     case register_(View) of
         {ok, V} ->
