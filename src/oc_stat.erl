@@ -40,8 +40,14 @@
             ok
         end).
 
-%% @doc Records one or multiple measurements with the same tags at once.
+%% @doc
+%% Records one or multiple measurements with the same tags at once.
 %% If there are any tags in the context, measurements will be tagged with them.
+%%
+%% Can be optimized with `oc_stat_measure' parse transform.
+%%
+%% Raises `{unknown_measure, MeasureName}' if measure doesn't exist.
+%% @end
 -spec record(ctx:t() | oc_tags:tags(), oc_stat_measure:name(), number()) -> ok.
 record(Tags, MeasureName, Value) when is_map(Tags) ->
     ?RECORD(Tags, MeasureName, Value);
@@ -49,6 +55,13 @@ record(Ctx, MeasureName, Value)->
     Tags = oc_tags:from_ctx(Ctx),
     ?RECORD(Tags, MeasureName, Value).
 
+%% @doc
+%% Records multiple measurements at once.
+%%
+%% Can be optimized with `oc_stat_measure' parse transform.
+%%
+%% Raises `{unknown_measure, MeasureName}' if measure doesn't exist.
+%% @end
 -spec record(ctx:t() | oc_tags:tags(), [{oc_stat_measure:name(), number()}]) -> ok.
 record(Tags, Measures) when is_map(Tags) ->
     [?RECORD(Tags, MeasureName, Value) || {MeasureName, Value} <- Measures],

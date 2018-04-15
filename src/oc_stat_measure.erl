@@ -16,6 +16,17 @@
 %% Measure represents a type of metric to be tracked and recorded.
 %% For example, latency, request Mb/s, and response Mb/s are measures
 %% to collect from a server.
+%%
+%% Measure is a generic interface for recording values in aggregations
+%% via subscribed views.
+%% When recording a value, we have to obtain the list of all subscribed views
+%% and call respective aggregations. We use code generation to optimize this.
+%% When a view subscribed or unsubscribed we regenerate unrolled loop in a
+%% special module (one for each measure). Module names generated from measurement
+%% names (1-to-1). If we know a measure name at the compile time, we can eliminate
+%% the module name lookup and inject remote call directly, replacing `oc_stat:record'
+%% with `<GENERATED_MEASURE_MODULE>:record'.
+%% For that {parse_transform, oc_stat_measure} option must be used.
 %% @end
 %%%-----------------------------------------------------------------------
 -module(oc_stat_measure).
@@ -157,12 +168,15 @@ module_name_str(Name) when is_list(Name) ->
 name_template(Name) ->
     lists:flatten(["$_MEASURE_", Name]).
 
+%% @private
 maybe_module_name(Name) ->
     list_to_existing_atom(module_name_str(Name)).
 
+%% @private
 regen_record(ModuleName, VSs) ->
     regen_module(ModuleName, gen_add_sample_calls(VSs), erl_parse:abstract(VSs)).
 
+%% @private
 delete_measure(#measure{name=Name, module=Module}) ->
     ErrorA = erl_parse:abstract({unknown_measure, Name}),
     regen_module(Module,
@@ -174,6 +188,7 @@ delete_measure(#measure{name=Name, module=Module}) ->
                   {remote, 1, {atom, 1, erlang}, {atom, 1, error}},
                   [ErrorA]}).
 
+%% @private
 regen_module(ModuleName, RecordBody, Subs) ->
     ModuleNameStr = atom_to_list(ModuleName),
     {ok, Module, Binary} =
@@ -204,6 +219,12 @@ gen_add_sample_calls([]) ->
 gen_add_sample_calls(VSs) ->
     lists:map(fun oc_stat_view:gen_add_sample_/1, VSs).
 
+%% @doc
+%% `oc_stat_measure' is also a parse transform. It can detect `oc_stat:record' calls
+%% with constant measure names and generate remote measure module call from that.
+%% At the run-time this means we don't have to do a lookup for the module name and
+%% if measure doesn't exist, `{unknown_measure, Name}' error will be thrown.
+%% @end
 parse_transform(Forms, _Options) ->
     HiForms = lists:map(fun walk_ast/1, Forms),
     HiForms.
