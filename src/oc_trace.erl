@@ -136,6 +136,7 @@ start_span(Name, SpanCtx) ->
       SpanCtx :: opencensus:span_ctx(),
       Options :: #{remote_parent => boolean(),
                    sampler => module(),
+                   kind => opencensus:span_kind(),
                    attributes => opencensus:attributes()}.
 start_span(Name, SpanCtx, Options) ->
     RemoteParent = maps:get(remote_parent, Options, false),

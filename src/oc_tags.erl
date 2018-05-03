@@ -19,6 +19,8 @@
 
 -export([new/0,
          new/1,
+         new/2,
+         update/2,
          new_ctx/2,
          from_ctx/1,
          to_map/1,
@@ -52,6 +54,21 @@ new(Map) ->
                       end
               end, #{}, Map).
 
+-spec new(ctx:t(), maps:map()) -> ctx:t().
+new(Ctx, Map) ->
+    ctx:with_value(Ctx, ?TAG_CTX, update(from_ctx(Ctx), Map)).
+
+-spec update(tags(), maps:map()) -> tags().
+update(Tags, Map) ->
+    maps:fold(fun(K, V, Acc) ->
+                      case put(K, V, Acc) of
+                          {ok, Acc1} ->
+                              Acc1;
+                          {error, _} ->
+                              Acc
+                      end
+              end, to_map(Tags), Map).
+
 -spec new_ctx(ctx:t(), tags()) -> ctx:t().
 new_ctx(Ctx, Tags) ->
     ctx:with_value(Ctx, ?TAG_CTX, Tags).
@@ -64,7 +81,7 @@ from_ctx(Ctx) ->
 to_map(Tags) ->
     Tags.
 
--spec put(key(), value(), tags()) -> {ok, tags()} | {error, term()}.
+-spec put(key(), value(), tags()) -> {ok, tags()} | {error, any()}.
 put(Key, Value, Tags) ->
     case verify_key(Key) andalso verify_value(Value) of
         true ->
