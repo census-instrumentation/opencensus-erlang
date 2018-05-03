@@ -31,6 +31,7 @@
          code_change/3]).
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 %% behaviour for reporters to implement
 -type opts() :: term().
@@ -128,17 +129,18 @@ send_spans(Reporter, Config) ->
             ok;
         Spans ->
             ets:delete_all_objects(Buffer),
-            %% don't let a reporter exception crash us
-            try
-                report(Reporter, Spans, Config)
-            catch
-                Class:Exception ->
-                    error_logger:info_msg("reporter threw exception: reporter=~p ~p:~p stacktrace=~p",
-                                          [Reporter, Class, Exception, erlang:get_stacktrace()])
-            end
+            report(Reporter, Spans, Config)
+
     end.
 
 report(undefined, _, _) ->
     ok;
 report(Reporter, Spans, Config) ->
-    Reporter:report(Spans, Config).
+    %% don't let a reporter exception crash us
+    try
+        Reporter:report(Spans, Config)
+    catch
+        ?WITH_STACKTRACE(Class, Exception, StackTrace)
+            ?LOG_INFO("reporter threw exception: reporter=~p ~p:~p stacktrace=~p",
+                      [Reporter, Class, Exception, StackTrace])
+    end.

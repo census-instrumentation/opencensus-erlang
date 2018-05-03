@@ -11,6 +11,7 @@
 -include_lib("common_test/include/ct.hrl").
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 all() ->
     [round_trip].
@@ -47,8 +48,8 @@ round_trip(_Config) ->
     StackTrace = try
                      throw(x)
                  catch
-                     _:_ ->
-                         erlang:get_stacktrace()
+                     ?WITH_STACKTRACE(_, _, Stacktrace)
+                         Stacktrace
                  end,
 
     %% set all optional fields

@@ -1,0 +1,12 @@
+-ifdef('21.0').
+-define(WITH_STACKTRACE(T, R, S), T:R:S ->).
+-else.
+-define(WITH_STACKTRACE(T, R, S), T:R -> S = erlang:get_stacktrace(),).
+-endif.
+
+-ifdef('21.0').
+-include_lib("kernel/include/logger.hrl").
+-else.
+-define(LOG_INFO(Format, Args), error_logger:info_msg(Format, Args)).
+-define(LOG_ERROR(Format, Args), error_logger:error_msg(Format, Args)).
+-endif.

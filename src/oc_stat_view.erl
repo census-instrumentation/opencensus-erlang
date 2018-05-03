@@ -216,7 +216,7 @@ is_subscribed(Name) ->
 %%                  subscribe_(RV);
 %%              {error, Error} ->
 %%                  %% TODO: should it crash?
-%%                  error_logger:info_msg("Unable to preload view ~p. Error is ~p", [NV#view.name, Error])
+%%                  ?LOG_INFO("Unable to preload view ~p. Error is ~p", [NV#view.name, Error])
 %%          end
 %%      end || V <- List].
 
