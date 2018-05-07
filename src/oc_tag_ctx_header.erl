@@ -19,7 +19,8 @@
 
 -export([field_name/0,
          encode/1,
-         decode/1]).
+         decode/1,
+         format_error/1]).
 
 -include("opencensus.hrl").
 
@@ -33,17 +34,19 @@ encode(Tags) ->
     {ok, IOList} = oc_tag_ctx_binary:encode(Tags),
     base64:encode_to_string(iolist_to_binary(IOList)).
 
--spec decode(iodata()) -> maybe(oc_tags:tags()).
+-spec decode(iodata()) ->  {ok, oc_tags:tags()} | {error, any()}.
 decode("0") ->
-    #{};
+    {ok, oc_tags:new()};
 decode(<<"0">>) ->
-    #{};
+    {ok, oc_tags:new()};
 decode(Thing) ->
     try base64:decode(iolist_to_binary(Thing)) of
         Data ->
-            {ok, Tags} = oc_tag_ctx_binary:decode(Data),
-            Tags
+            oc_tag_ctx_binary:decode(Data)
     catch
         _:_ ->
-            undefined
+            {error, {?MODULE, base64_decode_failed}}
     end.
+
+format_error(base64_decode_failed) ->
+    "invalid tag context: tag context header value not base64 encoded".

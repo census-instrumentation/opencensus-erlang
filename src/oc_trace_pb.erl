@@ -34,38 +34,38 @@
 -export_type(['opencensus.proto.trace.Span.SpanKind'/0, 'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'/0, 'opencensus.proto.trace.Span.Link.Type'/0]).
 
 %% message types
--type bool_value_pb() :: #bool_value_pb{}.
--type message_event_pb() :: #message_event_pb{}.
+-type float_value_pb() :: #float_value_pb{}.
 -type truncatable_string_pb() :: #truncatable_string_pb{}.
--type module_pb() :: #module_pb{}.
 -type attribute_value_pb() :: #attribute_value_pb{}.
 -type attributes_pb() :: #attributes_pb{}.
 -type annotation_pb() :: #annotation_pb{}.
+-type module_pb() :: #module_pb{}.
+-type message_event_pb() :: #message_event_pb{}.
 -type timestamp_pb() :: #timestamp_pb{}.
 -type time_event_pb() :: #time_event_pb{}.
--type float_value_pb() :: #float_value_pb{}.
--type int_32_value_pb() :: #int_32_value_pb{}.
+-type time_events_pb() :: #time_events_pb{}.
 -type bytes_value_pb() :: #bytes_value_pb{}.
 -type string_value_pb() :: #string_value_pb{}.
 -type int_64_value_pb() :: #int_64_value_pb{}.
+-type u_int_64_value_pb() :: #u_int_64_value_pb{}.
+-type double_value_pb() :: #double_value_pb{}.
+-type bool_value_pb() :: #bool_value_pb{}.
+-type link_pb() :: #link_pb{}.
+-type links_pb() :: #links_pb{}.
 -type stack_frame_pb() :: #stack_frame_pb{}.
 -type stack_frames_pb() :: #stack_frames_pb{}.
+-type stack_trace_pb() :: #stack_trace_pb{}.
+-type int_32_value_pb() :: #int_32_value_pb{}.
 -type status_pb() :: #status_pb{}.
 -type u_int_32_value_pb() :: #u_int_32_value_pb{}.
--type link_pb() :: #link_pb{}.
--type stack_trace_pb() :: #stack_trace_pb{}.
--type double_value_pb() :: #double_value_pb{}.
--type links_pb() :: #links_pb{}.
--type u_int_64_value_pb() :: #u_int_64_value_pb{}.
--type time_events_pb() :: #time_events_pb{}.
 -type span_pb() :: #span_pb{}.
--export_type(['bool_value_pb'/0, 'message_event_pb'/0, 'truncatable_string_pb'/0, 'module_pb'/0, 'attribute_value_pb'/0, 'attributes_pb'/0, 'annotation_pb'/0, 'timestamp_pb'/0, 'time_event_pb'/0, 'float_value_pb'/0, 'int_32_value_pb'/0, 'bytes_value_pb'/0, 'string_value_pb'/0, 'int_64_value_pb'/0, 'stack_frame_pb'/0, 'stack_frames_pb'/0, 'status_pb'/0, 'u_int_32_value_pb'/0, 'link_pb'/0, 'stack_trace_pb'/0, 'double_value_pb'/0, 'links_pb'/0, 'u_int_64_value_pb'/0, 'time_events_pb'/0, 'span_pb'/0]).
+-export_type(['float_value_pb'/0, 'truncatable_string_pb'/0, 'attribute_value_pb'/0, 'attributes_pb'/0, 'annotation_pb'/0, 'module_pb'/0, 'message_event_pb'/0, 'timestamp_pb'/0, 'time_event_pb'/0, 'time_events_pb'/0, 'bytes_value_pb'/0, 'string_value_pb'/0, 'int_64_value_pb'/0, 'u_int_64_value_pb'/0, 'double_value_pb'/0, 'bool_value_pb'/0, 'link_pb'/0, 'links_pb'/0, 'stack_frame_pb'/0, 'stack_frames_pb'/0, 'stack_trace_pb'/0, 'int_32_value_pb'/0, 'status_pb'/0, 'u_int_32_value_pb'/0, 'span_pb'/0]).
 
--spec encode_msg(#bool_value_pb{} | #message_event_pb{} | #truncatable_string_pb{} | #module_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #float_value_pb{} | #int_32_value_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #status_pb{} | #u_int_32_value_pb{} | #link_pb{} | #stack_trace_pb{} | #double_value_pb{} | #links_pb{} | #u_int_64_value_pb{} | #time_events_pb{} | #span_pb{}) -> binary().
+-spec encode_msg(#float_value_pb{} | #truncatable_string_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #module_pb{} | #message_event_pb{} | #timestamp_pb{} | #time_event_pb{} | #time_events_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #u_int_64_value_pb{} | #double_value_pb{} | #bool_value_pb{} | #link_pb{} | #links_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #stack_trace_pb{} | #int_32_value_pb{} | #status_pb{} | #u_int_32_value_pb{} | #span_pb{}) -> binary().
 encode_msg(Msg) -> encode_msg(Msg, []).
 
 
--spec encode_msg(#bool_value_pb{} | #message_event_pb{} | #truncatable_string_pb{} | #module_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #timestamp_pb{} | #time_event_pb{} | #float_value_pb{} | #int_32_value_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #status_pb{} | #u_int_32_value_pb{} | #link_pb{} | #stack_trace_pb{} | #double_value_pb{} | #links_pb{} | #u_int_64_value_pb{} | #time_events_pb{} | #span_pb{}, list()) -> binary().
+-spec encode_msg(#float_value_pb{} | #truncatable_string_pb{} | #attribute_value_pb{} | #attributes_pb{} | #annotation_pb{} | #module_pb{} | #message_event_pb{} | #timestamp_pb{} | #time_event_pb{} | #time_events_pb{} | #bytes_value_pb{} | #string_value_pb{} | #int_64_value_pb{} | #u_int_64_value_pb{} | #double_value_pb{} | #bool_value_pb{} | #link_pb{} | #links_pb{} | #stack_frame_pb{} | #stack_frames_pb{} | #stack_trace_pb{} | #int_32_value_pb{} | #status_pb{} | #u_int_32_value_pb{} | #span_pb{}, list()) -> binary().
 encode_msg(Msg, Opts) ->
     case proplists:get_bool(verify, Opts) of
       true -> verify_msg(Msg, Opts);
@@ -73,114 +73,66 @@ encode_msg(Msg, Opts) ->
     end,
     TrUserData = proplists:get_value(user_data, Opts),
     case Msg of
-      #bool_value_pb{} ->
-	  e_msg_bool_value_pb(Msg, TrUserData);
-      #message_event_pb{} ->
-	  e_msg_message_event_pb(Msg, TrUserData);
+      #float_value_pb{} ->
+	  e_msg_float_value_pb(Msg, TrUserData);
       #truncatable_string_pb{} ->
 	  e_msg_truncatable_string_pb(Msg, TrUserData);
-      #module_pb{} -> e_msg_module_pb(Msg, TrUserData);
       #attribute_value_pb{} ->
 	  e_msg_attribute_value_pb(Msg, TrUserData);
       #attributes_pb{} ->
 	  e_msg_attributes_pb(Msg, TrUserData);
       #annotation_pb{} ->
 	  e_msg_annotation_pb(Msg, TrUserData);
+      #module_pb{} -> e_msg_module_pb(Msg, TrUserData);
+      #message_event_pb{} ->
+	  e_msg_message_event_pb(Msg, TrUserData);
       #timestamp_pb{} -> e_msg_timestamp_pb(Msg, TrUserData);
       #time_event_pb{} ->
 	  e_msg_time_event_pb(Msg, TrUserData);
-      #float_value_pb{} ->
-	  e_msg_float_value_pb(Msg, TrUserData);
-      #int_32_value_pb{} ->
-	  e_msg_int_32_value_pb(Msg, TrUserData);
+      #time_events_pb{} ->
+	  e_msg_time_events_pb(Msg, TrUserData);
       #bytes_value_pb{} ->
 	  e_msg_bytes_value_pb(Msg, TrUserData);
       #string_value_pb{} ->
 	  e_msg_string_value_pb(Msg, TrUserData);
       #int_64_value_pb{} ->
 	  e_msg_int_64_value_pb(Msg, TrUserData);
+      #u_int_64_value_pb{} ->
+	  e_msg_u_int_64_value_pb(Msg, TrUserData);
+      #double_value_pb{} ->
+	  e_msg_double_value_pb(Msg, TrUserData);
+      #bool_value_pb{} ->
+	  e_msg_bool_value_pb(Msg, TrUserData);
+      #link_pb{} -> e_msg_link_pb(Msg, TrUserData);
+      #links_pb{} -> e_msg_links_pb(Msg, TrUserData);
       #stack_frame_pb{} ->
 	  e_msg_stack_frame_pb(Msg, TrUserData);
       #stack_frames_pb{} ->
 	  e_msg_stack_frames_pb(Msg, TrUserData);
+      #stack_trace_pb{} ->
+	  e_msg_stack_trace_pb(Msg, TrUserData);
+      #int_32_value_pb{} ->
+	  e_msg_int_32_value_pb(Msg, TrUserData);
       #status_pb{} -> e_msg_status_pb(Msg, TrUserData);
       #u_int_32_value_pb{} ->
 	  e_msg_u_int_32_value_pb(Msg, TrUserData);
-      #link_pb{} -> e_msg_link_pb(Msg, TrUserData);
-      #stack_trace_pb{} ->
-	  e_msg_stack_trace_pb(Msg, TrUserData);
-      #double_value_pb{} ->
-	  e_msg_double_value_pb(Msg, TrUserData);
-      #links_pb{} -> e_msg_links_pb(Msg, TrUserData);
-      #u_int_64_value_pb{} ->
-	  e_msg_u_int_64_value_pb(Msg, TrUserData);
-      #time_events_pb{} ->
-	  e_msg_time_events_pb(Msg, TrUserData);
       #span_pb{} -> e_msg_span_pb(Msg, TrUserData)
     end.
 
 
 
-e_msg_bool_value_pb(Msg, TrUserData) ->
-    e_msg_bool_value_pb(Msg, <<>>, TrUserData).
+e_msg_float_value_pb(Msg, TrUserData) ->
+    e_msg_float_value_pb(Msg, <<>>, TrUserData).
 
 
-e_msg_bool_value_pb(#bool_value_pb{value = F1}, Bin,
-		    TrUserData) ->
+e_msg_float_value_pb(#float_value_pb{value = F1}, Bin,
+		     TrUserData) ->
     if F1 == undefined -> Bin;
        true ->
 	   begin
 	     TrF1 = id(F1, TrUserData),
-	     if TrF1 =:= false -> Bin;
-		true -> e_type_bool(TrF1, <<Bin/binary, 8>>)
-	     end
-	   end
-    end.
-
-e_msg_message_event_pb(Msg, TrUserData) ->
-    e_msg_message_event_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_message_event_pb(#message_event_pb{type = F1,
-					 id = F2, uncompressed_size = F3,
-					 compressed_size = F4},
-		       Bin, TrUserData) ->
-    B1 = if F1 == undefined -> Bin;
-	    true ->
-		begin
-		  TrF1 = id(F1, TrUserData),
-		  if TrF1 =:= 'TYPE_UNSPECIFIED' -> Bin;
-		     true ->
-			 'e_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(TrF1,
-											  <<Bin/binary,
-											    8>>)
-		  end
-		end
-	 end,
-    B2 = if F2 == undefined -> B1;
-	    true ->
-		begin
-		  TrF2 = id(F2, TrUserData),
-		  if TrF2 =:= 0 -> B1;
-		     true -> e_varint(TrF2, <<B1/binary, 16>>)
-		  end
-		end
-	 end,
-    B3 = if F3 == undefined -> B2;
-	    true ->
-		begin
-		  TrF3 = id(F3, TrUserData),
-		  if TrF3 =:= 0 -> B2;
-		     true -> e_varint(TrF3, <<B2/binary, 24>>)
-		  end
-		end
-	 end,
-    if F4 == undefined -> B3;
-       true ->
-	   begin
-	     TrF4 = id(F4, TrUserData),
-	     if TrF4 =:= 0 -> B3;
-		true -> e_varint(TrF4, <<B3/binary, 32>>)
+	     if TrF1 =:= 0.0 -> Bin;
+		true -> e_type_float(TrF1, <<Bin/binary, 13>>)
 	     end
 	   end
     end.
@@ -209,35 +161,6 @@ e_msg_truncatable_string_pb(#truncatable_string_pb{value
 	     TrF2 = id(F2, TrUserData),
 	     if TrF2 =:= 0 -> B1;
 		true -> e_type_int32(TrF2, <<B1/binary, 16>>)
-	     end
-	   end
-    end.
-
-e_msg_module_pb(Msg, TrUserData) ->
-    e_msg_module_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_module_pb(#module_pb{module = F1, build_id = F2},
-		Bin, TrUserData) ->
-    B1 = if F1 == undefined -> Bin;
-	    true ->
-		begin
-		  TrF1 = id(F1, TrUserData),
-		  if TrF1 =:= undefined -> Bin;
-		     true ->
-			 e_mfield_module_pb_module(TrF1, <<Bin/binary, 10>>,
-						   TrUserData)
-		  end
-		end
-	 end,
-    if F2 == undefined -> B1;
-       true ->
-	   begin
-	     TrF2 = id(F2, TrUserData),
-	     if TrF2 =:= undefined -> B1;
-		true ->
-		    e_mfield_module_pb_build_id(TrF2, <<B1/binary, 18>>,
-						TrUserData)
 	     end
 	   end
     end.
@@ -328,6 +251,83 @@ e_msg_annotation_pb(#annotation_pb{description = F1,
 	   end
     end.
 
+e_msg_module_pb(Msg, TrUserData) ->
+    e_msg_module_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_module_pb(#module_pb{module = F1, build_id = F2},
+		Bin, TrUserData) ->
+    B1 = if F1 == undefined -> Bin;
+	    true ->
+		begin
+		  TrF1 = id(F1, TrUserData),
+		  if TrF1 =:= undefined -> Bin;
+		     true ->
+			 e_mfield_module_pb_module(TrF1, <<Bin/binary, 10>>,
+						   TrUserData)
+		  end
+		end
+	 end,
+    if F2 == undefined -> B1;
+       true ->
+	   begin
+	     TrF2 = id(F2, TrUserData),
+	     if TrF2 =:= undefined -> B1;
+		true ->
+		    e_mfield_module_pb_build_id(TrF2, <<B1/binary, 18>>,
+						TrUserData)
+	     end
+	   end
+    end.
+
+e_msg_message_event_pb(Msg, TrUserData) ->
+    e_msg_message_event_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_message_event_pb(#message_event_pb{type = F1,
+					 id = F2, uncompressed_size = F3,
+					 compressed_size = F4},
+		       Bin, TrUserData) ->
+    B1 = if F1 == undefined -> Bin;
+	    true ->
+		begin
+		  TrF1 = id(F1, TrUserData),
+		  if TrF1 =:= 'TYPE_UNSPECIFIED' -> Bin;
+		     true ->
+			 'e_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(TrF1,
+											  <<Bin/binary,
+											    8>>)
+		  end
+		end
+	 end,
+    B2 = if F2 == undefined -> B1;
+	    true ->
+		begin
+		  TrF2 = id(F2, TrUserData),
+		  if TrF2 =:= 0 -> B1;
+		     true -> e_varint(TrF2, <<B1/binary, 16>>)
+		  end
+		end
+	 end,
+    B3 = if F3 == undefined -> B2;
+	    true ->
+		begin
+		  TrF3 = id(F3, TrUserData),
+		  if TrF3 =:= 0 -> B2;
+		     true -> e_varint(TrF3, <<B2/binary, 24>>)
+		  end
+		end
+	 end,
+    if F4 == undefined -> B3;
+       true ->
+	   begin
+	     TrF4 = id(F4, TrUserData),
+	     if TrF4 =:= 0 -> B3;
+		true -> e_varint(TrF4, <<B3/binary, 32>>)
+	     end
+	   end
+    end.
+
 e_msg_timestamp_pb(Msg, TrUserData) ->
     e_msg_timestamp_pb(Msg, <<>>, TrUserData).
 
@@ -388,34 +388,36 @@ e_msg_time_event_pb(#time_event_pb{time = F1,
 	  end
     end.
 
-e_msg_float_value_pb(Msg, TrUserData) ->
-    e_msg_float_value_pb(Msg, <<>>, TrUserData).
+e_msg_time_events_pb(Msg, TrUserData) ->
+    e_msg_time_events_pb(Msg, <<>>, TrUserData).
 
 
-e_msg_float_value_pb(#float_value_pb{value = F1}, Bin,
-		     TrUserData) ->
-    if F1 == undefined -> Bin;
-       true ->
-	   begin
-	     TrF1 = id(F1, TrUserData),
-	     if TrF1 =:= 0.0 -> Bin;
-		true -> e_type_float(TrF1, <<Bin/binary, 13>>)
-	     end
+e_msg_time_events_pb(#time_events_pb{time_event = F1,
+				     dropped_annotations_count = F2,
+				     dropped_message_events_count = F3},
+		     Bin, TrUserData) ->
+    B1 = begin
+	   TrF1 = id(F1, TrUserData),
+	   if TrF1 == [] -> Bin;
+	      true ->
+		  e_field_time_events_pb_time_event(TrF1, Bin, TrUserData)
 	   end
-    end.
-
-e_msg_int_32_value_pb(Msg, TrUserData) ->
-    e_msg_int_32_value_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_int_32_value_pb(#int_32_value_pb{value = F1}, Bin,
-		      TrUserData) ->
-    if F1 == undefined -> Bin;
+	 end,
+    B2 = if F2 == undefined -> B1;
+	    true ->
+		begin
+		  TrF2 = id(F2, TrUserData),
+		  if TrF2 =:= 0 -> B1;
+		     true -> e_type_int32(TrF2, <<B1/binary, 16>>)
+		  end
+		end
+	 end,
+    if F3 == undefined -> B2;
        true ->
 	   begin
-	     TrF1 = id(F1, TrUserData),
-	     if TrF1 =:= 0 -> Bin;
-		true -> e_type_int32(TrF1, <<Bin/binary, 8>>)
+	     TrF3 = id(F3, TrUserData),
+	     if TrF3 =:= 0 -> B2;
+		true -> e_type_int32(TrF3, <<B2/binary, 24>>)
 	     end
 	   end
     end.
@@ -466,6 +468,128 @@ e_msg_int_64_value_pb(#int_64_value_pb{value = F1}, Bin,
 	     TrF1 = id(F1, TrUserData),
 	     if TrF1 =:= 0 -> Bin;
 		true -> e_type_int64(TrF1, <<Bin/binary, 8>>)
+	     end
+	   end
+    end.
+
+e_msg_u_int_64_value_pb(Msg, TrUserData) ->
+    e_msg_u_int_64_value_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_u_int_64_value_pb(#u_int_64_value_pb{value = F1},
+			Bin, TrUserData) ->
+    if F1 == undefined -> Bin;
+       true ->
+	   begin
+	     TrF1 = id(F1, TrUserData),
+	     if TrF1 =:= 0 -> Bin;
+		true -> e_varint(TrF1, <<Bin/binary, 8>>)
+	     end
+	   end
+    end.
+
+e_msg_double_value_pb(Msg, TrUserData) ->
+    e_msg_double_value_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_double_value_pb(#double_value_pb{value = F1}, Bin,
+		      TrUserData) ->
+    if F1 == undefined -> Bin;
+       true ->
+	   begin
+	     TrF1 = id(F1, TrUserData),
+	     if TrF1 =:= 0.0 -> Bin;
+		true -> e_type_double(TrF1, <<Bin/binary, 9>>)
+	     end
+	   end
+    end.
+
+e_msg_bool_value_pb(Msg, TrUserData) ->
+    e_msg_bool_value_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_bool_value_pb(#bool_value_pb{value = F1}, Bin,
+		    TrUserData) ->
+    if F1 == undefined -> Bin;
+       true ->
+	   begin
+	     TrF1 = id(F1, TrUserData),
+	     if TrF1 =:= false -> Bin;
+		true -> e_type_bool(TrF1, <<Bin/binary, 8>>)
+	     end
+	   end
+    end.
+
+e_msg_link_pb(Msg, TrUserData) ->
+    e_msg_link_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_link_pb(#link_pb{trace_id = F1, span_id = F2,
+		       type = F3, attributes = F4},
+	      Bin, TrUserData) ->
+    B1 = if F1 == undefined -> Bin;
+	    true ->
+		begin
+		  TrF1 = id(F1, TrUserData),
+		  case iolist_size(TrF1) of
+		    0 -> Bin;
+		    _ -> e_type_bytes(TrF1, <<Bin/binary, 10>>)
+		  end
+		end
+	 end,
+    B2 = if F2 == undefined -> B1;
+	    true ->
+		begin
+		  TrF2 = id(F2, TrUserData),
+		  case iolist_size(TrF2) of
+		    0 -> B1;
+		    _ -> e_type_bytes(TrF2, <<B1/binary, 18>>)
+		  end
+		end
+	 end,
+    B3 = if F3 == undefined -> B2;
+	    true ->
+		begin
+		  TrF3 = id(F3, TrUserData),
+		  if TrF3 =:= 'TYPE_UNSPECIFIED' -> B2;
+		     true ->
+			 'e_enum_opencensus.proto.trace.Span.Link.Type'(TrF3,
+									<<B2/binary,
+									  24>>)
+		  end
+		end
+	 end,
+    if F4 == undefined -> B3;
+       true ->
+	   begin
+	     TrF4 = id(F4, TrUserData),
+	     if TrF4 =:= undefined -> B3;
+		true ->
+		    e_mfield_link_pb_attributes(TrF4, <<B3/binary, 34>>,
+						TrUserData)
+	     end
+	   end
+    end.
+
+e_msg_links_pb(Msg, TrUserData) ->
+    e_msg_links_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_links_pb(#links_pb{link = F1,
+			 dropped_links_count = F2},
+	       Bin, TrUserData) ->
+    B1 = begin
+	   TrF1 = id(F1, TrUserData),
+	   if TrF1 == [] -> Bin;
+	      true -> e_field_links_pb_link(TrF1, Bin, TrUserData)
+	   end
+	 end,
+    if F2 == undefined -> B1;
+       true ->
+	   begin
+	     TrF2 = id(F2, TrUserData),
+	     if TrF2 =:= 0 -> B1;
+		true -> e_type_int32(TrF2, <<B1/binary, 16>>)
 	     end
 	   end
     end.
@@ -585,6 +709,52 @@ e_msg_stack_frames_pb(#stack_frames_pb{frame = F1,
 	   end
     end.
 
+e_msg_stack_trace_pb(Msg, TrUserData) ->
+    e_msg_stack_trace_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_stack_trace_pb(#stack_trace_pb{stack_frames = F1,
+				     stack_trace_hash_id = F2},
+		     Bin, TrUserData) ->
+    B1 = if F1 == undefined -> Bin;
+	    true ->
+		begin
+		  TrF1 = id(F1, TrUserData),
+		  if TrF1 =:= undefined -> Bin;
+		     true ->
+			 e_mfield_stack_trace_pb_stack_frames(TrF1,
+							      <<Bin/binary,
+								10>>,
+							      TrUserData)
+		  end
+		end
+	 end,
+    if F2 == undefined -> B1;
+       true ->
+	   begin
+	     TrF2 = id(F2, TrUserData),
+	     if TrF2 =:= 0 -> B1;
+		true -> e_varint(TrF2, <<B1/binary, 16>>)
+	     end
+	   end
+    end.
+
+e_msg_int_32_value_pb(Msg, TrUserData) ->
+    e_msg_int_32_value_pb(Msg, <<>>, TrUserData).
+
+
+e_msg_int_32_value_pb(#int_32_value_pb{value = F1}, Bin,
+		      TrUserData) ->
+    if F1 == undefined -> Bin;
+       true ->
+	   begin
+	     TrF1 = id(F1, TrUserData),
+	     if TrF1 =:= 0 -> Bin;
+		true -> e_type_int32(TrF1, <<Bin/binary, 8>>)
+	     end
+	   end
+    end.
+
 e_msg_status_pb(Msg, TrUserData) ->
     e_msg_status_pb(Msg, <<>>, TrUserData).
 
@@ -623,176 +793,6 @@ e_msg_u_int_32_value_pb(#u_int_32_value_pb{value = F1},
 	     TrF1 = id(F1, TrUserData),
 	     if TrF1 =:= 0 -> Bin;
 		true -> e_varint(TrF1, <<Bin/binary, 8>>)
-	     end
-	   end
-    end.
-
-e_msg_link_pb(Msg, TrUserData) ->
-    e_msg_link_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_link_pb(#link_pb{trace_id = F1, span_id = F2,
-		       type = F3, attributes = F4},
-	      Bin, TrUserData) ->
-    B1 = if F1 == undefined -> Bin;
-	    true ->
-		begin
-		  TrF1 = id(F1, TrUserData),
-		  case iolist_size(TrF1) of
-		    0 -> Bin;
-		    _ -> e_type_bytes(TrF1, <<Bin/binary, 10>>)
-		  end
-		end
-	 end,
-    B2 = if F2 == undefined -> B1;
-	    true ->
-		begin
-		  TrF2 = id(F2, TrUserData),
-		  case iolist_size(TrF2) of
-		    0 -> B1;
-		    _ -> e_type_bytes(TrF2, <<B1/binary, 18>>)
-		  end
-		end
-	 end,
-    B3 = if F3 == undefined -> B2;
-	    true ->
-		begin
-		  TrF3 = id(F3, TrUserData),
-		  if TrF3 =:= 'TYPE_UNSPECIFIED' -> B2;
-		     true ->
-			 'e_enum_opencensus.proto.trace.Span.Link.Type'(TrF3,
-									<<B2/binary,
-									  24>>)
-		  end
-		end
-	 end,
-    if F4 == undefined -> B3;
-       true ->
-	   begin
-	     TrF4 = id(F4, TrUserData),
-	     if TrF4 =:= undefined -> B3;
-		true ->
-		    e_mfield_link_pb_attributes(TrF4, <<B3/binary, 34>>,
-						TrUserData)
-	     end
-	   end
-    end.
-
-e_msg_stack_trace_pb(Msg, TrUserData) ->
-    e_msg_stack_trace_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_stack_trace_pb(#stack_trace_pb{stack_frames = F1,
-				     stack_trace_hash_id = F2},
-		     Bin, TrUserData) ->
-    B1 = if F1 == undefined -> Bin;
-	    true ->
-		begin
-		  TrF1 = id(F1, TrUserData),
-		  if TrF1 =:= undefined -> Bin;
-		     true ->
-			 e_mfield_stack_trace_pb_stack_frames(TrF1,
-							      <<Bin/binary,
-								10>>,
-							      TrUserData)
-		  end
-		end
-	 end,
-    if F2 == undefined -> B1;
-       true ->
-	   begin
-	     TrF2 = id(F2, TrUserData),
-	     if TrF2 =:= 0 -> B1;
-		true -> e_varint(TrF2, <<B1/binary, 16>>)
-	     end
-	   end
-    end.
-
-e_msg_double_value_pb(Msg, TrUserData) ->
-    e_msg_double_value_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_double_value_pb(#double_value_pb{value = F1}, Bin,
-		      TrUserData) ->
-    if F1 == undefined -> Bin;
-       true ->
-	   begin
-	     TrF1 = id(F1, TrUserData),
-	     if TrF1 =:= 0.0 -> Bin;
-		true -> e_type_double(TrF1, <<Bin/binary, 9>>)
-	     end
-	   end
-    end.
-
-e_msg_links_pb(Msg, TrUserData) ->
-    e_msg_links_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_links_pb(#links_pb{link = F1,
-			 dropped_links_count = F2},
-	       Bin, TrUserData) ->
-    B1 = begin
-	   TrF1 = id(F1, TrUserData),
-	   if TrF1 == [] -> Bin;
-	      true -> e_field_links_pb_link(TrF1, Bin, TrUserData)
-	   end
-	 end,
-    if F2 == undefined -> B1;
-       true ->
-	   begin
-	     TrF2 = id(F2, TrUserData),
-	     if TrF2 =:= 0 -> B1;
-		true -> e_type_int32(TrF2, <<B1/binary, 16>>)
-	     end
-	   end
-    end.
-
-e_msg_u_int_64_value_pb(Msg, TrUserData) ->
-    e_msg_u_int_64_value_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_u_int_64_value_pb(#u_int_64_value_pb{value = F1},
-			Bin, TrUserData) ->
-    if F1 == undefined -> Bin;
-       true ->
-	   begin
-	     TrF1 = id(F1, TrUserData),
-	     if TrF1 =:= 0 -> Bin;
-		true -> e_varint(TrF1, <<Bin/binary, 8>>)
-	     end
-	   end
-    end.
-
-e_msg_time_events_pb(Msg, TrUserData) ->
-    e_msg_time_events_pb(Msg, <<>>, TrUserData).
-
-
-e_msg_time_events_pb(#time_events_pb{time_event = F1,
-				     dropped_annotations_count = F2,
-				     dropped_message_events_count = F3},
-		     Bin, TrUserData) ->
-    B1 = begin
-	   TrF1 = id(F1, TrUserData),
-	   if TrF1 == [] -> Bin;
-	      true ->
-		  e_field_time_events_pb_time_event(TrF1, Bin, TrUserData)
-	   end
-	 end,
-    B2 = if F2 == undefined -> B1;
-	    true ->
-		begin
-		  TrF2 = id(F2, TrUserData),
-		  if TrF2 =:= 0 -> B1;
-		     true -> e_type_int32(TrF2, <<B1/binary, 16>>)
-		  end
-		end
-	 end,
-    if F3 == undefined -> B2;
-       true ->
-	   begin
-	     TrF3 = id(F3, TrUserData),
-	     if TrF3 =:= 0 -> B2;
-		true -> e_type_int32(TrF3, <<B2/binary, 24>>)
 	     end
 	   end
     end.
@@ -964,18 +964,6 @@ e_msg_span_pb(#span_pb{trace_id = F1, span_id = F2,
 	   end
     end.
 
-e_mfield_module_pb_module(Msg, Bin, TrUserData) ->
-    SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
-					 TrUserData),
-    Bin2 = e_varint(byte_size(SubBin), Bin),
-    <<Bin2/binary, SubBin/binary>>.
-
-e_mfield_module_pb_build_id(Msg, Bin, TrUserData) ->
-    SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
-					 TrUserData),
-    Bin2 = e_varint(byte_size(SubBin), Bin),
-    <<Bin2/binary, SubBin/binary>>.
-
 e_mfield_attribute_value_pb_string_value(Msg, Bin,
 					 TrUserData) ->
     SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
@@ -1016,6 +1004,18 @@ e_mfield_annotation_pb_attributes(Msg, Bin,
     Bin2 = e_varint(byte_size(SubBin), Bin),
     <<Bin2/binary, SubBin/binary>>.
 
+e_mfield_module_pb_module(Msg, Bin, TrUserData) ->
+    SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
+					 TrUserData),
+    Bin2 = e_varint(byte_size(SubBin), Bin),
+    <<Bin2/binary, SubBin/binary>>.
+
+e_mfield_module_pb_build_id(Msg, Bin, TrUserData) ->
+    SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
+					 TrUserData),
+    Bin2 = e_varint(byte_size(SubBin), Bin),
+    <<Bin2/binary, SubBin/binary>>.
+
 e_mfield_time_event_pb_time(Msg, Bin, TrUserData) ->
     SubBin = e_msg_timestamp_pb(Msg, <<>>, TrUserData),
     Bin2 = e_varint(byte_size(SubBin), Bin),
@@ -1032,6 +1032,41 @@ e_mfield_time_event_pb_message_event(Msg, Bin,
     SubBin = e_msg_message_event_pb(Msg, <<>>, TrUserData),
     Bin2 = e_varint(byte_size(SubBin), Bin),
     <<Bin2/binary, SubBin/binary>>.
+
+e_mfield_time_events_pb_time_event(Msg, Bin,
+				   TrUserData) ->
+    SubBin = e_msg_time_event_pb(Msg, <<>>, TrUserData),
+    Bin2 = e_varint(byte_size(SubBin), Bin),
+    <<Bin2/binary, SubBin/binary>>.
+
+e_field_time_events_pb_time_event([Elem | Rest], Bin,
+				  TrUserData) ->
+    Bin2 = <<Bin/binary, 10>>,
+    Bin3 = e_mfield_time_events_pb_time_event(id(Elem,
+						 TrUserData),
+					      Bin2, TrUserData),
+    e_field_time_events_pb_time_event(Rest, Bin3,
+				      TrUserData);
+e_field_time_events_pb_time_event([], Bin,
+				  _TrUserData) ->
+    Bin.
+
+e_mfield_link_pb_attributes(Msg, Bin, TrUserData) ->
+    SubBin = e_msg_attributes_pb(Msg, <<>>, TrUserData),
+    Bin2 = e_varint(byte_size(SubBin), Bin),
+    <<Bin2/binary, SubBin/binary>>.
+
+e_mfield_links_pb_link(Msg, Bin, TrUserData) ->
+    SubBin = e_msg_link_pb(Msg, <<>>, TrUserData),
+    Bin2 = e_varint(byte_size(SubBin), Bin),
+    <<Bin2/binary, SubBin/binary>>.
+
+e_field_links_pb_link([Elem | Rest], Bin, TrUserData) ->
+    Bin2 = <<Bin/binary, 10>>,
+    Bin3 = e_mfield_links_pb_link(id(Elem, TrUserData),
+				  Bin2, TrUserData),
+    e_field_links_pb_link(Rest, Bin3, TrUserData);
+e_field_links_pb_link([], Bin, _TrUserData) -> Bin.
 
 e_mfield_stack_frame_pb_function_name(Msg, Bin,
 				      TrUserData) ->
@@ -1082,46 +1117,11 @@ e_field_stack_frames_pb_frame([Elem | Rest], Bin,
 e_field_stack_frames_pb_frame([], Bin, _TrUserData) ->
     Bin.
 
-e_mfield_link_pb_attributes(Msg, Bin, TrUserData) ->
-    SubBin = e_msg_attributes_pb(Msg, <<>>, TrUserData),
-    Bin2 = e_varint(byte_size(SubBin), Bin),
-    <<Bin2/binary, SubBin/binary>>.
-
 e_mfield_stack_trace_pb_stack_frames(Msg, Bin,
 				     TrUserData) ->
     SubBin = e_msg_stack_frames_pb(Msg, <<>>, TrUserData),
     Bin2 = e_varint(byte_size(SubBin), Bin),
     <<Bin2/binary, SubBin/binary>>.
-
-e_mfield_links_pb_link(Msg, Bin, TrUserData) ->
-    SubBin = e_msg_link_pb(Msg, <<>>, TrUserData),
-    Bin2 = e_varint(byte_size(SubBin), Bin),
-    <<Bin2/binary, SubBin/binary>>.
-
-e_field_links_pb_link([Elem | Rest], Bin, TrUserData) ->
-    Bin2 = <<Bin/binary, 10>>,
-    Bin3 = e_mfield_links_pb_link(id(Elem, TrUserData),
-				  Bin2, TrUserData),
-    e_field_links_pb_link(Rest, Bin3, TrUserData);
-e_field_links_pb_link([], Bin, _TrUserData) -> Bin.
-
-e_mfield_time_events_pb_time_event(Msg, Bin,
-				   TrUserData) ->
-    SubBin = e_msg_time_event_pb(Msg, <<>>, TrUserData),
-    Bin2 = e_varint(byte_size(SubBin), Bin),
-    <<Bin2/binary, SubBin/binary>>.
-
-e_field_time_events_pb_time_event([Elem | Rest], Bin,
-				  TrUserData) ->
-    Bin2 = <<Bin/binary, 10>>,
-    Bin3 = e_mfield_time_events_pb_time_event(id(Elem,
-						 TrUserData),
-					      Bin2, TrUserData),
-    e_field_time_events_pb_time_event(Rest, Bin3,
-				      TrUserData);
-e_field_time_events_pb_time_event([], Bin,
-				  _TrUserData) ->
-    Bin.
 
 e_mfield_span_pb_name(Msg, Bin, TrUserData) ->
     SubBin = e_msg_truncatable_string_pb(Msg, <<>>,
@@ -1316,21 +1316,13 @@ decode_msg(Bin, MsgName) when is_binary(Bin) ->
 decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
     TrUserData = proplists:get_value(user_data, Opts),
     case MsgName of
-      bool_value_pb ->
-	  try d_msg_bool_value_pb(Bin, TrUserData) catch
+      float_value_pb ->
+	  try d_msg_float_value_pb(Bin, TrUserData) catch
 	    Class:Reason ->
 		StackTrace = erlang:get_stacktrace(),
 		error({gpb_error,
 		       {decoding_failure,
-			{Bin, bool_value_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      message_event_pb ->
-	  try d_msg_message_event_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, message_event_pb, {Class, Reason, StackTrace}}}})
+			{Bin, float_value_pb, {Class, Reason, StackTrace}}}})
 	  end;
       truncatable_string_pb ->
 	  try d_msg_truncatable_string_pb(Bin, TrUserData) catch
@@ -1340,14 +1332,6 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		       {decoding_failure,
 			{Bin, truncatable_string_pb,
 			 {Class, Reason, StackTrace}}}})
-	  end;
-      module_pb ->
-	  try d_msg_module_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, module_pb, {Class, Reason, StackTrace}}}})
 	  end;
       attribute_value_pb ->
 	  try d_msg_attribute_value_pb(Bin, TrUserData) catch
@@ -1374,6 +1358,22 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		       {decoding_failure,
 			{Bin, annotation_pb, {Class, Reason, StackTrace}}}})
 	  end;
+      module_pb ->
+	  try d_msg_module_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, module_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      message_event_pb ->
+	  try d_msg_message_event_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, message_event_pb, {Class, Reason, StackTrace}}}})
+	  end;
       timestamp_pb ->
 	  try d_msg_timestamp_pb(Bin, TrUserData) catch
 	    Class:Reason ->
@@ -1390,21 +1390,13 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		       {decoding_failure,
 			{Bin, time_event_pb, {Class, Reason, StackTrace}}}})
 	  end;
-      float_value_pb ->
-	  try d_msg_float_value_pb(Bin, TrUserData) catch
+      time_events_pb ->
+	  try d_msg_time_events_pb(Bin, TrUserData) catch
 	    Class:Reason ->
 		StackTrace = erlang:get_stacktrace(),
 		error({gpb_error,
 		       {decoding_failure,
-			{Bin, float_value_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      int_32_value_pb ->
-	  try d_msg_int_32_value_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, int_32_value_pb, {Class, Reason, StackTrace}}}})
+			{Bin, time_events_pb, {Class, Reason, StackTrace}}}})
 	  end;
       bytes_value_pb ->
 	  try d_msg_bytes_value_pb(Bin, TrUserData) catch
@@ -1430,6 +1422,46 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		       {decoding_failure,
 			{Bin, int_64_value_pb, {Class, Reason, StackTrace}}}})
 	  end;
+      u_int_64_value_pb ->
+	  try d_msg_u_int_64_value_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, u_int_64_value_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      double_value_pb ->
+	  try d_msg_double_value_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, double_value_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      bool_value_pb ->
+	  try d_msg_bool_value_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, bool_value_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      link_pb ->
+	  try d_msg_link_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, link_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      links_pb ->
+	  try d_msg_links_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, links_pb, {Class, Reason, StackTrace}}}})
+	  end;
       stack_frame_pb ->
 	  try d_msg_stack_frame_pb(Bin, TrUserData) catch
 	    Class:Reason ->
@@ -1445,6 +1477,22 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		error({gpb_error,
 		       {decoding_failure,
 			{Bin, stack_frames_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      stack_trace_pb ->
+	  try d_msg_stack_trace_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, stack_trace_pb, {Class, Reason, StackTrace}}}})
+	  end;
+      int_32_value_pb ->
+	  try d_msg_int_32_value_pb(Bin, TrUserData) catch
+	    Class:Reason ->
+		StackTrace = erlang:get_stacktrace(),
+		error({gpb_error,
+		       {decoding_failure,
+			{Bin, int_32_value_pb, {Class, Reason, StackTrace}}}})
 	  end;
       status_pb ->
 	  try d_msg_status_pb(Bin, TrUserData) catch
@@ -1462,54 +1510,6 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 		       {decoding_failure,
 			{Bin, u_int_32_value_pb, {Class, Reason, StackTrace}}}})
 	  end;
-      link_pb ->
-	  try d_msg_link_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, link_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      stack_trace_pb ->
-	  try d_msg_stack_trace_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, stack_trace_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      double_value_pb ->
-	  try d_msg_double_value_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, double_value_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      links_pb ->
-	  try d_msg_links_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, links_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      u_int_64_value_pb ->
-	  try d_msg_u_int_64_value_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, u_int_64_value_pb, {Class, Reason, StackTrace}}}})
-	  end;
-      time_events_pb ->
-	  try d_msg_time_events_pb(Bin, TrUserData) catch
-	    Class:Reason ->
-		StackTrace = erlang:get_stacktrace(),
-		error({gpb_error,
-		       {decoding_failure,
-			{Bin, time_events_pb, {Class, Reason, StackTrace}}}})
-	  end;
       span_pb ->
 	  try d_msg_span_pb(Bin, TrUserData) catch
 	    Class:Reason ->
@@ -1522,299 +1522,115 @@ decode_msg(Bin, MsgName, Opts) when is_binary(Bin) ->
 
 
 
-d_msg_bool_value_pb(Bin, TrUserData) ->
-    dfp_read_field_def_bool_value_pb(Bin, 0, 0,
-				     id(false, TrUserData), TrUserData).
+d_msg_float_value_pb(Bin, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Bin, 0, 0,
+				      id(0.0, TrUserData), TrUserData).
 
-dfp_read_field_def_bool_value_pb(<<8, Rest/binary>>, Z1,
-				 Z2, F@_1, TrUserData) ->
-    d_field_bool_value_pb_value(Rest, Z1, Z2, F@_1,
-				TrUserData);
-dfp_read_field_def_bool_value_pb(<<>>, 0, 0, F@_1, _) ->
-    #bool_value_pb{value = F@_1};
-dfp_read_field_def_bool_value_pb(Other, Z1, Z2, F@_1,
-				 TrUserData) ->
-    dg_read_field_def_bool_value_pb(Other, Z1, Z2, F@_1,
-				    TrUserData).
+dfp_read_field_def_float_value_pb(<<13, Rest/binary>>,
+				  Z1, Z2, F@_1, TrUserData) ->
+    d_field_float_value_pb_value(Rest, Z1, Z2, F@_1,
+				 TrUserData);
+dfp_read_field_def_float_value_pb(<<>>, 0, 0, F@_1,
+				  _) ->
+    #float_value_pb{value = F@_1};
+dfp_read_field_def_float_value_pb(Other, Z1, Z2, F@_1,
+				  TrUserData) ->
+    dg_read_field_def_float_value_pb(Other, Z1, Z2, F@_1,
+				     TrUserData).
 
-dg_read_field_def_bool_value_pb(<<1:1, X:7,
-				  Rest/binary>>,
-				N, Acc, F@_1, TrUserData)
+dg_read_field_def_float_value_pb(<<1:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, TrUserData)
     when N < 32 - 7 ->
-    dg_read_field_def_bool_value_pb(Rest, N + 7,
-				    X bsl N + Acc, F@_1, TrUserData);
-dg_read_field_def_bool_value_pb(<<0:1, X:7,
-				  Rest/binary>>,
-				N, Acc, F@_1, TrUserData) ->
+    dg_read_field_def_float_value_pb(Rest, N + 7,
+				     X bsl N + Acc, F@_1, TrUserData);
+dg_read_field_def_float_value_pb(<<0:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, TrUserData) ->
     Key = X bsl N + Acc,
     case Key of
-      8 ->
-	  d_field_bool_value_pb_value(Rest, 0, 0, F@_1,
-				      TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_bool_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    1 ->
-		skip_64_bool_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    2 ->
-		skip_length_delimited_bool_value_pb(Rest, 0, 0, F@_1,
-						    TrUserData);
-	    3 ->
-		skip_group_bool_value_pb(Rest, Key bsr 3, 0, F@_1,
-					 TrUserData);
-	    5 -> skip_32_bool_value_pb(Rest, 0, 0, F@_1, TrUserData)
-	  end
-    end;
-dg_read_field_def_bool_value_pb(<<>>, 0, 0, F@_1, _) ->
-    #bool_value_pb{value = F@_1}.
-
-d_field_bool_value_pb_value(<<1:1, X:7, Rest/binary>>,
-			    N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    d_field_bool_value_pb_value(Rest, N + 7, X bsl N + Acc,
-				F@_1, TrUserData);
-d_field_bool_value_pb_value(<<0:1, X:7, Rest/binary>>,
-			    N, Acc, _, TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc =/= 0, Rest},
-    dfp_read_field_def_bool_value_pb(RestF, 0, 0, NewFValue,
-				     TrUserData).
-
-skip_varint_bool_value_pb(<<1:1, _:7, Rest/binary>>, Z1,
-			  Z2, F@_1, TrUserData) ->
-    skip_varint_bool_value_pb(Rest, Z1, Z2, F@_1,
-			      TrUserData);
-skip_varint_bool_value_pb(<<0:1, _:7, Rest/binary>>, Z1,
-			  Z2, F@_1, TrUserData) ->
-    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
-				     TrUserData).
-
-skip_length_delimited_bool_value_pb(<<1:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_bool_value_pb(Rest, N + 7,
-					X bsl N + Acc, F@_1, TrUserData);
-skip_length_delimited_bool_value_pb(<<0:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, F@_1, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_bool_value_pb(Rest2, 0, 0, F@_1,
-				     TrUserData).
-
-skip_group_bool_value_pb(Bin, FNum, Z2, F@_1,
-			 TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_bool_value_pb(Rest, 0, Z2, F@_1,
-				     TrUserData).
-
-skip_32_bool_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
-		      F@_1, TrUserData) ->
-    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
-				     TrUserData).
-
-skip_64_bool_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
-		      F@_1, TrUserData) ->
-    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
-				     TrUserData).
-
-d_msg_message_event_pb(Bin, TrUserData) ->
-    dfp_read_field_def_message_event_pb(Bin, 0, 0,
-					id('TYPE_UNSPECIFIED', TrUserData),
-					id(0, TrUserData), id(0, TrUserData),
-					id(0, TrUserData), TrUserData).
-
-dfp_read_field_def_message_event_pb(<<8, Rest/binary>>,
-				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
-				    TrUserData) ->
-    d_field_message_event_pb_type(Rest, Z1, Z2, F@_1, F@_2,
-				  F@_3, F@_4, TrUserData);
-dfp_read_field_def_message_event_pb(<<16, Rest/binary>>,
-				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
-				    TrUserData) ->
-    d_field_message_event_pb_id(Rest, Z1, Z2, F@_1, F@_2,
-				F@_3, F@_4, TrUserData);
-dfp_read_field_def_message_event_pb(<<24, Rest/binary>>,
-				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
-				    TrUserData) ->
-    d_field_message_event_pb_uncompressed_size(Rest, Z1, Z2,
-					       F@_1, F@_2, F@_3, F@_4,
-					       TrUserData);
-dfp_read_field_def_message_event_pb(<<32, Rest/binary>>,
-				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
-				    TrUserData) ->
-    d_field_message_event_pb_compressed_size(Rest, Z1, Z2,
-					     F@_1, F@_2, F@_3, F@_4,
-					     TrUserData);
-dfp_read_field_def_message_event_pb(<<>>, 0, 0, F@_1,
-				    F@_2, F@_3, F@_4, _) ->
-    #message_event_pb{type = F@_1, id = F@_2,
-		      uncompressed_size = F@_3, compressed_size = F@_4};
-dfp_read_field_def_message_event_pb(Other, Z1, Z2, F@_1,
-				    F@_2, F@_3, F@_4, TrUserData) ->
-    dg_read_field_def_message_event_pb(Other, Z1, Z2, F@_1,
-				       F@_2, F@_3, F@_4, TrUserData).
-
-dg_read_field_def_message_event_pb(<<1:1, X:7,
-				     Rest/binary>>,
-				   N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_message_event_pb(Rest, N + 7,
-				       X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
+      13 ->
+	  d_field_float_value_pb_value(Rest, 0, 0, F@_1,
 				       TrUserData);
-dg_read_field_def_message_event_pb(<<0:1, X:7,
-				     Rest/binary>>,
-				   N, Acc, F@_1, F@_2, F@_3, F@_4,
-				   TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      8 ->
-	  d_field_message_event_pb_type(Rest, 0, 0, F@_1, F@_2,
-					F@_3, F@_4, TrUserData);
-      16 ->
-	  d_field_message_event_pb_id(Rest, 0, 0, F@_1, F@_2,
-				      F@_3, F@_4, TrUserData);
-      24 ->
-	  d_field_message_event_pb_uncompressed_size(Rest, 0, 0,
-						     F@_1, F@_2, F@_3, F@_4,
-						     TrUserData);
-      32 ->
-	  d_field_message_event_pb_compressed_size(Rest, 0, 0,
-						   F@_1, F@_2, F@_3, F@_4,
-						   TrUserData);
       _ ->
 	  case Key band 7 of
 	    0 ->
-		skip_varint_message_event_pb(Rest, 0, 0, F@_1, F@_2,
-					     F@_3, F@_4, TrUserData);
+		skip_varint_float_value_pb(Rest, 0, 0, F@_1,
+					   TrUserData);
 	    1 ->
-		skip_64_message_event_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
-					 F@_4, TrUserData);
+		skip_64_float_value_pb(Rest, 0, 0, F@_1, TrUserData);
 	    2 ->
-		skip_length_delimited_message_event_pb(Rest, 0, 0, F@_1,
-						       F@_2, F@_3, F@_4,
-						       TrUserData);
+		skip_length_delimited_float_value_pb(Rest, 0, 0, F@_1,
+						     TrUserData);
 	    3 ->
-		skip_group_message_event_pb(Rest, Key bsr 3, 0, F@_1,
-					    F@_2, F@_3, F@_4, TrUserData);
+		skip_group_float_value_pb(Rest, Key bsr 3, 0, F@_1,
+					  TrUserData);
 	    5 ->
-		skip_32_message_event_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
-					 F@_4, TrUserData)
+		skip_32_float_value_pb(Rest, 0, 0, F@_1, TrUserData)
 	  end
     end;
-dg_read_field_def_message_event_pb(<<>>, 0, 0, F@_1,
-				   F@_2, F@_3, F@_4, _) ->
-    #message_event_pb{type = F@_1, id = F@_2,
-		      uncompressed_size = F@_3, compressed_size = F@_4}.
+dg_read_field_def_float_value_pb(<<>>, 0, 0, F@_1, _) ->
+    #float_value_pb{value = F@_1}.
 
-d_field_message_event_pb_type(<<1:1, X:7, Rest/binary>>,
-			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+d_field_float_value_pb_value(<<0:16, 128, 127,
+			       Rest/binary>>,
+			     Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2,
+				      infinity, TrUserData);
+d_field_float_value_pb_value(<<0:16, 128, 255,
+			       Rest/binary>>,
+			     Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2,
+				      '-infinity', TrUserData);
+d_field_float_value_pb_value(<<_:16, 1:1, _:7, _:1,
+			       127:7, Rest/binary>>,
+			     Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, nan,
+				      TrUserData);
+d_field_float_value_pb_value(<<Value:32/little-float,
+			       Rest/binary>>,
+			     Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, Value,
+				      TrUserData).
+
+skip_varint_float_value_pb(<<1:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, TrUserData) ->
+    skip_varint_float_value_pb(Rest, Z1, Z2, F@_1,
+			       TrUserData);
+skip_varint_float_value_pb(<<0:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
+				      TrUserData).
+
+skip_length_delimited_float_value_pb(<<1:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, TrUserData)
     when N < 57 ->
-    d_field_message_event_pb_type(Rest, N + 7,
-				  X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
-				  TrUserData);
-d_field_message_event_pb_type(<<0:1, X:7, Rest/binary>>,
-			      N, Acc, _, F@_2, F@_3, F@_4, TrUserData) ->
-    {NewFValue, RestF} =
-	{'d_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(begin
-									    <<Res:32/signed-native>> =
-										<<(X
-										     bsl
-										     N
-										     +
-										     Acc):32/unsigned-native>>,
-									    Res
-									  end),
-	 Rest},
-    dfp_read_field_def_message_event_pb(RestF, 0, 0,
-					NewFValue, F@_2, F@_3, F@_4,
-					TrUserData).
-
-d_field_message_event_pb_id(<<1:1, X:7, Rest/binary>>,
-			    N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    d_field_message_event_pb_id(Rest, N + 7, X bsl N + Acc,
-				F@_1, F@_2, F@_3, F@_4, TrUserData);
-d_field_message_event_pb_id(<<0:1, X:7, Rest/binary>>,
-			    N, Acc, F@_1, _, F@_3, F@_4, TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc, Rest},
-    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
-					NewFValue, F@_3, F@_4, TrUserData).
-
-d_field_message_event_pb_uncompressed_size(<<1:1, X:7,
-					     Rest/binary>>,
-					   N, Acc, F@_1, F@_2, F@_3, F@_4,
-					   TrUserData)
-    when N < 57 ->
-    d_field_message_event_pb_uncompressed_size(Rest, N + 7,
-					       X bsl N + Acc, F@_1, F@_2, F@_3,
-					       F@_4, TrUserData);
-d_field_message_event_pb_uncompressed_size(<<0:1, X:7,
-					     Rest/binary>>,
-					   N, Acc, F@_1, F@_2, _, F@_4,
-					   TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc, Rest},
-    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
-					F@_2, NewFValue, F@_4, TrUserData).
-
-d_field_message_event_pb_compressed_size(<<1:1, X:7,
-					   Rest/binary>>,
-					 N, Acc, F@_1, F@_2, F@_3, F@_4,
-					 TrUserData)
-    when N < 57 ->
-    d_field_message_event_pb_compressed_size(Rest, N + 7,
-					     X bsl N + Acc, F@_1, F@_2, F@_3,
-					     F@_4, TrUserData);
-d_field_message_event_pb_compressed_size(<<0:1, X:7,
-					   Rest/binary>>,
-					 N, Acc, F@_1, F@_2, F@_3, _,
-					 TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc, Rest},
-    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
-					F@_2, F@_3, NewFValue, TrUserData).
-
-skip_varint_message_event_pb(<<1:1, _:7, Rest/binary>>,
-			     Z1, Z2, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    skip_varint_message_event_pb(Rest, Z1, Z2, F@_1, F@_2,
-				 F@_3, F@_4, TrUserData);
-skip_varint_message_event_pb(<<0:1, _:7, Rest/binary>>,
-			     Z1, Z2, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
-					F@_2, F@_3, F@_4, TrUserData).
-
-skip_length_delimited_message_event_pb(<<1:1, X:7,
-					 Rest/binary>>,
-				       N, Acc, F@_1, F@_2, F@_3, F@_4,
-				       TrUserData)
-    when N < 57 ->
-    skip_length_delimited_message_event_pb(Rest, N + 7,
-					   X bsl N + Acc, F@_1, F@_2, F@_3,
-					   F@_4, TrUserData);
-skip_length_delimited_message_event_pb(<<0:1, X:7,
-					 Rest/binary>>,
-				       N, Acc, F@_1, F@_2, F@_3, F@_4,
-				       TrUserData) ->
+    skip_length_delimited_float_value_pb(Rest, N + 7,
+					 X bsl N + Acc, F@_1, TrUserData);
+skip_length_delimited_float_value_pb(<<0:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, TrUserData) ->
     Length = X bsl N + Acc,
     <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_message_event_pb(Rest2, 0, 0, F@_1,
-					F@_2, F@_3, F@_4, TrUserData).
+    dfp_read_field_def_float_value_pb(Rest2, 0, 0, F@_1,
+				      TrUserData).
 
-skip_group_message_event_pb(Bin, FNum, Z2, F@_1, F@_2,
-			    F@_3, F@_4, TrUserData) ->
+skip_group_float_value_pb(Bin, FNum, Z2, F@_1,
+			  TrUserData) ->
     {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_message_event_pb(Rest, 0, Z2, F@_1,
-					F@_2, F@_3, F@_4, TrUserData).
+    dfp_read_field_def_float_value_pb(Rest, 0, Z2, F@_1,
+				      TrUserData).
 
-skip_32_message_event_pb(<<_:32, Rest/binary>>, Z1, Z2,
-			 F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
-					F@_2, F@_3, F@_4, TrUserData).
+skip_32_float_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
+		       F@_1, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
+				      TrUserData).
 
-skip_64_message_event_pb(<<_:64, Rest/binary>>, Z1, Z2,
-			 F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
-					F@_2, F@_3, F@_4, TrUserData).
+skip_64_float_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
+		       F@_1, TrUserData) ->
+    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
+				      TrUserData).
 
 d_msg_truncatable_string_pb(Bin, TrUserData) ->
     dfp_read_field_def_truncatable_string_pb(Bin, 0, 0,
@@ -1964,148 +1780,6 @@ skip_64_truncatable_string_pb(<<_:64, Rest/binary>>, Z1,
 			      Z2, F@_1, F@_2, TrUserData) ->
     dfp_read_field_def_truncatable_string_pb(Rest, Z1, Z2,
 					     F@_1, F@_2, TrUserData).
-
-d_msg_module_pb(Bin, TrUserData) ->
-    dfp_read_field_def_module_pb(Bin, 0, 0,
-				 id(undefined, TrUserData),
-				 id(undefined, TrUserData), TrUserData).
-
-dfp_read_field_def_module_pb(<<10, Rest/binary>>, Z1,
-			     Z2, F@_1, F@_2, TrUserData) ->
-    d_field_module_pb_module(Rest, Z1, Z2, F@_1, F@_2,
-			     TrUserData);
-dfp_read_field_def_module_pb(<<18, Rest/binary>>, Z1,
-			     Z2, F@_1, F@_2, TrUserData) ->
-    d_field_module_pb_build_id(Rest, Z1, Z2, F@_1, F@_2,
-			       TrUserData);
-dfp_read_field_def_module_pb(<<>>, 0, 0, F@_1, F@_2,
-			     _) ->
-    #module_pb{module = F@_1, build_id = F@_2};
-dfp_read_field_def_module_pb(Other, Z1, Z2, F@_1, F@_2,
-			     TrUserData) ->
-    dg_read_field_def_module_pb(Other, Z1, Z2, F@_1, F@_2,
-				TrUserData).
-
-dg_read_field_def_module_pb(<<1:1, X:7, Rest/binary>>,
-			    N, Acc, F@_1, F@_2, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_module_pb(Rest, N + 7, X bsl N + Acc,
-				F@_1, F@_2, TrUserData);
-dg_read_field_def_module_pb(<<0:1, X:7, Rest/binary>>,
-			    N, Acc, F@_1, F@_2, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      10 ->
-	  d_field_module_pb_module(Rest, 0, 0, F@_1, F@_2,
-				   TrUserData);
-      18 ->
-	  d_field_module_pb_build_id(Rest, 0, 0, F@_1, F@_2,
-				     TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_module_pb(Rest, 0, 0, F@_1, F@_2,
-				      TrUserData);
-	    1 ->
-		skip_64_module_pb(Rest, 0, 0, F@_1, F@_2, TrUserData);
-	    2 ->
-		skip_length_delimited_module_pb(Rest, 0, 0, F@_1, F@_2,
-						TrUserData);
-	    3 ->
-		skip_group_module_pb(Rest, Key bsr 3, 0, F@_1, F@_2,
-				     TrUserData);
-	    5 ->
-		skip_32_module_pb(Rest, 0, 0, F@_1, F@_2, TrUserData)
-	  end
-    end;
-dg_read_field_def_module_pb(<<>>, 0, 0, F@_1, F@_2,
-			    _) ->
-    #module_pb{module = F@_1, build_id = F@_2}.
-
-d_field_module_pb_module(<<1:1, X:7, Rest/binary>>, N,
-			 Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_module_pb_module(Rest, N + 7, X bsl N + Acc,
-			     F@_1, F@_2, TrUserData);
-d_field_module_pb_module(<<0:1, X:7, Rest/binary>>, N,
-			 Acc, Prev, F@_2, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_truncatable_string_pb(Bs, TrUserData),
-			       TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_module_pb(RestF, 0, 0,
-				 if Prev == undefined -> NewFValue;
-				    true ->
-					merge_msg_truncatable_string_pb(Prev,
-									NewFValue,
-									TrUserData)
-				 end,
-				 F@_2, TrUserData).
-
-d_field_module_pb_build_id(<<1:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_module_pb_build_id(Rest, N + 7, X bsl N + Acc,
-			       F@_1, F@_2, TrUserData);
-d_field_module_pb_build_id(<<0:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, Prev, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_truncatable_string_pb(Bs, TrUserData),
-			       TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_module_pb(RestF, 0, 0, F@_1,
-				 if Prev == undefined -> NewFValue;
-				    true ->
-					merge_msg_truncatable_string_pb(Prev,
-									NewFValue,
-									TrUserData)
-				 end,
-				 TrUserData).
-
-skip_varint_module_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
-		      F@_1, F@_2, TrUserData) ->
-    skip_varint_module_pb(Rest, Z1, Z2, F@_1, F@_2,
-			  TrUserData);
-skip_varint_module_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
-		      F@_1, F@_2, TrUserData) ->
-    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
-				 TrUserData).
-
-skip_length_delimited_module_pb(<<1:1, X:7,
-				  Rest/binary>>,
-				N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_module_pb(Rest, N + 7,
-				    X bsl N + Acc, F@_1, F@_2, TrUserData);
-skip_length_delimited_module_pb(<<0:1, X:7,
-				  Rest/binary>>,
-				N, Acc, F@_1, F@_2, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_module_pb(Rest2, 0, 0, F@_1, F@_2,
-				 TrUserData).
-
-skip_group_module_pb(Bin, FNum, Z2, F@_1, F@_2,
-		     TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_module_pb(Rest, 0, Z2, F@_1, F@_2,
-				 TrUserData).
-
-skip_32_module_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
-		  F@_2, TrUserData) ->
-    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
-				 TrUserData).
-
-skip_64_module_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
-		  F@_2, TrUserData) ->
-    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
-				 TrUserData).
 
 d_msg_attribute_value_pb(Bin, TrUserData) ->
     dfp_read_field_def_attribute_value_pb(Bin, 0, 0,
@@ -2577,6 +2251,345 @@ skip_64_annotation_pb(<<_:64, Rest/binary>>, Z1, Z2,
     dfp_read_field_def_annotation_pb(Rest, Z1, Z2, F@_1,
 				     F@_2, TrUserData).
 
+d_msg_module_pb(Bin, TrUserData) ->
+    dfp_read_field_def_module_pb(Bin, 0, 0,
+				 id(undefined, TrUserData),
+				 id(undefined, TrUserData), TrUserData).
+
+dfp_read_field_def_module_pb(<<10, Rest/binary>>, Z1,
+			     Z2, F@_1, F@_2, TrUserData) ->
+    d_field_module_pb_module(Rest, Z1, Z2, F@_1, F@_2,
+			     TrUserData);
+dfp_read_field_def_module_pb(<<18, Rest/binary>>, Z1,
+			     Z2, F@_1, F@_2, TrUserData) ->
+    d_field_module_pb_build_id(Rest, Z1, Z2, F@_1, F@_2,
+			       TrUserData);
+dfp_read_field_def_module_pb(<<>>, 0, 0, F@_1, F@_2,
+			     _) ->
+    #module_pb{module = F@_1, build_id = F@_2};
+dfp_read_field_def_module_pb(Other, Z1, Z2, F@_1, F@_2,
+			     TrUserData) ->
+    dg_read_field_def_module_pb(Other, Z1, Z2, F@_1, F@_2,
+				TrUserData).
+
+dg_read_field_def_module_pb(<<1:1, X:7, Rest/binary>>,
+			    N, Acc, F@_1, F@_2, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_module_pb(Rest, N + 7, X bsl N + Acc,
+				F@_1, F@_2, TrUserData);
+dg_read_field_def_module_pb(<<0:1, X:7, Rest/binary>>,
+			    N, Acc, F@_1, F@_2, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      10 ->
+	  d_field_module_pb_module(Rest, 0, 0, F@_1, F@_2,
+				   TrUserData);
+      18 ->
+	  d_field_module_pb_build_id(Rest, 0, 0, F@_1, F@_2,
+				     TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_module_pb(Rest, 0, 0, F@_1, F@_2,
+				      TrUserData);
+	    1 ->
+		skip_64_module_pb(Rest, 0, 0, F@_1, F@_2, TrUserData);
+	    2 ->
+		skip_length_delimited_module_pb(Rest, 0, 0, F@_1, F@_2,
+						TrUserData);
+	    3 ->
+		skip_group_module_pb(Rest, Key bsr 3, 0, F@_1, F@_2,
+				     TrUserData);
+	    5 ->
+		skip_32_module_pb(Rest, 0, 0, F@_1, F@_2, TrUserData)
+	  end
+    end;
+dg_read_field_def_module_pb(<<>>, 0, 0, F@_1, F@_2,
+			    _) ->
+    #module_pb{module = F@_1, build_id = F@_2}.
+
+d_field_module_pb_module(<<1:1, X:7, Rest/binary>>, N,
+			 Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_module_pb_module(Rest, N + 7, X bsl N + Acc,
+			     F@_1, F@_2, TrUserData);
+d_field_module_pb_module(<<0:1, X:7, Rest/binary>>, N,
+			 Acc, Prev, F@_2, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_truncatable_string_pb(Bs, TrUserData),
+			       TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_module_pb(RestF, 0, 0,
+				 if Prev == undefined -> NewFValue;
+				    true ->
+					merge_msg_truncatable_string_pb(Prev,
+									NewFValue,
+									TrUserData)
+				 end,
+				 F@_2, TrUserData).
+
+d_field_module_pb_build_id(<<1:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_module_pb_build_id(Rest, N + 7, X bsl N + Acc,
+			       F@_1, F@_2, TrUserData);
+d_field_module_pb_build_id(<<0:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, Prev, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_truncatable_string_pb(Bs, TrUserData),
+			       TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_module_pb(RestF, 0, 0, F@_1,
+				 if Prev == undefined -> NewFValue;
+				    true ->
+					merge_msg_truncatable_string_pb(Prev,
+									NewFValue,
+									TrUserData)
+				 end,
+				 TrUserData).
+
+skip_varint_module_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
+		      F@_1, F@_2, TrUserData) ->
+    skip_varint_module_pb(Rest, Z1, Z2, F@_1, F@_2,
+			  TrUserData);
+skip_varint_module_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
+		      F@_1, F@_2, TrUserData) ->
+    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
+				 TrUserData).
+
+skip_length_delimited_module_pb(<<1:1, X:7,
+				  Rest/binary>>,
+				N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_module_pb(Rest, N + 7,
+				    X bsl N + Acc, F@_1, F@_2, TrUserData);
+skip_length_delimited_module_pb(<<0:1, X:7,
+				  Rest/binary>>,
+				N, Acc, F@_1, F@_2, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_module_pb(Rest2, 0, 0, F@_1, F@_2,
+				 TrUserData).
+
+skip_group_module_pb(Bin, FNum, Z2, F@_1, F@_2,
+		     TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_module_pb(Rest, 0, Z2, F@_1, F@_2,
+				 TrUserData).
+
+skip_32_module_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
+		  F@_2, TrUserData) ->
+    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
+				 TrUserData).
+
+skip_64_module_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
+		  F@_2, TrUserData) ->
+    dfp_read_field_def_module_pb(Rest, Z1, Z2, F@_1, F@_2,
+				 TrUserData).
+
+d_msg_message_event_pb(Bin, TrUserData) ->
+    dfp_read_field_def_message_event_pb(Bin, 0, 0,
+					id('TYPE_UNSPECIFIED', TrUserData),
+					id(0, TrUserData), id(0, TrUserData),
+					id(0, TrUserData), TrUserData).
+
+dfp_read_field_def_message_event_pb(<<8, Rest/binary>>,
+				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
+				    TrUserData) ->
+    d_field_message_event_pb_type(Rest, Z1, Z2, F@_1, F@_2,
+				  F@_3, F@_4, TrUserData);
+dfp_read_field_def_message_event_pb(<<16, Rest/binary>>,
+				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
+				    TrUserData) ->
+    d_field_message_event_pb_id(Rest, Z1, Z2, F@_1, F@_2,
+				F@_3, F@_4, TrUserData);
+dfp_read_field_def_message_event_pb(<<24, Rest/binary>>,
+				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
+				    TrUserData) ->
+    d_field_message_event_pb_uncompressed_size(Rest, Z1, Z2,
+					       F@_1, F@_2, F@_3, F@_4,
+					       TrUserData);
+dfp_read_field_def_message_event_pb(<<32, Rest/binary>>,
+				    Z1, Z2, F@_1, F@_2, F@_3, F@_4,
+				    TrUserData) ->
+    d_field_message_event_pb_compressed_size(Rest, Z1, Z2,
+					     F@_1, F@_2, F@_3, F@_4,
+					     TrUserData);
+dfp_read_field_def_message_event_pb(<<>>, 0, 0, F@_1,
+				    F@_2, F@_3, F@_4, _) ->
+    #message_event_pb{type = F@_1, id = F@_2,
+		      uncompressed_size = F@_3, compressed_size = F@_4};
+dfp_read_field_def_message_event_pb(Other, Z1, Z2, F@_1,
+				    F@_2, F@_3, F@_4, TrUserData) ->
+    dg_read_field_def_message_event_pb(Other, Z1, Z2, F@_1,
+				       F@_2, F@_3, F@_4, TrUserData).
+
+dg_read_field_def_message_event_pb(<<1:1, X:7,
+				     Rest/binary>>,
+				   N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_message_event_pb(Rest, N + 7,
+				       X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
+				       TrUserData);
+dg_read_field_def_message_event_pb(<<0:1, X:7,
+				     Rest/binary>>,
+				   N, Acc, F@_1, F@_2, F@_3, F@_4,
+				   TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      8 ->
+	  d_field_message_event_pb_type(Rest, 0, 0, F@_1, F@_2,
+					F@_3, F@_4, TrUserData);
+      16 ->
+	  d_field_message_event_pb_id(Rest, 0, 0, F@_1, F@_2,
+				      F@_3, F@_4, TrUserData);
+      24 ->
+	  d_field_message_event_pb_uncompressed_size(Rest, 0, 0,
+						     F@_1, F@_2, F@_3, F@_4,
+						     TrUserData);
+      32 ->
+	  d_field_message_event_pb_compressed_size(Rest, 0, 0,
+						   F@_1, F@_2, F@_3, F@_4,
+						   TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_message_event_pb(Rest, 0, 0, F@_1, F@_2,
+					     F@_3, F@_4, TrUserData);
+	    1 ->
+		skip_64_message_event_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
+					 F@_4, TrUserData);
+	    2 ->
+		skip_length_delimited_message_event_pb(Rest, 0, 0, F@_1,
+						       F@_2, F@_3, F@_4,
+						       TrUserData);
+	    3 ->
+		skip_group_message_event_pb(Rest, Key bsr 3, 0, F@_1,
+					    F@_2, F@_3, F@_4, TrUserData);
+	    5 ->
+		skip_32_message_event_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
+					 F@_4, TrUserData)
+	  end
+    end;
+dg_read_field_def_message_event_pb(<<>>, 0, 0, F@_1,
+				   F@_2, F@_3, F@_4, _) ->
+    #message_event_pb{type = F@_1, id = F@_2,
+		      uncompressed_size = F@_3, compressed_size = F@_4}.
+
+d_field_message_event_pb_type(<<1:1, X:7, Rest/binary>>,
+			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_message_event_pb_type(Rest, N + 7,
+				  X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
+				  TrUserData);
+d_field_message_event_pb_type(<<0:1, X:7, Rest/binary>>,
+			      N, Acc, _, F@_2, F@_3, F@_4, TrUserData) ->
+    {NewFValue, RestF} =
+	{'d_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(begin
+									    <<Res:32/signed-native>> =
+										<<(X
+										     bsl
+										     N
+										     +
+										     Acc):32/unsigned-native>>,
+									    Res
+									  end),
+	 Rest},
+    dfp_read_field_def_message_event_pb(RestF, 0, 0,
+					NewFValue, F@_2, F@_3, F@_4,
+					TrUserData).
+
+d_field_message_event_pb_id(<<1:1, X:7, Rest/binary>>,
+			    N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_message_event_pb_id(Rest, N + 7, X bsl N + Acc,
+				F@_1, F@_2, F@_3, F@_4, TrUserData);
+d_field_message_event_pb_id(<<0:1, X:7, Rest/binary>>,
+			    N, Acc, F@_1, _, F@_3, F@_4, TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc, Rest},
+    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
+					NewFValue, F@_3, F@_4, TrUserData).
+
+d_field_message_event_pb_uncompressed_size(<<1:1, X:7,
+					     Rest/binary>>,
+					   N, Acc, F@_1, F@_2, F@_3, F@_4,
+					   TrUserData)
+    when N < 57 ->
+    d_field_message_event_pb_uncompressed_size(Rest, N + 7,
+					       X bsl N + Acc, F@_1, F@_2, F@_3,
+					       F@_4, TrUserData);
+d_field_message_event_pb_uncompressed_size(<<0:1, X:7,
+					     Rest/binary>>,
+					   N, Acc, F@_1, F@_2, _, F@_4,
+					   TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc, Rest},
+    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
+					F@_2, NewFValue, F@_4, TrUserData).
+
+d_field_message_event_pb_compressed_size(<<1:1, X:7,
+					   Rest/binary>>,
+					 N, Acc, F@_1, F@_2, F@_3, F@_4,
+					 TrUserData)
+    when N < 57 ->
+    d_field_message_event_pb_compressed_size(Rest, N + 7,
+					     X bsl N + Acc, F@_1, F@_2, F@_3,
+					     F@_4, TrUserData);
+d_field_message_event_pb_compressed_size(<<0:1, X:7,
+					   Rest/binary>>,
+					 N, Acc, F@_1, F@_2, F@_3, _,
+					 TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc, Rest},
+    dfp_read_field_def_message_event_pb(RestF, 0, 0, F@_1,
+					F@_2, F@_3, NewFValue, TrUserData).
+
+skip_varint_message_event_pb(<<1:1, _:7, Rest/binary>>,
+			     Z1, Z2, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    skip_varint_message_event_pb(Rest, Z1, Z2, F@_1, F@_2,
+				 F@_3, F@_4, TrUserData);
+skip_varint_message_event_pb(<<0:1, _:7, Rest/binary>>,
+			     Z1, Z2, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
+					F@_2, F@_3, F@_4, TrUserData).
+
+skip_length_delimited_message_event_pb(<<1:1, X:7,
+					 Rest/binary>>,
+				       N, Acc, F@_1, F@_2, F@_3, F@_4,
+				       TrUserData)
+    when N < 57 ->
+    skip_length_delimited_message_event_pb(Rest, N + 7,
+					   X bsl N + Acc, F@_1, F@_2, F@_3,
+					   F@_4, TrUserData);
+skip_length_delimited_message_event_pb(<<0:1, X:7,
+					 Rest/binary>>,
+				       N, Acc, F@_1, F@_2, F@_3, F@_4,
+				       TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_message_event_pb(Rest2, 0, 0, F@_1,
+					F@_2, F@_3, F@_4, TrUserData).
+
+skip_group_message_event_pb(Bin, FNum, Z2, F@_1, F@_2,
+			    F@_3, F@_4, TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_message_event_pb(Rest, 0, Z2, F@_1,
+					F@_2, F@_3, F@_4, TrUserData).
+
+skip_32_message_event_pb(<<_:32, Rest/binary>>, Z1, Z2,
+			 F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
+					F@_2, F@_3, F@_4, TrUserData).
+
+skip_64_message_event_pb(<<_:64, Rest/binary>>, Z1, Z2,
+			 F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_message_event_pb(Rest, Z1, Z2, F@_1,
+					F@_2, F@_3, F@_4, TrUserData).
+
 d_msg_timestamp_pb(Bin, TrUserData) ->
     dfp_read_field_def_timestamp_pb(Bin, 0, 0,
 				    id(0, TrUserData), id(0, TrUserData),
@@ -2892,221 +2905,187 @@ skip_64_time_event_pb(<<_:64, Rest/binary>>, Z1, Z2,
     dfp_read_field_def_time_event_pb(Rest, Z1, Z2, F@_1,
 				     F@_2, TrUserData).
 
-d_msg_float_value_pb(Bin, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Bin, 0, 0,
-				      id(0.0, TrUserData), TrUserData).
+d_msg_time_events_pb(Bin, TrUserData) ->
+    dfp_read_field_def_time_events_pb(Bin, 0, 0,
+				      id([], TrUserData), id(0, TrUserData),
+				      id(0, TrUserData), TrUserData).
 
-dfp_read_field_def_float_value_pb(<<13, Rest/binary>>,
-				  Z1, Z2, F@_1, TrUserData) ->
-    d_field_float_value_pb_value(Rest, Z1, Z2, F@_1,
-				 TrUserData);
-dfp_read_field_def_float_value_pb(<<>>, 0, 0, F@_1,
-				  _) ->
-    #float_value_pb{value = F@_1};
-dfp_read_field_def_float_value_pb(Other, Z1, Z2, F@_1,
-				  TrUserData) ->
-    dg_read_field_def_float_value_pb(Other, Z1, Z2, F@_1,
-				     TrUserData).
-
-dg_read_field_def_float_value_pb(<<1:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_float_value_pb(Rest, N + 7,
-				     X bsl N + Acc, F@_1, TrUserData);
-dg_read_field_def_float_value_pb(<<0:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      13 ->
-	  d_field_float_value_pb_value(Rest, 0, 0, F@_1,
-				       TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_float_value_pb(Rest, 0, 0, F@_1,
-					   TrUserData);
-	    1 ->
-		skip_64_float_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    2 ->
-		skip_length_delimited_float_value_pb(Rest, 0, 0, F@_1,
+dfp_read_field_def_time_events_pb(<<10, Rest/binary>>,
+				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
+    d_field_time_events_pb_time_event(Rest, Z1, Z2, F@_1,
+				      F@_2, F@_3, TrUserData);
+dfp_read_field_def_time_events_pb(<<16, Rest/binary>>,
+				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
+    d_field_time_events_pb_dropped_annotations_count(Rest,
+						     Z1, Z2, F@_1, F@_2, F@_3,
 						     TrUserData);
-	    3 ->
-		skip_group_float_value_pb(Rest, Key bsr 3, 0, F@_1,
-					  TrUserData);
-	    5 ->
-		skip_32_float_value_pb(Rest, 0, 0, F@_1, TrUserData)
-	  end
-    end;
-dg_read_field_def_float_value_pb(<<>>, 0, 0, F@_1, _) ->
-    #float_value_pb{value = F@_1}.
+dfp_read_field_def_time_events_pb(<<24, Rest/binary>>,
+				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
+    d_field_time_events_pb_dropped_message_events_count(Rest,
+							Z1, Z2, F@_1, F@_2,
+							F@_3, TrUserData);
+dfp_read_field_def_time_events_pb(<<>>, 0, 0, R1, F@_2,
+				  F@_3, TrUserData) ->
+    #time_events_pb{time_event =
+			lists_reverse(R1, TrUserData),
+		    dropped_annotations_count = F@_2,
+		    dropped_message_events_count = F@_3};
+dfp_read_field_def_time_events_pb(Other, Z1, Z2, F@_1,
+				  F@_2, F@_3, TrUserData) ->
+    dg_read_field_def_time_events_pb(Other, Z1, Z2, F@_1,
+				     F@_2, F@_3, TrUserData).
 
-d_field_float_value_pb_value(<<0:16, 128, 127,
-			       Rest/binary>>,
-			     Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2,
-				      infinity, TrUserData);
-d_field_float_value_pb_value(<<0:16, 128, 255,
-			       Rest/binary>>,
-			     Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2,
-				      '-infinity', TrUserData);
-d_field_float_value_pb_value(<<_:16, 1:1, _:7, _:1,
-			       127:7, Rest/binary>>,
-			     Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, nan,
-				      TrUserData);
-d_field_float_value_pb_value(<<Value:32/little-float,
-			       Rest/binary>>,
-			     Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, Value,
-				      TrUserData).
-
-skip_varint_float_value_pb(<<1:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, TrUserData) ->
-    skip_varint_float_value_pb(Rest, Z1, Z2, F@_1,
-			       TrUserData);
-skip_varint_float_value_pb(<<0:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
-				      TrUserData).
-
-skip_length_delimited_float_value_pb(<<1:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_float_value_pb(Rest, N + 7,
-					 X bsl N + Acc, F@_1, TrUserData);
-skip_length_delimited_float_value_pb(<<0:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_float_value_pb(Rest2, 0, 0, F@_1,
-				      TrUserData).
-
-skip_group_float_value_pb(Bin, FNum, Z2, F@_1,
-			  TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_float_value_pb(Rest, 0, Z2, F@_1,
-				      TrUserData).
-
-skip_32_float_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
-		       F@_1, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
-				      TrUserData).
-
-skip_64_float_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
-		       F@_1, TrUserData) ->
-    dfp_read_field_def_float_value_pb(Rest, Z1, Z2, F@_1,
-				      TrUserData).
-
-d_msg_int_32_value_pb(Bin, TrUserData) ->
-    dfp_read_field_def_int_32_value_pb(Bin, 0, 0,
-				       id(0, TrUserData), TrUserData).
-
-dfp_read_field_def_int_32_value_pb(<<8, Rest/binary>>,
-				   Z1, Z2, F@_1, TrUserData) ->
-    d_field_int_32_value_pb_value(Rest, Z1, Z2, F@_1,
-				  TrUserData);
-dfp_read_field_def_int_32_value_pb(<<>>, 0, 0, F@_1,
-				   _) ->
-    #int_32_value_pb{value = F@_1};
-dfp_read_field_def_int_32_value_pb(Other, Z1, Z2, F@_1,
-				   TrUserData) ->
-    dg_read_field_def_int_32_value_pb(Other, Z1, Z2, F@_1,
-				      TrUserData).
-
-dg_read_field_def_int_32_value_pb(<<1:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, F@_1, TrUserData)
+dg_read_field_def_time_events_pb(<<1:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, F@_2, F@_3, TrUserData)
     when N < 32 - 7 ->
-    dg_read_field_def_int_32_value_pb(Rest, N + 7,
-				      X bsl N + Acc, F@_1, TrUserData);
-dg_read_field_def_int_32_value_pb(<<0:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, F@_1, TrUserData) ->
+    dg_read_field_def_time_events_pb(Rest, N + 7,
+				     X bsl N + Acc, F@_1, F@_2, F@_3,
+				     TrUserData);
+dg_read_field_def_time_events_pb(<<0:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, F@_2, F@_3, TrUserData) ->
     Key = X bsl N + Acc,
     case Key of
-      8 ->
-	  d_field_int_32_value_pb_value(Rest, 0, 0, F@_1,
-					TrUserData);
+      10 ->
+	  d_field_time_events_pb_time_event(Rest, 0, 0, F@_1,
+					    F@_2, F@_3, TrUserData);
+      16 ->
+	  d_field_time_events_pb_dropped_annotations_count(Rest,
+							   0, 0, F@_1, F@_2,
+							   F@_3, TrUserData);
+      24 ->
+	  d_field_time_events_pb_dropped_message_events_count(Rest,
+							      0, 0, F@_1, F@_2,
+							      F@_3, TrUserData);
       _ ->
 	  case Key band 7 of
 	    0 ->
-		skip_varint_int_32_value_pb(Rest, 0, 0, F@_1,
-					    TrUserData);
-	    1 ->
-		skip_64_int_32_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    2 ->
-		skip_length_delimited_int_32_value_pb(Rest, 0, 0, F@_1,
-						      TrUserData);
-	    3 ->
-		skip_group_int_32_value_pb(Rest, Key bsr 3, 0, F@_1,
+		skip_varint_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
 					   TrUserData);
+	    1 ->
+		skip_64_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
+				       TrUserData);
+	    2 ->
+		skip_length_delimited_time_events_pb(Rest, 0, 0, F@_1,
+						     F@_2, F@_3, TrUserData);
+	    3 ->
+		skip_group_time_events_pb(Rest, Key bsr 3, 0, F@_1,
+					  F@_2, F@_3, TrUserData);
 	    5 ->
-		skip_32_int_32_value_pb(Rest, 0, 0, F@_1, TrUserData)
+		skip_32_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
+				       TrUserData)
 	  end
     end;
-dg_read_field_def_int_32_value_pb(<<>>, 0, 0, F@_1,
-				  _) ->
-    #int_32_value_pb{value = F@_1}.
+dg_read_field_def_time_events_pb(<<>>, 0, 0, R1, F@_2,
+				 F@_3, TrUserData) ->
+    #time_events_pb{time_event =
+			lists_reverse(R1, TrUserData),
+		    dropped_annotations_count = F@_2,
+		    dropped_message_events_count = F@_3}.
 
-d_field_int_32_value_pb_value(<<1:1, X:7, Rest/binary>>,
-			      N, Acc, F@_1, TrUserData)
+d_field_time_events_pb_time_event(<<1:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, F@_1, F@_2, F@_3, TrUserData)
     when N < 57 ->
-    d_field_int_32_value_pb_value(Rest, N + 7,
-				  X bsl N + Acc, F@_1, TrUserData);
-d_field_int_32_value_pb_value(<<0:1, X:7, Rest/binary>>,
-			      N, Acc, _, TrUserData) ->
+    d_field_time_events_pb_time_event(Rest, N + 7,
+				      X bsl N + Acc, F@_1, F@_2, F@_3,
+				      TrUserData);
+d_field_time_events_pb_time_event(<<0:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, Prev, F@_2, F@_3, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_time_event_pb(Bs, TrUserData), TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_time_events_pb(RestF, 0, 0,
+				      cons(NewFValue, Prev, TrUserData), F@_2,
+				      F@_3, TrUserData).
+
+d_field_time_events_pb_dropped_annotations_count(<<1:1,
+						   X:7, Rest/binary>>,
+						 N, Acc, F@_1, F@_2, F@_3,
+						 TrUserData)
+    when N < 57 ->
+    d_field_time_events_pb_dropped_annotations_count(Rest,
+						     N + 7, X bsl N + Acc, F@_1,
+						     F@_2, F@_3, TrUserData);
+d_field_time_events_pb_dropped_annotations_count(<<0:1,
+						   X:7, Rest/binary>>,
+						 N, Acc, F@_1, _, F@_3,
+						 TrUserData) ->
     {NewFValue, RestF} = {begin
 			    <<Res:32/signed-native>> = <<(X bsl N +
 							    Acc):32/unsigned-native>>,
 			    Res
 			  end,
 			  Rest},
-    dfp_read_field_def_int_32_value_pb(RestF, 0, 0,
-				       NewFValue, TrUserData).
+    dfp_read_field_def_time_events_pb(RestF, 0, 0, F@_1,
+				      NewFValue, F@_3, TrUserData).
 
-skip_varint_int_32_value_pb(<<1:1, _:7, Rest/binary>>,
-			    Z1, Z2, F@_1, TrUserData) ->
-    skip_varint_int_32_value_pb(Rest, Z1, Z2, F@_1,
-				TrUserData);
-skip_varint_int_32_value_pb(<<0:1, _:7, Rest/binary>>,
-			    Z1, Z2, F@_1, TrUserData) ->
-    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
-
-skip_length_delimited_int_32_value_pb(<<1:1, X:7,
-					Rest/binary>>,
-				      N, Acc, F@_1, TrUserData)
+d_field_time_events_pb_dropped_message_events_count(<<1:1,
+						      X:7, Rest/binary>>,
+						    N, Acc, F@_1, F@_2, F@_3,
+						    TrUserData)
     when N < 57 ->
-    skip_length_delimited_int_32_value_pb(Rest, N + 7,
-					  X bsl N + Acc, F@_1, TrUserData);
-skip_length_delimited_int_32_value_pb(<<0:1, X:7,
-					Rest/binary>>,
-				      N, Acc, F@_1, TrUserData) ->
+    d_field_time_events_pb_dropped_message_events_count(Rest,
+							N + 7, X bsl N + Acc,
+							F@_1, F@_2, F@_3,
+							TrUserData);
+d_field_time_events_pb_dropped_message_events_count(<<0:1,
+						      X:7, Rest/binary>>,
+						    N, Acc, F@_1, F@_2, _,
+						    TrUserData) ->
+    {NewFValue, RestF} = {begin
+			    <<Res:32/signed-native>> = <<(X bsl N +
+							    Acc):32/unsigned-native>>,
+			    Res
+			  end,
+			  Rest},
+    dfp_read_field_def_time_events_pb(RestF, 0, 0, F@_1,
+				      F@_2, NewFValue, TrUserData).
+
+skip_varint_time_events_pb(<<1:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
+    skip_varint_time_events_pb(Rest, Z1, Z2, F@_1, F@_2,
+			       F@_3, TrUserData);
+skip_varint_time_events_pb(<<0:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
+    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, F@_3, TrUserData).
+
+skip_length_delimited_time_events_pb(<<1:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, F@_2, F@_3, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_time_events_pb(Rest, N + 7,
+					 X bsl N + Acc, F@_1, F@_2, F@_3,
+					 TrUserData);
+skip_length_delimited_time_events_pb(<<0:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, F@_2, F@_3, TrUserData) ->
     Length = X bsl N + Acc,
     <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_int_32_value_pb(Rest2, 0, 0, F@_1,
-				       TrUserData).
+    dfp_read_field_def_time_events_pb(Rest2, 0, 0, F@_1,
+				      F@_2, F@_3, TrUserData).
 
-skip_group_int_32_value_pb(Bin, FNum, Z2, F@_1,
-			   TrUserData) ->
+skip_group_time_events_pb(Bin, FNum, Z2, F@_1, F@_2,
+			  F@_3, TrUserData) ->
     {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_int_32_value_pb(Rest, 0, Z2, F@_1,
-				       TrUserData).
+    dfp_read_field_def_time_events_pb(Rest, 0, Z2, F@_1,
+				      F@_2, F@_3, TrUserData).
 
-skip_32_int_32_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
-			F@_1, TrUserData) ->
-    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
+skip_32_time_events_pb(<<_:32, Rest/binary>>, Z1, Z2,
+		       F@_1, F@_2, F@_3, TrUserData) ->
+    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, F@_3, TrUserData).
 
-skip_64_int_32_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
-			F@_1, TrUserData) ->
-    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
+skip_64_time_events_pb(<<_:64, Rest/binary>>, Z1, Z2,
+		       F@_1, F@_2, F@_3, TrUserData) ->
+    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, F@_3, TrUserData).
 
 d_msg_bytes_value_pb(Bin, TrUserData) ->
     dfp_read_field_def_bytes_value_pb(Bin, 0, 0,
@@ -3422,6 +3401,634 @@ skip_64_int_64_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
 			F@_1, TrUserData) ->
     dfp_read_field_def_int_64_value_pb(Rest, Z1, Z2, F@_1,
 				       TrUserData).
+
+d_msg_u_int_64_value_pb(Bin, TrUserData) ->
+    dfp_read_field_def_u_int_64_value_pb(Bin, 0, 0,
+					 id(0, TrUserData), TrUserData).
+
+dfp_read_field_def_u_int_64_value_pb(<<8, Rest/binary>>,
+				     Z1, Z2, F@_1, TrUserData) ->
+    d_field_u_int_64_value_pb_value(Rest, Z1, Z2, F@_1,
+				    TrUserData);
+dfp_read_field_def_u_int_64_value_pb(<<>>, 0, 0, F@_1,
+				     _) ->
+    #u_int_64_value_pb{value = F@_1};
+dfp_read_field_def_u_int_64_value_pb(Other, Z1, Z2,
+				     F@_1, TrUserData) ->
+    dg_read_field_def_u_int_64_value_pb(Other, Z1, Z2, F@_1,
+					TrUserData).
+
+dg_read_field_def_u_int_64_value_pb(<<1:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, F@_1, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_u_int_64_value_pb(Rest, N + 7,
+					X bsl N + Acc, F@_1, TrUserData);
+dg_read_field_def_u_int_64_value_pb(<<0:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, F@_1, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      8 ->
+	  d_field_u_int_64_value_pb_value(Rest, 0, 0, F@_1,
+					  TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_u_int_64_value_pb(Rest, 0, 0, F@_1,
+					      TrUserData);
+	    1 ->
+		skip_64_u_int_64_value_pb(Rest, 0, 0, F@_1, TrUserData);
+	    2 ->
+		skip_length_delimited_u_int_64_value_pb(Rest, 0, 0,
+							F@_1, TrUserData);
+	    3 ->
+		skip_group_u_int_64_value_pb(Rest, Key bsr 3, 0, F@_1,
+					     TrUserData);
+	    5 ->
+		skip_32_u_int_64_value_pb(Rest, 0, 0, F@_1, TrUserData)
+	  end
+    end;
+dg_read_field_def_u_int_64_value_pb(<<>>, 0, 0, F@_1,
+				    _) ->
+    #u_int_64_value_pb{value = F@_1}.
+
+d_field_u_int_64_value_pb_value(<<1:1, X:7,
+				  Rest/binary>>,
+				N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    d_field_u_int_64_value_pb_value(Rest, N + 7,
+				    X bsl N + Acc, F@_1, TrUserData);
+d_field_u_int_64_value_pb_value(<<0:1, X:7,
+				  Rest/binary>>,
+				N, Acc, _, TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc, Rest},
+    dfp_read_field_def_u_int_64_value_pb(RestF, 0, 0,
+					 NewFValue, TrUserData).
+
+skip_varint_u_int_64_value_pb(<<1:1, _:7, Rest/binary>>,
+			      Z1, Z2, F@_1, TrUserData) ->
+    skip_varint_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
+				  TrUserData);
+skip_varint_u_int_64_value_pb(<<0:1, _:7, Rest/binary>>,
+			      Z1, Z2, F@_1, TrUserData) ->
+    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
+					 TrUserData).
+
+skip_length_delimited_u_int_64_value_pb(<<1:1, X:7,
+					  Rest/binary>>,
+					N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_u_int_64_value_pb(Rest, N + 7,
+					    X bsl N + Acc, F@_1, TrUserData);
+skip_length_delimited_u_int_64_value_pb(<<0:1, X:7,
+					  Rest/binary>>,
+					N, Acc, F@_1, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_u_int_64_value_pb(Rest2, 0, 0, F@_1,
+					 TrUserData).
+
+skip_group_u_int_64_value_pb(Bin, FNum, Z2, F@_1,
+			     TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_u_int_64_value_pb(Rest, 0, Z2, F@_1,
+					 TrUserData).
+
+skip_32_u_int_64_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
+			  F@_1, TrUserData) ->
+    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
+					 TrUserData).
+
+skip_64_u_int_64_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
+			  F@_1, TrUserData) ->
+    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
+					 TrUserData).
+
+d_msg_double_value_pb(Bin, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Bin, 0, 0,
+				       id(0.0, TrUserData), TrUserData).
+
+dfp_read_field_def_double_value_pb(<<9, Rest/binary>>,
+				   Z1, Z2, F@_1, TrUserData) ->
+    d_field_double_value_pb_value(Rest, Z1, Z2, F@_1,
+				  TrUserData);
+dfp_read_field_def_double_value_pb(<<>>, 0, 0, F@_1,
+				   _) ->
+    #double_value_pb{value = F@_1};
+dfp_read_field_def_double_value_pb(Other, Z1, Z2, F@_1,
+				   TrUserData) ->
+    dg_read_field_def_double_value_pb(Other, Z1, Z2, F@_1,
+				      TrUserData).
+
+dg_read_field_def_double_value_pb(<<1:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, F@_1, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_double_value_pb(Rest, N + 7,
+				      X bsl N + Acc, F@_1, TrUserData);
+dg_read_field_def_double_value_pb(<<0:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, F@_1, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      9 ->
+	  d_field_double_value_pb_value(Rest, 0, 0, F@_1,
+					TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_double_value_pb(Rest, 0, 0, F@_1,
+					    TrUserData);
+	    1 ->
+		skip_64_double_value_pb(Rest, 0, 0, F@_1, TrUserData);
+	    2 ->
+		skip_length_delimited_double_value_pb(Rest, 0, 0, F@_1,
+						      TrUserData);
+	    3 ->
+		skip_group_double_value_pb(Rest, Key bsr 3, 0, F@_1,
+					   TrUserData);
+	    5 ->
+		skip_32_double_value_pb(Rest, 0, 0, F@_1, TrUserData)
+	  end
+    end;
+dg_read_field_def_double_value_pb(<<>>, 0, 0, F@_1,
+				  _) ->
+    #double_value_pb{value = F@_1}.
+
+d_field_double_value_pb_value(<<0:48, 240, 127,
+				Rest/binary>>,
+			      Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2,
+				       infinity, TrUserData);
+d_field_double_value_pb_value(<<0:48, 240, 255,
+				Rest/binary>>,
+			      Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2,
+				       '-infinity', TrUserData);
+d_field_double_value_pb_value(<<_:48, 15:4, _:4, _:1,
+				127:7, Rest/binary>>,
+			      Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, nan,
+				       TrUserData);
+d_field_double_value_pb_value(<<Value:64/little-float,
+				Rest/binary>>,
+			      Z1, Z2, _, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, Value,
+				       TrUserData).
+
+skip_varint_double_value_pb(<<1:1, _:7, Rest/binary>>,
+			    Z1, Z2, F@_1, TrUserData) ->
+    skip_varint_double_value_pb(Rest, Z1, Z2, F@_1,
+				TrUserData);
+skip_varint_double_value_pb(<<0:1, _:7, Rest/binary>>,
+			    Z1, Z2, F@_1, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
+skip_length_delimited_double_value_pb(<<1:1, X:7,
+					Rest/binary>>,
+				      N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_double_value_pb(Rest, N + 7,
+					  X bsl N + Acc, F@_1, TrUserData);
+skip_length_delimited_double_value_pb(<<0:1, X:7,
+					Rest/binary>>,
+				      N, Acc, F@_1, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_double_value_pb(Rest2, 0, 0, F@_1,
+				       TrUserData).
+
+skip_group_double_value_pb(Bin, FNum, Z2, F@_1,
+			   TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_double_value_pb(Rest, 0, Z2, F@_1,
+				       TrUserData).
+
+skip_32_double_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
+			F@_1, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
+skip_64_double_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
+			F@_1, TrUserData) ->
+    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
+d_msg_bool_value_pb(Bin, TrUserData) ->
+    dfp_read_field_def_bool_value_pb(Bin, 0, 0,
+				     id(false, TrUserData), TrUserData).
+
+dfp_read_field_def_bool_value_pb(<<8, Rest/binary>>, Z1,
+				 Z2, F@_1, TrUserData) ->
+    d_field_bool_value_pb_value(Rest, Z1, Z2, F@_1,
+				TrUserData);
+dfp_read_field_def_bool_value_pb(<<>>, 0, 0, F@_1, _) ->
+    #bool_value_pb{value = F@_1};
+dfp_read_field_def_bool_value_pb(Other, Z1, Z2, F@_1,
+				 TrUserData) ->
+    dg_read_field_def_bool_value_pb(Other, Z1, Z2, F@_1,
+				    TrUserData).
+
+dg_read_field_def_bool_value_pb(<<1:1, X:7,
+				  Rest/binary>>,
+				N, Acc, F@_1, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_bool_value_pb(Rest, N + 7,
+				    X bsl N + Acc, F@_1, TrUserData);
+dg_read_field_def_bool_value_pb(<<0:1, X:7,
+				  Rest/binary>>,
+				N, Acc, F@_1, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      8 ->
+	  d_field_bool_value_pb_value(Rest, 0, 0, F@_1,
+				      TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_bool_value_pb(Rest, 0, 0, F@_1, TrUserData);
+	    1 ->
+		skip_64_bool_value_pb(Rest, 0, 0, F@_1, TrUserData);
+	    2 ->
+		skip_length_delimited_bool_value_pb(Rest, 0, 0, F@_1,
+						    TrUserData);
+	    3 ->
+		skip_group_bool_value_pb(Rest, Key bsr 3, 0, F@_1,
+					 TrUserData);
+	    5 -> skip_32_bool_value_pb(Rest, 0, 0, F@_1, TrUserData)
+	  end
+    end;
+dg_read_field_def_bool_value_pb(<<>>, 0, 0, F@_1, _) ->
+    #bool_value_pb{value = F@_1}.
+
+d_field_bool_value_pb_value(<<1:1, X:7, Rest/binary>>,
+			    N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    d_field_bool_value_pb_value(Rest, N + 7, X bsl N + Acc,
+				F@_1, TrUserData);
+d_field_bool_value_pb_value(<<0:1, X:7, Rest/binary>>,
+			    N, Acc, _, TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc =/= 0, Rest},
+    dfp_read_field_def_bool_value_pb(RestF, 0, 0, NewFValue,
+				     TrUserData).
+
+skip_varint_bool_value_pb(<<1:1, _:7, Rest/binary>>, Z1,
+			  Z2, F@_1, TrUserData) ->
+    skip_varint_bool_value_pb(Rest, Z1, Z2, F@_1,
+			      TrUserData);
+skip_varint_bool_value_pb(<<0:1, _:7, Rest/binary>>, Z1,
+			  Z2, F@_1, TrUserData) ->
+    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
+				     TrUserData).
+
+skip_length_delimited_bool_value_pb(<<1:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_bool_value_pb(Rest, N + 7,
+					X bsl N + Acc, F@_1, TrUserData);
+skip_length_delimited_bool_value_pb(<<0:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, F@_1, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_bool_value_pb(Rest2, 0, 0, F@_1,
+				     TrUserData).
+
+skip_group_bool_value_pb(Bin, FNum, Z2, F@_1,
+			 TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_bool_value_pb(Rest, 0, Z2, F@_1,
+				     TrUserData).
+
+skip_32_bool_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
+		      F@_1, TrUserData) ->
+    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
+				     TrUserData).
+
+skip_64_bool_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
+		      F@_1, TrUserData) ->
+    dfp_read_field_def_bool_value_pb(Rest, Z1, Z2, F@_1,
+				     TrUserData).
+
+d_msg_link_pb(Bin, TrUserData) ->
+    dfp_read_field_def_link_pb(Bin, 0, 0,
+			       id(<<>>, TrUserData), id(<<>>, TrUserData),
+			       id('TYPE_UNSPECIFIED', TrUserData),
+			       id(undefined, TrUserData), TrUserData).
+
+dfp_read_field_def_link_pb(<<10, Rest/binary>>, Z1, Z2,
+			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    d_field_link_pb_trace_id(Rest, Z1, Z2, F@_1, F@_2, F@_3,
+			     F@_4, TrUserData);
+dfp_read_field_def_link_pb(<<18, Rest/binary>>, Z1, Z2,
+			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    d_field_link_pb_span_id(Rest, Z1, Z2, F@_1, F@_2, F@_3,
+			    F@_4, TrUserData);
+dfp_read_field_def_link_pb(<<24, Rest/binary>>, Z1, Z2,
+			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    d_field_link_pb_type(Rest, Z1, Z2, F@_1, F@_2, F@_3,
+			 F@_4, TrUserData);
+dfp_read_field_def_link_pb(<<34, Rest/binary>>, Z1, Z2,
+			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    d_field_link_pb_attributes(Rest, Z1, Z2, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData);
+dfp_read_field_def_link_pb(<<>>, 0, 0, F@_1, F@_2, F@_3,
+			   F@_4, _) ->
+    #link_pb{trace_id = F@_1, span_id = F@_2, type = F@_3,
+	     attributes = F@_4};
+dfp_read_field_def_link_pb(Other, Z1, Z2, F@_1, F@_2,
+			   F@_3, F@_4, TrUserData) ->
+    dg_read_field_def_link_pb(Other, Z1, Z2, F@_1, F@_2,
+			      F@_3, F@_4, TrUserData).
+
+dg_read_field_def_link_pb(<<1:1, X:7, Rest/binary>>, N,
+			  Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_link_pb(Rest, N + 7, X bsl N + Acc,
+			      F@_1, F@_2, F@_3, F@_4, TrUserData);
+dg_read_field_def_link_pb(<<0:1, X:7, Rest/binary>>, N,
+			  Acc, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      10 ->
+	  d_field_link_pb_trace_id(Rest, 0, 0, F@_1, F@_2, F@_3,
+				   F@_4, TrUserData);
+      18 ->
+	  d_field_link_pb_span_id(Rest, 0, 0, F@_1, F@_2, F@_3,
+				  F@_4, TrUserData);
+      24 ->
+	  d_field_link_pb_type(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
+			       TrUserData);
+      34 ->
+	  d_field_link_pb_attributes(Rest, 0, 0, F@_1, F@_2, F@_3,
+				     F@_4, TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
+				    TrUserData);
+	    1 ->
+		skip_64_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
+				TrUserData);
+	    2 ->
+		skip_length_delimited_link_pb(Rest, 0, 0, F@_1, F@_2,
+					      F@_3, F@_4, TrUserData);
+	    3 ->
+		skip_group_link_pb(Rest, Key bsr 3, 0, F@_1, F@_2, F@_3,
+				   F@_4, TrUserData);
+	    5 ->
+		skip_32_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
+				TrUserData)
+	  end
+    end;
+dg_read_field_def_link_pb(<<>>, 0, 0, F@_1, F@_2, F@_3,
+			  F@_4, _) ->
+    #link_pb{trace_id = F@_1, span_id = F@_2, type = F@_3,
+	     attributes = F@_4}.
+
+d_field_link_pb_trace_id(<<1:1, X:7, Rest/binary>>, N,
+			 Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_link_pb_trace_id(Rest, N + 7, X bsl N + Acc,
+			     F@_1, F@_2, F@_3, F@_4, TrUserData);
+d_field_link_pb_trace_id(<<0:1, X:7, Rest/binary>>, N,
+			 Acc, _, F@_2, F@_3, F@_4, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bytes:Len/binary, Rest2/binary>> = Rest,
+			   {binary:copy(Bytes), Rest2}
+			 end,
+    dfp_read_field_def_link_pb(RestF, 0, 0, NewFValue, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+d_field_link_pb_span_id(<<1:1, X:7, Rest/binary>>, N,
+			Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_link_pb_span_id(Rest, N + 7, X bsl N + Acc,
+			    F@_1, F@_2, F@_3, F@_4, TrUserData);
+d_field_link_pb_span_id(<<0:1, X:7, Rest/binary>>, N,
+			Acc, F@_1, _, F@_3, F@_4, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bytes:Len/binary, Rest2/binary>> = Rest,
+			   {binary:copy(Bytes), Rest2}
+			 end,
+    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, NewFValue,
+			       F@_3, F@_4, TrUserData).
+
+d_field_link_pb_type(<<1:1, X:7, Rest/binary>>, N, Acc,
+		     F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_link_pb_type(Rest, N + 7, X bsl N + Acc, F@_1,
+			 F@_2, F@_3, F@_4, TrUserData);
+d_field_link_pb_type(<<0:1, X:7, Rest/binary>>, N, Acc,
+		     F@_1, F@_2, _, F@_4, TrUserData) ->
+    {NewFValue, RestF} =
+	{'d_enum_opencensus.proto.trace.Span.Link.Type'(begin
+							  <<Res:32/signed-native>> =
+							      <<(X bsl N +
+								   Acc):32/unsigned-native>>,
+							  Res
+							end),
+	 Rest},
+    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, F@_2,
+			       NewFValue, F@_4, TrUserData).
+
+d_field_link_pb_attributes(<<1:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    d_field_link_pb_attributes(Rest, N + 7, X bsl N + Acc,
+			       F@_1, F@_2, F@_3, F@_4, TrUserData);
+d_field_link_pb_attributes(<<0:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, F@_2, F@_3, Prev, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_attributes_pb(Bs, TrUserData), TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, F@_2,
+			       F@_3,
+			       if Prev == undefined -> NewFValue;
+				  true ->
+				      merge_msg_attributes_pb(Prev, NewFValue,
+							      TrUserData)
+			       end,
+			       TrUserData).
+
+skip_varint_link_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
+		    F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    skip_varint_link_pb(Rest, Z1, Z2, F@_1, F@_2, F@_3,
+			F@_4, TrUserData);
+skip_varint_link_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
+		    F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+skip_length_delimited_link_pb(<<1:1, X:7, Rest/binary>>,
+			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_link_pb(Rest, N + 7,
+				  X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
+				  TrUserData);
+skip_length_delimited_link_pb(<<0:1, X:7, Rest/binary>>,
+			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_link_pb(Rest2, 0, 0, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+skip_group_link_pb(Bin, FNum, Z2, F@_1, F@_2, F@_3,
+		   F@_4, TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_link_pb(Rest, 0, Z2, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+skip_32_link_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
+		F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+skip_64_link_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
+		F@_2, F@_3, F@_4, TrUserData) ->
+    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
+			       F@_3, F@_4, TrUserData).
+
+d_msg_links_pb(Bin, TrUserData) ->
+    dfp_read_field_def_links_pb(Bin, 0, 0,
+				id([], TrUserData), id(0, TrUserData),
+				TrUserData).
+
+dfp_read_field_def_links_pb(<<10, Rest/binary>>, Z1, Z2,
+			    F@_1, F@_2, TrUserData) ->
+    d_field_links_pb_link(Rest, Z1, Z2, F@_1, F@_2,
+			  TrUserData);
+dfp_read_field_def_links_pb(<<16, Rest/binary>>, Z1, Z2,
+			    F@_1, F@_2, TrUserData) ->
+    d_field_links_pb_dropped_links_count(Rest, Z1, Z2, F@_1,
+					 F@_2, TrUserData);
+dfp_read_field_def_links_pb(<<>>, 0, 0, R1, F@_2,
+			    TrUserData) ->
+    #links_pb{link = lists_reverse(R1, TrUserData),
+	      dropped_links_count = F@_2};
+dfp_read_field_def_links_pb(Other, Z1, Z2, F@_1, F@_2,
+			    TrUserData) ->
+    dg_read_field_def_links_pb(Other, Z1, Z2, F@_1, F@_2,
+			       TrUserData).
+
+dg_read_field_def_links_pb(<<1:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, F@_2, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_links_pb(Rest, N + 7, X bsl N + Acc,
+			       F@_1, F@_2, TrUserData);
+dg_read_field_def_links_pb(<<0:1, X:7, Rest/binary>>, N,
+			   Acc, F@_1, F@_2, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      10 ->
+	  d_field_links_pb_link(Rest, 0, 0, F@_1, F@_2,
+				TrUserData);
+      16 ->
+	  d_field_links_pb_dropped_links_count(Rest, 0, 0, F@_1,
+					       F@_2, TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_links_pb(Rest, 0, 0, F@_1, F@_2,
+				     TrUserData);
+	    1 ->
+		skip_64_links_pb(Rest, 0, 0, F@_1, F@_2, TrUserData);
+	    2 ->
+		skip_length_delimited_links_pb(Rest, 0, 0, F@_1, F@_2,
+					       TrUserData);
+	    3 ->
+		skip_group_links_pb(Rest, Key bsr 3, 0, F@_1, F@_2,
+				    TrUserData);
+	    5 ->
+		skip_32_links_pb(Rest, 0, 0, F@_1, F@_2, TrUserData)
+	  end
+    end;
+dg_read_field_def_links_pb(<<>>, 0, 0, R1, F@_2,
+			   TrUserData) ->
+    #links_pb{link = lists_reverse(R1, TrUserData),
+	      dropped_links_count = F@_2}.
+
+d_field_links_pb_link(<<1:1, X:7, Rest/binary>>, N, Acc,
+		      F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_links_pb_link(Rest, N + 7, X bsl N + Acc, F@_1,
+			  F@_2, TrUserData);
+d_field_links_pb_link(<<0:1, X:7, Rest/binary>>, N, Acc,
+		      Prev, F@_2, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_link_pb(Bs, TrUserData), TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_links_pb(RestF, 0, 0,
+				cons(NewFValue, Prev, TrUserData), F@_2,
+				TrUserData).
+
+d_field_links_pb_dropped_links_count(<<1:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_links_pb_dropped_links_count(Rest, N + 7,
+					 X bsl N + Acc, F@_1, F@_2, TrUserData);
+d_field_links_pb_dropped_links_count(<<0:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, _, TrUserData) ->
+    {NewFValue, RestF} = {begin
+			    <<Res:32/signed-native>> = <<(X bsl N +
+							    Acc):32/unsigned-native>>,
+			    Res
+			  end,
+			  Rest},
+    dfp_read_field_def_links_pb(RestF, 0, 0, F@_1,
+				NewFValue, TrUserData).
+
+skip_varint_links_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
+		     F@_1, F@_2, TrUserData) ->
+    skip_varint_links_pb(Rest, Z1, Z2, F@_1, F@_2,
+			 TrUserData);
+skip_varint_links_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
+		     F@_1, F@_2, TrUserData) ->
+    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
+				TrUserData).
+
+skip_length_delimited_links_pb(<<1:1, X:7,
+				 Rest/binary>>,
+			       N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_links_pb(Rest, N + 7,
+				   X bsl N + Acc, F@_1, F@_2, TrUserData);
+skip_length_delimited_links_pb(<<0:1, X:7,
+				 Rest/binary>>,
+			       N, Acc, F@_1, F@_2, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_links_pb(Rest2, 0, 0, F@_1, F@_2,
+				TrUserData).
+
+skip_group_links_pb(Bin, FNum, Z2, F@_1, F@_2,
+		    TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_links_pb(Rest, 0, Z2, F@_1, F@_2,
+				TrUserData).
+
+skip_32_links_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
+		 F@_2, TrUserData) ->
+    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
+				TrUserData).
+
+skip_64_links_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
+		 F@_2, TrUserData) ->
+    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
+				TrUserData).
 
 d_msg_stack_frame_pb(Bin, TrUserData) ->
     dfp_read_field_def_stack_frame_pb(Bin, 0, 0,
@@ -3935,6 +4542,253 @@ skip_64_stack_frames_pb(<<_:64, Rest/binary>>, Z1, Z2,
     dfp_read_field_def_stack_frames_pb(Rest, Z1, Z2, F@_1,
 				       F@_2, TrUserData).
 
+d_msg_stack_trace_pb(Bin, TrUserData) ->
+    dfp_read_field_def_stack_trace_pb(Bin, 0, 0,
+				      id(undefined, TrUserData),
+				      id(0, TrUserData), TrUserData).
+
+dfp_read_field_def_stack_trace_pb(<<10, Rest/binary>>,
+				  Z1, Z2, F@_1, F@_2, TrUserData) ->
+    d_field_stack_trace_pb_stack_frames(Rest, Z1, Z2, F@_1,
+					F@_2, TrUserData);
+dfp_read_field_def_stack_trace_pb(<<16, Rest/binary>>,
+				  Z1, Z2, F@_1, F@_2, TrUserData) ->
+    d_field_stack_trace_pb_stack_trace_hash_id(Rest, Z1, Z2,
+					       F@_1, F@_2, TrUserData);
+dfp_read_field_def_stack_trace_pb(<<>>, 0, 0, F@_1,
+				  F@_2, _) ->
+    #stack_trace_pb{stack_frames = F@_1,
+		    stack_trace_hash_id = F@_2};
+dfp_read_field_def_stack_trace_pb(Other, Z1, Z2, F@_1,
+				  F@_2, TrUserData) ->
+    dg_read_field_def_stack_trace_pb(Other, Z1, Z2, F@_1,
+				     F@_2, TrUserData).
+
+dg_read_field_def_stack_trace_pb(<<1:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, F@_2, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_stack_trace_pb(Rest, N + 7,
+				     X bsl N + Acc, F@_1, F@_2, TrUserData);
+dg_read_field_def_stack_trace_pb(<<0:1, X:7,
+				   Rest/binary>>,
+				 N, Acc, F@_1, F@_2, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      10 ->
+	  d_field_stack_trace_pb_stack_frames(Rest, 0, 0, F@_1,
+					      F@_2, TrUserData);
+      16 ->
+	  d_field_stack_trace_pb_stack_trace_hash_id(Rest, 0, 0,
+						     F@_1, F@_2, TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
+					   TrUserData);
+	    1 ->
+		skip_64_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
+				       TrUserData);
+	    2 ->
+		skip_length_delimited_stack_trace_pb(Rest, 0, 0, F@_1,
+						     F@_2, TrUserData);
+	    3 ->
+		skip_group_stack_trace_pb(Rest, Key bsr 3, 0, F@_1,
+					  F@_2, TrUserData);
+	    5 ->
+		skip_32_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
+				       TrUserData)
+	  end
+    end;
+dg_read_field_def_stack_trace_pb(<<>>, 0, 0, F@_1, F@_2,
+				 _) ->
+    #stack_trace_pb{stack_frames = F@_1,
+		    stack_trace_hash_id = F@_2}.
+
+d_field_stack_trace_pb_stack_frames(<<1:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_stack_trace_pb_stack_frames(Rest, N + 7,
+					X bsl N + Acc, F@_1, F@_2, TrUserData);
+d_field_stack_trace_pb_stack_frames(<<0:1, X:7,
+				      Rest/binary>>,
+				    N, Acc, Prev, F@_2, TrUserData) ->
+    {NewFValue, RestF} = begin
+			   Len = X bsl N + Acc,
+			   <<Bs:Len/binary, Rest2/binary>> = Rest,
+			   {id(d_msg_stack_frames_pb(Bs, TrUserData),
+			       TrUserData),
+			    Rest2}
+			 end,
+    dfp_read_field_def_stack_trace_pb(RestF, 0, 0,
+				      if Prev == undefined -> NewFValue;
+					 true ->
+					     merge_msg_stack_frames_pb(Prev,
+								       NewFValue,
+								       TrUserData)
+				      end,
+				      F@_2, TrUserData).
+
+d_field_stack_trace_pb_stack_trace_hash_id(<<1:1, X:7,
+					     Rest/binary>>,
+					   N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    d_field_stack_trace_pb_stack_trace_hash_id(Rest, N + 7,
+					       X bsl N + Acc, F@_1, F@_2,
+					       TrUserData);
+d_field_stack_trace_pb_stack_trace_hash_id(<<0:1, X:7,
+					     Rest/binary>>,
+					   N, Acc, F@_1, _, TrUserData) ->
+    {NewFValue, RestF} = {X bsl N + Acc, Rest},
+    dfp_read_field_def_stack_trace_pb(RestF, 0, 0, F@_1,
+				      NewFValue, TrUserData).
+
+skip_varint_stack_trace_pb(<<1:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, F@_2, TrUserData) ->
+    skip_varint_stack_trace_pb(Rest, Z1, Z2, F@_1, F@_2,
+			       TrUserData);
+skip_varint_stack_trace_pb(<<0:1, _:7, Rest/binary>>,
+			   Z1, Z2, F@_1, F@_2, TrUserData) ->
+    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, TrUserData).
+
+skip_length_delimited_stack_trace_pb(<<1:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, F@_2, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_stack_trace_pb(Rest, N + 7,
+					 X bsl N + Acc, F@_1, F@_2, TrUserData);
+skip_length_delimited_stack_trace_pb(<<0:1, X:7,
+				       Rest/binary>>,
+				     N, Acc, F@_1, F@_2, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_stack_trace_pb(Rest2, 0, 0, F@_1,
+				      F@_2, TrUserData).
+
+skip_group_stack_trace_pb(Bin, FNum, Z2, F@_1, F@_2,
+			  TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_stack_trace_pb(Rest, 0, Z2, F@_1,
+				      F@_2, TrUserData).
+
+skip_32_stack_trace_pb(<<_:32, Rest/binary>>, Z1, Z2,
+		       F@_1, F@_2, TrUserData) ->
+    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, TrUserData).
+
+skip_64_stack_trace_pb(<<_:64, Rest/binary>>, Z1, Z2,
+		       F@_1, F@_2, TrUserData) ->
+    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
+				      F@_2, TrUserData).
+
+d_msg_int_32_value_pb(Bin, TrUserData) ->
+    dfp_read_field_def_int_32_value_pb(Bin, 0, 0,
+				       id(0, TrUserData), TrUserData).
+
+dfp_read_field_def_int_32_value_pb(<<8, Rest/binary>>,
+				   Z1, Z2, F@_1, TrUserData) ->
+    d_field_int_32_value_pb_value(Rest, Z1, Z2, F@_1,
+				  TrUserData);
+dfp_read_field_def_int_32_value_pb(<<>>, 0, 0, F@_1,
+				   _) ->
+    #int_32_value_pb{value = F@_1};
+dfp_read_field_def_int_32_value_pb(Other, Z1, Z2, F@_1,
+				   TrUserData) ->
+    dg_read_field_def_int_32_value_pb(Other, Z1, Z2, F@_1,
+				      TrUserData).
+
+dg_read_field_def_int_32_value_pb(<<1:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, F@_1, TrUserData)
+    when N < 32 - 7 ->
+    dg_read_field_def_int_32_value_pb(Rest, N + 7,
+				      X bsl N + Acc, F@_1, TrUserData);
+dg_read_field_def_int_32_value_pb(<<0:1, X:7,
+				    Rest/binary>>,
+				  N, Acc, F@_1, TrUserData) ->
+    Key = X bsl N + Acc,
+    case Key of
+      8 ->
+	  d_field_int_32_value_pb_value(Rest, 0, 0, F@_1,
+					TrUserData);
+      _ ->
+	  case Key band 7 of
+	    0 ->
+		skip_varint_int_32_value_pb(Rest, 0, 0, F@_1,
+					    TrUserData);
+	    1 ->
+		skip_64_int_32_value_pb(Rest, 0, 0, F@_1, TrUserData);
+	    2 ->
+		skip_length_delimited_int_32_value_pb(Rest, 0, 0, F@_1,
+						      TrUserData);
+	    3 ->
+		skip_group_int_32_value_pb(Rest, Key bsr 3, 0, F@_1,
+					   TrUserData);
+	    5 ->
+		skip_32_int_32_value_pb(Rest, 0, 0, F@_1, TrUserData)
+	  end
+    end;
+dg_read_field_def_int_32_value_pb(<<>>, 0, 0, F@_1,
+				  _) ->
+    #int_32_value_pb{value = F@_1}.
+
+d_field_int_32_value_pb_value(<<1:1, X:7, Rest/binary>>,
+			      N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    d_field_int_32_value_pb_value(Rest, N + 7,
+				  X bsl N + Acc, F@_1, TrUserData);
+d_field_int_32_value_pb_value(<<0:1, X:7, Rest/binary>>,
+			      N, Acc, _, TrUserData) ->
+    {NewFValue, RestF} = {begin
+			    <<Res:32/signed-native>> = <<(X bsl N +
+							    Acc):32/unsigned-native>>,
+			    Res
+			  end,
+			  Rest},
+    dfp_read_field_def_int_32_value_pb(RestF, 0, 0,
+				       NewFValue, TrUserData).
+
+skip_varint_int_32_value_pb(<<1:1, _:7, Rest/binary>>,
+			    Z1, Z2, F@_1, TrUserData) ->
+    skip_varint_int_32_value_pb(Rest, Z1, Z2, F@_1,
+				TrUserData);
+skip_varint_int_32_value_pb(<<0:1, _:7, Rest/binary>>,
+			    Z1, Z2, F@_1, TrUserData) ->
+    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
+skip_length_delimited_int_32_value_pb(<<1:1, X:7,
+					Rest/binary>>,
+				      N, Acc, F@_1, TrUserData)
+    when N < 57 ->
+    skip_length_delimited_int_32_value_pb(Rest, N + 7,
+					  X bsl N + Acc, F@_1, TrUserData);
+skip_length_delimited_int_32_value_pb(<<0:1, X:7,
+					Rest/binary>>,
+				      N, Acc, F@_1, TrUserData) ->
+    Length = X bsl N + Acc,
+    <<_:Length/binary, Rest2/binary>> = Rest,
+    dfp_read_field_def_int_32_value_pb(Rest2, 0, 0, F@_1,
+				       TrUserData).
+
+skip_group_int_32_value_pb(Bin, FNum, Z2, F@_1,
+			   TrUserData) ->
+    {_, Rest} = read_group(Bin, FNum),
+    dfp_read_field_def_int_32_value_pb(Rest, 0, Z2, F@_1,
+				       TrUserData).
+
+skip_32_int_32_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
+			F@_1, TrUserData) ->
+    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
+skip_64_int_32_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
+			F@_1, TrUserData) ->
+    dfp_read_field_def_int_32_value_pb(Rest, Z1, Z2, F@_1,
+				       TrUserData).
+
 d_msg_status_pb(Bin, TrUserData) ->
     dfp_read_field_def_status_pb(Bin, 0, 0,
 				 id(0, TrUserData), id(<<>>, TrUserData),
@@ -4164,860 +5018,6 @@ skip_64_u_int_32_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
 			  F@_1, TrUserData) ->
     dfp_read_field_def_u_int_32_value_pb(Rest, Z1, Z2, F@_1,
 					 TrUserData).
-
-d_msg_link_pb(Bin, TrUserData) ->
-    dfp_read_field_def_link_pb(Bin, 0, 0,
-			       id(<<>>, TrUserData), id(<<>>, TrUserData),
-			       id('TYPE_UNSPECIFIED', TrUserData),
-			       id(undefined, TrUserData), TrUserData).
-
-dfp_read_field_def_link_pb(<<10, Rest/binary>>, Z1, Z2,
-			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    d_field_link_pb_trace_id(Rest, Z1, Z2, F@_1, F@_2, F@_3,
-			     F@_4, TrUserData);
-dfp_read_field_def_link_pb(<<18, Rest/binary>>, Z1, Z2,
-			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    d_field_link_pb_span_id(Rest, Z1, Z2, F@_1, F@_2, F@_3,
-			    F@_4, TrUserData);
-dfp_read_field_def_link_pb(<<24, Rest/binary>>, Z1, Z2,
-			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    d_field_link_pb_type(Rest, Z1, Z2, F@_1, F@_2, F@_3,
-			 F@_4, TrUserData);
-dfp_read_field_def_link_pb(<<34, Rest/binary>>, Z1, Z2,
-			   F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    d_field_link_pb_attributes(Rest, Z1, Z2, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData);
-dfp_read_field_def_link_pb(<<>>, 0, 0, F@_1, F@_2, F@_3,
-			   F@_4, _) ->
-    #link_pb{trace_id = F@_1, span_id = F@_2, type = F@_3,
-	     attributes = F@_4};
-dfp_read_field_def_link_pb(Other, Z1, Z2, F@_1, F@_2,
-			   F@_3, F@_4, TrUserData) ->
-    dg_read_field_def_link_pb(Other, Z1, Z2, F@_1, F@_2,
-			      F@_3, F@_4, TrUserData).
-
-dg_read_field_def_link_pb(<<1:1, X:7, Rest/binary>>, N,
-			  Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_link_pb(Rest, N + 7, X bsl N + Acc,
-			      F@_1, F@_2, F@_3, F@_4, TrUserData);
-dg_read_field_def_link_pb(<<0:1, X:7, Rest/binary>>, N,
-			  Acc, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      10 ->
-	  d_field_link_pb_trace_id(Rest, 0, 0, F@_1, F@_2, F@_3,
-				   F@_4, TrUserData);
-      18 ->
-	  d_field_link_pb_span_id(Rest, 0, 0, F@_1, F@_2, F@_3,
-				  F@_4, TrUserData);
-      24 ->
-	  d_field_link_pb_type(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
-			       TrUserData);
-      34 ->
-	  d_field_link_pb_attributes(Rest, 0, 0, F@_1, F@_2, F@_3,
-				     F@_4, TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
-				    TrUserData);
-	    1 ->
-		skip_64_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
-				TrUserData);
-	    2 ->
-		skip_length_delimited_link_pb(Rest, 0, 0, F@_1, F@_2,
-					      F@_3, F@_4, TrUserData);
-	    3 ->
-		skip_group_link_pb(Rest, Key bsr 3, 0, F@_1, F@_2, F@_3,
-				   F@_4, TrUserData);
-	    5 ->
-		skip_32_link_pb(Rest, 0, 0, F@_1, F@_2, F@_3, F@_4,
-				TrUserData)
-	  end
-    end;
-dg_read_field_def_link_pb(<<>>, 0, 0, F@_1, F@_2, F@_3,
-			  F@_4, _) ->
-    #link_pb{trace_id = F@_1, span_id = F@_2, type = F@_3,
-	     attributes = F@_4}.
-
-d_field_link_pb_trace_id(<<1:1, X:7, Rest/binary>>, N,
-			 Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    d_field_link_pb_trace_id(Rest, N + 7, X bsl N + Acc,
-			     F@_1, F@_2, F@_3, F@_4, TrUserData);
-d_field_link_pb_trace_id(<<0:1, X:7, Rest/binary>>, N,
-			 Acc, _, F@_2, F@_3, F@_4, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bytes:Len/binary, Rest2/binary>> = Rest,
-			   {binary:copy(Bytes), Rest2}
-			 end,
-    dfp_read_field_def_link_pb(RestF, 0, 0, NewFValue, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-d_field_link_pb_span_id(<<1:1, X:7, Rest/binary>>, N,
-			Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    d_field_link_pb_span_id(Rest, N + 7, X bsl N + Acc,
-			    F@_1, F@_2, F@_3, F@_4, TrUserData);
-d_field_link_pb_span_id(<<0:1, X:7, Rest/binary>>, N,
-			Acc, F@_1, _, F@_3, F@_4, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bytes:Len/binary, Rest2/binary>> = Rest,
-			   {binary:copy(Bytes), Rest2}
-			 end,
-    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, NewFValue,
-			       F@_3, F@_4, TrUserData).
-
-d_field_link_pb_type(<<1:1, X:7, Rest/binary>>, N, Acc,
-		     F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    d_field_link_pb_type(Rest, N + 7, X bsl N + Acc, F@_1,
-			 F@_2, F@_3, F@_4, TrUserData);
-d_field_link_pb_type(<<0:1, X:7, Rest/binary>>, N, Acc,
-		     F@_1, F@_2, _, F@_4, TrUserData) ->
-    {NewFValue, RestF} =
-	{'d_enum_opencensus.proto.trace.Span.Link.Type'(begin
-							  <<Res:32/signed-native>> =
-							      <<(X bsl N +
-								   Acc):32/unsigned-native>>,
-							  Res
-							end),
-	 Rest},
-    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, F@_2,
-			       NewFValue, F@_4, TrUserData).
-
-d_field_link_pb_attributes(<<1:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    d_field_link_pb_attributes(Rest, N + 7, X bsl N + Acc,
-			       F@_1, F@_2, F@_3, F@_4, TrUserData);
-d_field_link_pb_attributes(<<0:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, F@_2, F@_3, Prev, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_attributes_pb(Bs, TrUserData), TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_link_pb(RestF, 0, 0, F@_1, F@_2,
-			       F@_3,
-			       if Prev == undefined -> NewFValue;
-				  true ->
-				      merge_msg_attributes_pb(Prev, NewFValue,
-							      TrUserData)
-			       end,
-			       TrUserData).
-
-skip_varint_link_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
-		    F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    skip_varint_link_pb(Rest, Z1, Z2, F@_1, F@_2, F@_3,
-			F@_4, TrUserData);
-skip_varint_link_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
-		    F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-skip_length_delimited_link_pb(<<1:1, X:7, Rest/binary>>,
-			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_link_pb(Rest, N + 7,
-				  X bsl N + Acc, F@_1, F@_2, F@_3, F@_4,
-				  TrUserData);
-skip_length_delimited_link_pb(<<0:1, X:7, Rest/binary>>,
-			      N, Acc, F@_1, F@_2, F@_3, F@_4, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_link_pb(Rest2, 0, 0, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-skip_group_link_pb(Bin, FNum, Z2, F@_1, F@_2, F@_3,
-		   F@_4, TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_link_pb(Rest, 0, Z2, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-skip_32_link_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
-		F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-skip_64_link_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
-		F@_2, F@_3, F@_4, TrUserData) ->
-    dfp_read_field_def_link_pb(Rest, Z1, Z2, F@_1, F@_2,
-			       F@_3, F@_4, TrUserData).
-
-d_msg_stack_trace_pb(Bin, TrUserData) ->
-    dfp_read_field_def_stack_trace_pb(Bin, 0, 0,
-				      id(undefined, TrUserData),
-				      id(0, TrUserData), TrUserData).
-
-dfp_read_field_def_stack_trace_pb(<<10, Rest/binary>>,
-				  Z1, Z2, F@_1, F@_2, TrUserData) ->
-    d_field_stack_trace_pb_stack_frames(Rest, Z1, Z2, F@_1,
-					F@_2, TrUserData);
-dfp_read_field_def_stack_trace_pb(<<16, Rest/binary>>,
-				  Z1, Z2, F@_1, F@_2, TrUserData) ->
-    d_field_stack_trace_pb_stack_trace_hash_id(Rest, Z1, Z2,
-					       F@_1, F@_2, TrUserData);
-dfp_read_field_def_stack_trace_pb(<<>>, 0, 0, F@_1,
-				  F@_2, _) ->
-    #stack_trace_pb{stack_frames = F@_1,
-		    stack_trace_hash_id = F@_2};
-dfp_read_field_def_stack_trace_pb(Other, Z1, Z2, F@_1,
-				  F@_2, TrUserData) ->
-    dg_read_field_def_stack_trace_pb(Other, Z1, Z2, F@_1,
-				     F@_2, TrUserData).
-
-dg_read_field_def_stack_trace_pb(<<1:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, F@_2, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_stack_trace_pb(Rest, N + 7,
-				     X bsl N + Acc, F@_1, F@_2, TrUserData);
-dg_read_field_def_stack_trace_pb(<<0:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, F@_2, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      10 ->
-	  d_field_stack_trace_pb_stack_frames(Rest, 0, 0, F@_1,
-					      F@_2, TrUserData);
-      16 ->
-	  d_field_stack_trace_pb_stack_trace_hash_id(Rest, 0, 0,
-						     F@_1, F@_2, TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
-					   TrUserData);
-	    1 ->
-		skip_64_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
-				       TrUserData);
-	    2 ->
-		skip_length_delimited_stack_trace_pb(Rest, 0, 0, F@_1,
-						     F@_2, TrUserData);
-	    3 ->
-		skip_group_stack_trace_pb(Rest, Key bsr 3, 0, F@_1,
-					  F@_2, TrUserData);
-	    5 ->
-		skip_32_stack_trace_pb(Rest, 0, 0, F@_1, F@_2,
-				       TrUserData)
-	  end
-    end;
-dg_read_field_def_stack_trace_pb(<<>>, 0, 0, F@_1, F@_2,
-				 _) ->
-    #stack_trace_pb{stack_frames = F@_1,
-		    stack_trace_hash_id = F@_2}.
-
-d_field_stack_trace_pb_stack_frames(<<1:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_stack_trace_pb_stack_frames(Rest, N + 7,
-					X bsl N + Acc, F@_1, F@_2, TrUserData);
-d_field_stack_trace_pb_stack_frames(<<0:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, Prev, F@_2, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_stack_frames_pb(Bs, TrUserData),
-			       TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_stack_trace_pb(RestF, 0, 0,
-				      if Prev == undefined -> NewFValue;
-					 true ->
-					     merge_msg_stack_frames_pb(Prev,
-								       NewFValue,
-								       TrUserData)
-				      end,
-				      F@_2, TrUserData).
-
-d_field_stack_trace_pb_stack_trace_hash_id(<<1:1, X:7,
-					     Rest/binary>>,
-					   N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_stack_trace_pb_stack_trace_hash_id(Rest, N + 7,
-					       X bsl N + Acc, F@_1, F@_2,
-					       TrUserData);
-d_field_stack_trace_pb_stack_trace_hash_id(<<0:1, X:7,
-					     Rest/binary>>,
-					   N, Acc, F@_1, _, TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc, Rest},
-    dfp_read_field_def_stack_trace_pb(RestF, 0, 0, F@_1,
-				      NewFValue, TrUserData).
-
-skip_varint_stack_trace_pb(<<1:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, F@_2, TrUserData) ->
-    skip_varint_stack_trace_pb(Rest, Z1, Z2, F@_1, F@_2,
-			       TrUserData);
-skip_varint_stack_trace_pb(<<0:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, F@_2, TrUserData) ->
-    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, TrUserData).
-
-skip_length_delimited_stack_trace_pb(<<1:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_stack_trace_pb(Rest, N + 7,
-					 X bsl N + Acc, F@_1, F@_2, TrUserData);
-skip_length_delimited_stack_trace_pb(<<0:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, F@_2, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_stack_trace_pb(Rest2, 0, 0, F@_1,
-				      F@_2, TrUserData).
-
-skip_group_stack_trace_pb(Bin, FNum, Z2, F@_1, F@_2,
-			  TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_stack_trace_pb(Rest, 0, Z2, F@_1,
-				      F@_2, TrUserData).
-
-skip_32_stack_trace_pb(<<_:32, Rest/binary>>, Z1, Z2,
-		       F@_1, F@_2, TrUserData) ->
-    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, TrUserData).
-
-skip_64_stack_trace_pb(<<_:64, Rest/binary>>, Z1, Z2,
-		       F@_1, F@_2, TrUserData) ->
-    dfp_read_field_def_stack_trace_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, TrUserData).
-
-d_msg_double_value_pb(Bin, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Bin, 0, 0,
-				       id(0.0, TrUserData), TrUserData).
-
-dfp_read_field_def_double_value_pb(<<9, Rest/binary>>,
-				   Z1, Z2, F@_1, TrUserData) ->
-    d_field_double_value_pb_value(Rest, Z1, Z2, F@_1,
-				  TrUserData);
-dfp_read_field_def_double_value_pb(<<>>, 0, 0, F@_1,
-				   _) ->
-    #double_value_pb{value = F@_1};
-dfp_read_field_def_double_value_pb(Other, Z1, Z2, F@_1,
-				   TrUserData) ->
-    dg_read_field_def_double_value_pb(Other, Z1, Z2, F@_1,
-				      TrUserData).
-
-dg_read_field_def_double_value_pb(<<1:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, F@_1, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_double_value_pb(Rest, N + 7,
-				      X bsl N + Acc, F@_1, TrUserData);
-dg_read_field_def_double_value_pb(<<0:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, F@_1, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      9 ->
-	  d_field_double_value_pb_value(Rest, 0, 0, F@_1,
-					TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_double_value_pb(Rest, 0, 0, F@_1,
-					    TrUserData);
-	    1 ->
-		skip_64_double_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    2 ->
-		skip_length_delimited_double_value_pb(Rest, 0, 0, F@_1,
-						      TrUserData);
-	    3 ->
-		skip_group_double_value_pb(Rest, Key bsr 3, 0, F@_1,
-					   TrUserData);
-	    5 ->
-		skip_32_double_value_pb(Rest, 0, 0, F@_1, TrUserData)
-	  end
-    end;
-dg_read_field_def_double_value_pb(<<>>, 0, 0, F@_1,
-				  _) ->
-    #double_value_pb{value = F@_1}.
-
-d_field_double_value_pb_value(<<0:48, 240, 127,
-				Rest/binary>>,
-			      Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2,
-				       infinity, TrUserData);
-d_field_double_value_pb_value(<<0:48, 240, 255,
-				Rest/binary>>,
-			      Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2,
-				       '-infinity', TrUserData);
-d_field_double_value_pb_value(<<_:48, 15:4, _:4, _:1,
-				127:7, Rest/binary>>,
-			      Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, nan,
-				       TrUserData);
-d_field_double_value_pb_value(<<Value:64/little-float,
-				Rest/binary>>,
-			      Z1, Z2, _, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, Value,
-				       TrUserData).
-
-skip_varint_double_value_pb(<<1:1, _:7, Rest/binary>>,
-			    Z1, Z2, F@_1, TrUserData) ->
-    skip_varint_double_value_pb(Rest, Z1, Z2, F@_1,
-				TrUserData);
-skip_varint_double_value_pb(<<0:1, _:7, Rest/binary>>,
-			    Z1, Z2, F@_1, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
-
-skip_length_delimited_double_value_pb(<<1:1, X:7,
-					Rest/binary>>,
-				      N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_double_value_pb(Rest, N + 7,
-					  X bsl N + Acc, F@_1, TrUserData);
-skip_length_delimited_double_value_pb(<<0:1, X:7,
-					Rest/binary>>,
-				      N, Acc, F@_1, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_double_value_pb(Rest2, 0, 0, F@_1,
-				       TrUserData).
-
-skip_group_double_value_pb(Bin, FNum, Z2, F@_1,
-			   TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_double_value_pb(Rest, 0, Z2, F@_1,
-				       TrUserData).
-
-skip_32_double_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
-			F@_1, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
-
-skip_64_double_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
-			F@_1, TrUserData) ->
-    dfp_read_field_def_double_value_pb(Rest, Z1, Z2, F@_1,
-				       TrUserData).
-
-d_msg_links_pb(Bin, TrUserData) ->
-    dfp_read_field_def_links_pb(Bin, 0, 0,
-				id([], TrUserData), id(0, TrUserData),
-				TrUserData).
-
-dfp_read_field_def_links_pb(<<10, Rest/binary>>, Z1, Z2,
-			    F@_1, F@_2, TrUserData) ->
-    d_field_links_pb_link(Rest, Z1, Z2, F@_1, F@_2,
-			  TrUserData);
-dfp_read_field_def_links_pb(<<16, Rest/binary>>, Z1, Z2,
-			    F@_1, F@_2, TrUserData) ->
-    d_field_links_pb_dropped_links_count(Rest, Z1, Z2, F@_1,
-					 F@_2, TrUserData);
-dfp_read_field_def_links_pb(<<>>, 0, 0, R1, F@_2,
-			    TrUserData) ->
-    #links_pb{link = lists_reverse(R1, TrUserData),
-	      dropped_links_count = F@_2};
-dfp_read_field_def_links_pb(Other, Z1, Z2, F@_1, F@_2,
-			    TrUserData) ->
-    dg_read_field_def_links_pb(Other, Z1, Z2, F@_1, F@_2,
-			       TrUserData).
-
-dg_read_field_def_links_pb(<<1:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, F@_2, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_links_pb(Rest, N + 7, X bsl N + Acc,
-			       F@_1, F@_2, TrUserData);
-dg_read_field_def_links_pb(<<0:1, X:7, Rest/binary>>, N,
-			   Acc, F@_1, F@_2, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      10 ->
-	  d_field_links_pb_link(Rest, 0, 0, F@_1, F@_2,
-				TrUserData);
-      16 ->
-	  d_field_links_pb_dropped_links_count(Rest, 0, 0, F@_1,
-					       F@_2, TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_links_pb(Rest, 0, 0, F@_1, F@_2,
-				     TrUserData);
-	    1 ->
-		skip_64_links_pb(Rest, 0, 0, F@_1, F@_2, TrUserData);
-	    2 ->
-		skip_length_delimited_links_pb(Rest, 0, 0, F@_1, F@_2,
-					       TrUserData);
-	    3 ->
-		skip_group_links_pb(Rest, Key bsr 3, 0, F@_1, F@_2,
-				    TrUserData);
-	    5 ->
-		skip_32_links_pb(Rest, 0, 0, F@_1, F@_2, TrUserData)
-	  end
-    end;
-dg_read_field_def_links_pb(<<>>, 0, 0, R1, F@_2,
-			   TrUserData) ->
-    #links_pb{link = lists_reverse(R1, TrUserData),
-	      dropped_links_count = F@_2}.
-
-d_field_links_pb_link(<<1:1, X:7, Rest/binary>>, N, Acc,
-		      F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_links_pb_link(Rest, N + 7, X bsl N + Acc, F@_1,
-			  F@_2, TrUserData);
-d_field_links_pb_link(<<0:1, X:7, Rest/binary>>, N, Acc,
-		      Prev, F@_2, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_link_pb(Bs, TrUserData), TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_links_pb(RestF, 0, 0,
-				cons(NewFValue, Prev, TrUserData), F@_2,
-				TrUserData).
-
-d_field_links_pb_dropped_links_count(<<1:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    d_field_links_pb_dropped_links_count(Rest, N + 7,
-					 X bsl N + Acc, F@_1, F@_2, TrUserData);
-d_field_links_pb_dropped_links_count(<<0:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, _, TrUserData) ->
-    {NewFValue, RestF} = {begin
-			    <<Res:32/signed-native>> = <<(X bsl N +
-							    Acc):32/unsigned-native>>,
-			    Res
-			  end,
-			  Rest},
-    dfp_read_field_def_links_pb(RestF, 0, 0, F@_1,
-				NewFValue, TrUserData).
-
-skip_varint_links_pb(<<1:1, _:7, Rest/binary>>, Z1, Z2,
-		     F@_1, F@_2, TrUserData) ->
-    skip_varint_links_pb(Rest, Z1, Z2, F@_1, F@_2,
-			 TrUserData);
-skip_varint_links_pb(<<0:1, _:7, Rest/binary>>, Z1, Z2,
-		     F@_1, F@_2, TrUserData) ->
-    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
-				TrUserData).
-
-skip_length_delimited_links_pb(<<1:1, X:7,
-				 Rest/binary>>,
-			       N, Acc, F@_1, F@_2, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_links_pb(Rest, N + 7,
-				   X bsl N + Acc, F@_1, F@_2, TrUserData);
-skip_length_delimited_links_pb(<<0:1, X:7,
-				 Rest/binary>>,
-			       N, Acc, F@_1, F@_2, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_links_pb(Rest2, 0, 0, F@_1, F@_2,
-				TrUserData).
-
-skip_group_links_pb(Bin, FNum, Z2, F@_1, F@_2,
-		    TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_links_pb(Rest, 0, Z2, F@_1, F@_2,
-				TrUserData).
-
-skip_32_links_pb(<<_:32, Rest/binary>>, Z1, Z2, F@_1,
-		 F@_2, TrUserData) ->
-    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
-				TrUserData).
-
-skip_64_links_pb(<<_:64, Rest/binary>>, Z1, Z2, F@_1,
-		 F@_2, TrUserData) ->
-    dfp_read_field_def_links_pb(Rest, Z1, Z2, F@_1, F@_2,
-				TrUserData).
-
-d_msg_u_int_64_value_pb(Bin, TrUserData) ->
-    dfp_read_field_def_u_int_64_value_pb(Bin, 0, 0,
-					 id(0, TrUserData), TrUserData).
-
-dfp_read_field_def_u_int_64_value_pb(<<8, Rest/binary>>,
-				     Z1, Z2, F@_1, TrUserData) ->
-    d_field_u_int_64_value_pb_value(Rest, Z1, Z2, F@_1,
-				    TrUserData);
-dfp_read_field_def_u_int_64_value_pb(<<>>, 0, 0, F@_1,
-				     _) ->
-    #u_int_64_value_pb{value = F@_1};
-dfp_read_field_def_u_int_64_value_pb(Other, Z1, Z2,
-				     F@_1, TrUserData) ->
-    dg_read_field_def_u_int_64_value_pb(Other, Z1, Z2, F@_1,
-					TrUserData).
-
-dg_read_field_def_u_int_64_value_pb(<<1:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, F@_1, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_u_int_64_value_pb(Rest, N + 7,
-					X bsl N + Acc, F@_1, TrUserData);
-dg_read_field_def_u_int_64_value_pb(<<0:1, X:7,
-				      Rest/binary>>,
-				    N, Acc, F@_1, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      8 ->
-	  d_field_u_int_64_value_pb_value(Rest, 0, 0, F@_1,
-					  TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_u_int_64_value_pb(Rest, 0, 0, F@_1,
-					      TrUserData);
-	    1 ->
-		skip_64_u_int_64_value_pb(Rest, 0, 0, F@_1, TrUserData);
-	    2 ->
-		skip_length_delimited_u_int_64_value_pb(Rest, 0, 0,
-							F@_1, TrUserData);
-	    3 ->
-		skip_group_u_int_64_value_pb(Rest, Key bsr 3, 0, F@_1,
-					     TrUserData);
-	    5 ->
-		skip_32_u_int_64_value_pb(Rest, 0, 0, F@_1, TrUserData)
-	  end
-    end;
-dg_read_field_def_u_int_64_value_pb(<<>>, 0, 0, F@_1,
-				    _) ->
-    #u_int_64_value_pb{value = F@_1}.
-
-d_field_u_int_64_value_pb_value(<<1:1, X:7,
-				  Rest/binary>>,
-				N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    d_field_u_int_64_value_pb_value(Rest, N + 7,
-				    X bsl N + Acc, F@_1, TrUserData);
-d_field_u_int_64_value_pb_value(<<0:1, X:7,
-				  Rest/binary>>,
-				N, Acc, _, TrUserData) ->
-    {NewFValue, RestF} = {X bsl N + Acc, Rest},
-    dfp_read_field_def_u_int_64_value_pb(RestF, 0, 0,
-					 NewFValue, TrUserData).
-
-skip_varint_u_int_64_value_pb(<<1:1, _:7, Rest/binary>>,
-			      Z1, Z2, F@_1, TrUserData) ->
-    skip_varint_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
-				  TrUserData);
-skip_varint_u_int_64_value_pb(<<0:1, _:7, Rest/binary>>,
-			      Z1, Z2, F@_1, TrUserData) ->
-    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
-					 TrUserData).
-
-skip_length_delimited_u_int_64_value_pb(<<1:1, X:7,
-					  Rest/binary>>,
-					N, Acc, F@_1, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_u_int_64_value_pb(Rest, N + 7,
-					    X bsl N + Acc, F@_1, TrUserData);
-skip_length_delimited_u_int_64_value_pb(<<0:1, X:7,
-					  Rest/binary>>,
-					N, Acc, F@_1, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_u_int_64_value_pb(Rest2, 0, 0, F@_1,
-					 TrUserData).
-
-skip_group_u_int_64_value_pb(Bin, FNum, Z2, F@_1,
-			     TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_u_int_64_value_pb(Rest, 0, Z2, F@_1,
-					 TrUserData).
-
-skip_32_u_int_64_value_pb(<<_:32, Rest/binary>>, Z1, Z2,
-			  F@_1, TrUserData) ->
-    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
-					 TrUserData).
-
-skip_64_u_int_64_value_pb(<<_:64, Rest/binary>>, Z1, Z2,
-			  F@_1, TrUserData) ->
-    dfp_read_field_def_u_int_64_value_pb(Rest, Z1, Z2, F@_1,
-					 TrUserData).
-
-d_msg_time_events_pb(Bin, TrUserData) ->
-    dfp_read_field_def_time_events_pb(Bin, 0, 0,
-				      id([], TrUserData), id(0, TrUserData),
-				      id(0, TrUserData), TrUserData).
-
-dfp_read_field_def_time_events_pb(<<10, Rest/binary>>,
-				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
-    d_field_time_events_pb_time_event(Rest, Z1, Z2, F@_1,
-				      F@_2, F@_3, TrUserData);
-dfp_read_field_def_time_events_pb(<<16, Rest/binary>>,
-				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
-    d_field_time_events_pb_dropped_annotations_count(Rest,
-						     Z1, Z2, F@_1, F@_2, F@_3,
-						     TrUserData);
-dfp_read_field_def_time_events_pb(<<24, Rest/binary>>,
-				  Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
-    d_field_time_events_pb_dropped_message_events_count(Rest,
-							Z1, Z2, F@_1, F@_2,
-							F@_3, TrUserData);
-dfp_read_field_def_time_events_pb(<<>>, 0, 0, R1, F@_2,
-				  F@_3, TrUserData) ->
-    #time_events_pb{time_event =
-			lists_reverse(R1, TrUserData),
-		    dropped_annotations_count = F@_2,
-		    dropped_message_events_count = F@_3};
-dfp_read_field_def_time_events_pb(Other, Z1, Z2, F@_1,
-				  F@_2, F@_3, TrUserData) ->
-    dg_read_field_def_time_events_pb(Other, Z1, Z2, F@_1,
-				     F@_2, F@_3, TrUserData).
-
-dg_read_field_def_time_events_pb(<<1:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, F@_2, F@_3, TrUserData)
-    when N < 32 - 7 ->
-    dg_read_field_def_time_events_pb(Rest, N + 7,
-				     X bsl N + Acc, F@_1, F@_2, F@_3,
-				     TrUserData);
-dg_read_field_def_time_events_pb(<<0:1, X:7,
-				   Rest/binary>>,
-				 N, Acc, F@_1, F@_2, F@_3, TrUserData) ->
-    Key = X bsl N + Acc,
-    case Key of
-      10 ->
-	  d_field_time_events_pb_time_event(Rest, 0, 0, F@_1,
-					    F@_2, F@_3, TrUserData);
-      16 ->
-	  d_field_time_events_pb_dropped_annotations_count(Rest,
-							   0, 0, F@_1, F@_2,
-							   F@_3, TrUserData);
-      24 ->
-	  d_field_time_events_pb_dropped_message_events_count(Rest,
-							      0, 0, F@_1, F@_2,
-							      F@_3, TrUserData);
-      _ ->
-	  case Key band 7 of
-	    0 ->
-		skip_varint_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
-					   TrUserData);
-	    1 ->
-		skip_64_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
-				       TrUserData);
-	    2 ->
-		skip_length_delimited_time_events_pb(Rest, 0, 0, F@_1,
-						     F@_2, F@_3, TrUserData);
-	    3 ->
-		skip_group_time_events_pb(Rest, Key bsr 3, 0, F@_1,
-					  F@_2, F@_3, TrUserData);
-	    5 ->
-		skip_32_time_events_pb(Rest, 0, 0, F@_1, F@_2, F@_3,
-				       TrUserData)
-	  end
-    end;
-dg_read_field_def_time_events_pb(<<>>, 0, 0, R1, F@_2,
-				 F@_3, TrUserData) ->
-    #time_events_pb{time_event =
-			lists_reverse(R1, TrUserData),
-		    dropped_annotations_count = F@_2,
-		    dropped_message_events_count = F@_3}.
-
-d_field_time_events_pb_time_event(<<1:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, F@_1, F@_2, F@_3, TrUserData)
-    when N < 57 ->
-    d_field_time_events_pb_time_event(Rest, N + 7,
-				      X bsl N + Acc, F@_1, F@_2, F@_3,
-				      TrUserData);
-d_field_time_events_pb_time_event(<<0:1, X:7,
-				    Rest/binary>>,
-				  N, Acc, Prev, F@_2, F@_3, TrUserData) ->
-    {NewFValue, RestF} = begin
-			   Len = X bsl N + Acc,
-			   <<Bs:Len/binary, Rest2/binary>> = Rest,
-			   {id(d_msg_time_event_pb(Bs, TrUserData), TrUserData),
-			    Rest2}
-			 end,
-    dfp_read_field_def_time_events_pb(RestF, 0, 0,
-				      cons(NewFValue, Prev, TrUserData), F@_2,
-				      F@_3, TrUserData).
-
-d_field_time_events_pb_dropped_annotations_count(<<1:1,
-						   X:7, Rest/binary>>,
-						 N, Acc, F@_1, F@_2, F@_3,
-						 TrUserData)
-    when N < 57 ->
-    d_field_time_events_pb_dropped_annotations_count(Rest,
-						     N + 7, X bsl N + Acc, F@_1,
-						     F@_2, F@_3, TrUserData);
-d_field_time_events_pb_dropped_annotations_count(<<0:1,
-						   X:7, Rest/binary>>,
-						 N, Acc, F@_1, _, F@_3,
-						 TrUserData) ->
-    {NewFValue, RestF} = {begin
-			    <<Res:32/signed-native>> = <<(X bsl N +
-							    Acc):32/unsigned-native>>,
-			    Res
-			  end,
-			  Rest},
-    dfp_read_field_def_time_events_pb(RestF, 0, 0, F@_1,
-				      NewFValue, F@_3, TrUserData).
-
-d_field_time_events_pb_dropped_message_events_count(<<1:1,
-						      X:7, Rest/binary>>,
-						    N, Acc, F@_1, F@_2, F@_3,
-						    TrUserData)
-    when N < 57 ->
-    d_field_time_events_pb_dropped_message_events_count(Rest,
-							N + 7, X bsl N + Acc,
-							F@_1, F@_2, F@_3,
-							TrUserData);
-d_field_time_events_pb_dropped_message_events_count(<<0:1,
-						      X:7, Rest/binary>>,
-						    N, Acc, F@_1, F@_2, _,
-						    TrUserData) ->
-    {NewFValue, RestF} = {begin
-			    <<Res:32/signed-native>> = <<(X bsl N +
-							    Acc):32/unsigned-native>>,
-			    Res
-			  end,
-			  Rest},
-    dfp_read_field_def_time_events_pb(RestF, 0, 0, F@_1,
-				      F@_2, NewFValue, TrUserData).
-
-skip_varint_time_events_pb(<<1:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
-    skip_varint_time_events_pb(Rest, Z1, Z2, F@_1, F@_2,
-			       F@_3, TrUserData);
-skip_varint_time_events_pb(<<0:1, _:7, Rest/binary>>,
-			   Z1, Z2, F@_1, F@_2, F@_3, TrUserData) ->
-    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, F@_3, TrUserData).
-
-skip_length_delimited_time_events_pb(<<1:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, F@_2, F@_3, TrUserData)
-    when N < 57 ->
-    skip_length_delimited_time_events_pb(Rest, N + 7,
-					 X bsl N + Acc, F@_1, F@_2, F@_3,
-					 TrUserData);
-skip_length_delimited_time_events_pb(<<0:1, X:7,
-				       Rest/binary>>,
-				     N, Acc, F@_1, F@_2, F@_3, TrUserData) ->
-    Length = X bsl N + Acc,
-    <<_:Length/binary, Rest2/binary>> = Rest,
-    dfp_read_field_def_time_events_pb(Rest2, 0, 0, F@_1,
-				      F@_2, F@_3, TrUserData).
-
-skip_group_time_events_pb(Bin, FNum, Z2, F@_1, F@_2,
-			  F@_3, TrUserData) ->
-    {_, Rest} = read_group(Bin, FNum),
-    dfp_read_field_def_time_events_pb(Rest, 0, Z2, F@_1,
-				      F@_2, F@_3, TrUserData).
-
-skip_32_time_events_pb(<<_:32, Rest/binary>>, Z1, Z2,
-		       F@_1, F@_2, F@_3, TrUserData) ->
-    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, F@_3, TrUserData).
-
-skip_64_time_events_pb(<<_:64, Rest/binary>>, Z1, Z2,
-		       F@_1, F@_2, F@_3, TrUserData) ->
-    dfp_read_field_def_time_events_pb(Rest, Z1, Z2, F@_1,
-				      F@_2, F@_3, TrUserData).
 
 d_msg_span_pb(Bin, TrUserData) ->
     dfp_read_field_def_span_pb(Bin, 0, 0,
@@ -5946,94 +5946,63 @@ merge_msgs(Prev, New, Opts)
     when element(1, Prev) =:= element(1, New) ->
     TrUserData = proplists:get_value(user_data, Opts),
     case Prev of
-      #bool_value_pb{} ->
-	  merge_msg_bool_value_pb(Prev, New, TrUserData);
-      #message_event_pb{} ->
-	  merge_msg_message_event_pb(Prev, New, TrUserData);
+      #float_value_pb{} ->
+	  merge_msg_float_value_pb(Prev, New, TrUserData);
       #truncatable_string_pb{} ->
 	  merge_msg_truncatable_string_pb(Prev, New, TrUserData);
-      #module_pb{} ->
-	  merge_msg_module_pb(Prev, New, TrUserData);
       #attribute_value_pb{} ->
 	  merge_msg_attribute_value_pb(Prev, New, TrUserData);
       #attributes_pb{} ->
 	  merge_msg_attributes_pb(Prev, New, TrUserData);
       #annotation_pb{} ->
 	  merge_msg_annotation_pb(Prev, New, TrUserData);
+      #module_pb{} ->
+	  merge_msg_module_pb(Prev, New, TrUserData);
+      #message_event_pb{} ->
+	  merge_msg_message_event_pb(Prev, New, TrUserData);
       #timestamp_pb{} ->
 	  merge_msg_timestamp_pb(Prev, New, TrUserData);
       #time_event_pb{} ->
 	  merge_msg_time_event_pb(Prev, New, TrUserData);
-      #float_value_pb{} ->
-	  merge_msg_float_value_pb(Prev, New, TrUserData);
-      #int_32_value_pb{} ->
-	  merge_msg_int_32_value_pb(Prev, New, TrUserData);
+      #time_events_pb{} ->
+	  merge_msg_time_events_pb(Prev, New, TrUserData);
       #bytes_value_pb{} ->
 	  merge_msg_bytes_value_pb(Prev, New, TrUserData);
       #string_value_pb{} ->
 	  merge_msg_string_value_pb(Prev, New, TrUserData);
       #int_64_value_pb{} ->
 	  merge_msg_int_64_value_pb(Prev, New, TrUserData);
+      #u_int_64_value_pb{} ->
+	  merge_msg_u_int_64_value_pb(Prev, New, TrUserData);
+      #double_value_pb{} ->
+	  merge_msg_double_value_pb(Prev, New, TrUserData);
+      #bool_value_pb{} ->
+	  merge_msg_bool_value_pb(Prev, New, TrUserData);
+      #link_pb{} -> merge_msg_link_pb(Prev, New, TrUserData);
+      #links_pb{} ->
+	  merge_msg_links_pb(Prev, New, TrUserData);
       #stack_frame_pb{} ->
 	  merge_msg_stack_frame_pb(Prev, New, TrUserData);
       #stack_frames_pb{} ->
 	  merge_msg_stack_frames_pb(Prev, New, TrUserData);
+      #stack_trace_pb{} ->
+	  merge_msg_stack_trace_pb(Prev, New, TrUserData);
+      #int_32_value_pb{} ->
+	  merge_msg_int_32_value_pb(Prev, New, TrUserData);
       #status_pb{} ->
 	  merge_msg_status_pb(Prev, New, TrUserData);
       #u_int_32_value_pb{} ->
 	  merge_msg_u_int_32_value_pb(Prev, New, TrUserData);
-      #link_pb{} -> merge_msg_link_pb(Prev, New, TrUserData);
-      #stack_trace_pb{} ->
-	  merge_msg_stack_trace_pb(Prev, New, TrUserData);
-      #double_value_pb{} ->
-	  merge_msg_double_value_pb(Prev, New, TrUserData);
-      #links_pb{} ->
-	  merge_msg_links_pb(Prev, New, TrUserData);
-      #u_int_64_value_pb{} ->
-	  merge_msg_u_int_64_value_pb(Prev, New, TrUserData);
-      #time_events_pb{} ->
-	  merge_msg_time_events_pb(Prev, New, TrUserData);
       #span_pb{} -> merge_msg_span_pb(Prev, New, TrUserData)
     end.
 
-merge_msg_bool_value_pb(#bool_value_pb{value = PFvalue},
-			#bool_value_pb{value = NFvalue}, _) ->
-    #bool_value_pb{value =
-		       if NFvalue =:= undefined -> PFvalue;
-			  true -> NFvalue
-		       end}.
-
-merge_msg_message_event_pb(#message_event_pb{type =
-						 PFtype,
-					     id = PFid,
-					     uncompressed_size =
-						 PFuncompressed_size,
-					     compressed_size =
-						 PFcompressed_size},
-			   #message_event_pb{type = NFtype, id = NFid,
-					     uncompressed_size =
-						 NFuncompressed_size,
-					     compressed_size =
-						 NFcompressed_size},
-			   _) ->
-    #message_event_pb{type =
-			  if NFtype =:= undefined -> PFtype;
-			     true -> NFtype
-			  end,
-		      id =
-			  if NFid =:= undefined -> PFid;
-			     true -> NFid
-			  end,
-		      uncompressed_size =
-			  if NFuncompressed_size =:= undefined ->
-				 PFuncompressed_size;
-			     true -> NFuncompressed_size
-			  end,
-		      compressed_size =
-			  if NFcompressed_size =:= undefined ->
-				 PFcompressed_size;
-			     true -> NFcompressed_size
-			  end}.
+merge_msg_float_value_pb(#float_value_pb{value =
+					     PFvalue},
+			 #float_value_pb{value = NFvalue}, _) ->
+    #float_value_pb{value =
+			if NFvalue =:= undefined -> PFvalue;
+			   true -> NFvalue
+			end}.
 
 merge_msg_truncatable_string_pb(#truncatable_string_pb{value
 							   = PFvalue,
@@ -6052,26 +6021,6 @@ merge_msg_truncatable_string_pb(#truncatable_string_pb{value
 				      PFtruncated_byte_count;
 				  true -> NFtruncated_byte_count
 			       end}.
-
-merge_msg_module_pb(#module_pb{module = PFmodule,
-			       build_id = PFbuild_id},
-		    #module_pb{module = NFmodule, build_id = NFbuild_id},
-		    TrUserData) ->
-    #module_pb{module =
-		   if PFmodule /= undefined, NFmodule /= undefined ->
-			  merge_msg_truncatable_string_pb(PFmodule, NFmodule,
-							  TrUserData);
-		      PFmodule == undefined -> NFmodule;
-		      NFmodule == undefined -> PFmodule
-		   end,
-	       build_id =
-		   if PFbuild_id /= undefined, NFbuild_id /= undefined ->
-			  merge_msg_truncatable_string_pb(PFbuild_id,
-							  NFbuild_id,
-							  TrUserData);
-		      PFbuild_id == undefined -> NFbuild_id;
-		      NFbuild_id == undefined -> PFbuild_id
-		   end}.
 
 merge_msg_attribute_value_pb(#attribute_value_pb{value =
 						     PFvalue},
@@ -6136,6 +6085,58 @@ merge_msg_annotation_pb(#annotation_pb{description =
 			  NFattributes == undefined -> PFattributes
 		       end}.
 
+merge_msg_module_pb(#module_pb{module = PFmodule,
+			       build_id = PFbuild_id},
+		    #module_pb{module = NFmodule, build_id = NFbuild_id},
+		    TrUserData) ->
+    #module_pb{module =
+		   if PFmodule /= undefined, NFmodule /= undefined ->
+			  merge_msg_truncatable_string_pb(PFmodule, NFmodule,
+							  TrUserData);
+		      PFmodule == undefined -> NFmodule;
+		      NFmodule == undefined -> PFmodule
+		   end,
+	       build_id =
+		   if PFbuild_id /= undefined, NFbuild_id /= undefined ->
+			  merge_msg_truncatable_string_pb(PFbuild_id,
+							  NFbuild_id,
+							  TrUserData);
+		      PFbuild_id == undefined -> NFbuild_id;
+		      NFbuild_id == undefined -> PFbuild_id
+		   end}.
+
+merge_msg_message_event_pb(#message_event_pb{type =
+						 PFtype,
+					     id = PFid,
+					     uncompressed_size =
+						 PFuncompressed_size,
+					     compressed_size =
+						 PFcompressed_size},
+			   #message_event_pb{type = NFtype, id = NFid,
+					     uncompressed_size =
+						 NFuncompressed_size,
+					     compressed_size =
+						 NFcompressed_size},
+			   _) ->
+    #message_event_pb{type =
+			  if NFtype =:= undefined -> PFtype;
+			     true -> NFtype
+			  end,
+		      id =
+			  if NFid =:= undefined -> PFid;
+			     true -> NFid
+			  end,
+		      uncompressed_size =
+			  if NFuncompressed_size =:= undefined ->
+				 PFuncompressed_size;
+			     true -> NFuncompressed_size
+			  end,
+		      compressed_size =
+			  if NFcompressed_size =:= undefined ->
+				 PFcompressed_size;
+			     true -> NFcompressed_size
+			  end}.
+
 merge_msg_timestamp_pb(#timestamp_pb{seconds =
 					 PFseconds,
 				     nanos = PFnanos},
@@ -6176,21 +6177,36 @@ merge_msg_time_event_pb(#time_event_pb{time = PFtime,
 			 _ -> NFvalue
 		       end}.
 
-merge_msg_float_value_pb(#float_value_pb{value =
-					     PFvalue},
-			 #float_value_pb{value = NFvalue}, _) ->
-    #float_value_pb{value =
-			if NFvalue =:= undefined -> PFvalue;
-			   true -> NFvalue
+merge_msg_time_events_pb(#time_events_pb{time_event =
+					     PFtime_event,
+					 dropped_annotations_count =
+					     PFdropped_annotations_count,
+					 dropped_message_events_count =
+					     PFdropped_message_events_count},
+			 #time_events_pb{time_event = NFtime_event,
+					 dropped_annotations_count =
+					     NFdropped_annotations_count,
+					 dropped_message_events_count =
+					     NFdropped_message_events_count},
+			 TrUserData) ->
+    #time_events_pb{time_event =
+			if PFtime_event /= undefined,
+			   NFtime_event /= undefined ->
+			       'erlang_++'(PFtime_event, NFtime_event,
+					   TrUserData);
+			   PFtime_event == undefined -> NFtime_event;
+			   NFtime_event == undefined -> PFtime_event
+			end,
+		    dropped_annotations_count =
+			if NFdropped_annotations_count =:= undefined ->
+			       PFdropped_annotations_count;
+			   true -> NFdropped_annotations_count
+			end,
+		    dropped_message_events_count =
+			if NFdropped_message_events_count =:= undefined ->
+			       PFdropped_message_events_count;
+			   true -> NFdropped_message_events_count
 			end}.
-
-merge_msg_int_32_value_pb(#int_32_value_pb{value =
-					       PFvalue},
-			  #int_32_value_pb{value = NFvalue}, _) ->
-    #int_32_value_pb{value =
-			 if NFvalue =:= undefined -> PFvalue;
-			    true -> NFvalue
-			 end}.
 
 merge_msg_bytes_value_pb(#bytes_value_pb{value =
 					     PFvalue},
@@ -6215,6 +6231,73 @@ merge_msg_int_64_value_pb(#int_64_value_pb{value =
 			 if NFvalue =:= undefined -> PFvalue;
 			    true -> NFvalue
 			 end}.
+
+merge_msg_u_int_64_value_pb(#u_int_64_value_pb{value =
+						   PFvalue},
+			    #u_int_64_value_pb{value = NFvalue}, _) ->
+    #u_int_64_value_pb{value =
+			   if NFvalue =:= undefined -> PFvalue;
+			      true -> NFvalue
+			   end}.
+
+merge_msg_double_value_pb(#double_value_pb{value =
+					       PFvalue},
+			  #double_value_pb{value = NFvalue}, _) ->
+    #double_value_pb{value =
+			 if NFvalue =:= undefined -> PFvalue;
+			    true -> NFvalue
+			 end}.
+
+merge_msg_bool_value_pb(#bool_value_pb{value = PFvalue},
+			#bool_value_pb{value = NFvalue}, _) ->
+    #bool_value_pb{value =
+		       if NFvalue =:= undefined -> PFvalue;
+			  true -> NFvalue
+		       end}.
+
+merge_msg_link_pb(#link_pb{trace_id = PFtrace_id,
+			   span_id = PFspan_id, type = PFtype,
+			   attributes = PFattributes},
+		  #link_pb{trace_id = NFtrace_id, span_id = NFspan_id,
+			   type = NFtype, attributes = NFattributes},
+		  TrUserData) ->
+    #link_pb{trace_id =
+		 if NFtrace_id =:= undefined -> PFtrace_id;
+		    true -> NFtrace_id
+		 end,
+	     span_id =
+		 if NFspan_id =:= undefined -> PFspan_id;
+		    true -> NFspan_id
+		 end,
+	     type =
+		 if NFtype =:= undefined -> PFtype;
+		    true -> NFtype
+		 end,
+	     attributes =
+		 if PFattributes /= undefined,
+		    NFattributes /= undefined ->
+			merge_msg_attributes_pb(PFattributes, NFattributes,
+						TrUserData);
+		    PFattributes == undefined -> NFattributes;
+		    NFattributes == undefined -> PFattributes
+		 end}.
+
+merge_msg_links_pb(#links_pb{link = PFlink,
+			     dropped_links_count = PFdropped_links_count},
+		   #links_pb{link = NFlink,
+			     dropped_links_count = NFdropped_links_count},
+		   TrUserData) ->
+    #links_pb{link =
+		  if PFlink /= undefined, NFlink /= undefined ->
+			 'erlang_++'(PFlink, NFlink, TrUserData);
+		     PFlink == undefined -> NFlink;
+		     NFlink == undefined -> PFlink
+		  end,
+	      dropped_links_count =
+		  if NFdropped_links_count =:= undefined ->
+			 PFdropped_links_count;
+		     true -> NFdropped_links_count
+		  end}.
 
 merge_msg_stack_frame_pb(#stack_frame_pb{function_name =
 					     PFfunction_name,
@@ -6308,53 +6391,6 @@ merge_msg_stack_frames_pb(#stack_frames_pb{frame =
 			    true -> NFdropped_frames_count
 			 end}.
 
-merge_msg_status_pb(#status_pb{code = PFcode,
-			       message = PFmessage},
-		    #status_pb{code = NFcode, message = NFmessage}, _) ->
-    #status_pb{code =
-		   if NFcode =:= undefined -> PFcode;
-		      true -> NFcode
-		   end,
-	       message =
-		   if NFmessage =:= undefined -> PFmessage;
-		      true -> NFmessage
-		   end}.
-
-merge_msg_u_int_32_value_pb(#u_int_32_value_pb{value =
-						   PFvalue},
-			    #u_int_32_value_pb{value = NFvalue}, _) ->
-    #u_int_32_value_pb{value =
-			   if NFvalue =:= undefined -> PFvalue;
-			      true -> NFvalue
-			   end}.
-
-merge_msg_link_pb(#link_pb{trace_id = PFtrace_id,
-			   span_id = PFspan_id, type = PFtype,
-			   attributes = PFattributes},
-		  #link_pb{trace_id = NFtrace_id, span_id = NFspan_id,
-			   type = NFtype, attributes = NFattributes},
-		  TrUserData) ->
-    #link_pb{trace_id =
-		 if NFtrace_id =:= undefined -> PFtrace_id;
-		    true -> NFtrace_id
-		 end,
-	     span_id =
-		 if NFspan_id =:= undefined -> PFspan_id;
-		    true -> NFspan_id
-		 end,
-	     type =
-		 if NFtype =:= undefined -> PFtype;
-		    true -> NFtype
-		 end,
-	     attributes =
-		 if PFattributes /= undefined,
-		    NFattributes /= undefined ->
-			merge_msg_attributes_pb(PFattributes, NFattributes,
-						TrUserData);
-		    PFattributes == undefined -> NFattributes;
-		    NFattributes == undefined -> PFattributes
-		 end}.
-
 merge_msg_stack_trace_pb(#stack_trace_pb{stack_frames =
 					     PFstack_frames,
 					 stack_trace_hash_id =
@@ -6378,69 +6414,33 @@ merge_msg_stack_trace_pb(#stack_trace_pb{stack_frames =
 			   true -> NFstack_trace_hash_id
 			end}.
 
-merge_msg_double_value_pb(#double_value_pb{value =
+merge_msg_int_32_value_pb(#int_32_value_pb{value =
 					       PFvalue},
-			  #double_value_pb{value = NFvalue}, _) ->
-    #double_value_pb{value =
+			  #int_32_value_pb{value = NFvalue}, _) ->
+    #int_32_value_pb{value =
 			 if NFvalue =:= undefined -> PFvalue;
 			    true -> NFvalue
 			 end}.
 
-merge_msg_links_pb(#links_pb{link = PFlink,
-			     dropped_links_count = PFdropped_links_count},
-		   #links_pb{link = NFlink,
-			     dropped_links_count = NFdropped_links_count},
-		   TrUserData) ->
-    #links_pb{link =
-		  if PFlink /= undefined, NFlink /= undefined ->
-			 'erlang_++'(PFlink, NFlink, TrUserData);
-		     PFlink == undefined -> NFlink;
-		     NFlink == undefined -> PFlink
-		  end,
-	      dropped_links_count =
-		  if NFdropped_links_count =:= undefined ->
-			 PFdropped_links_count;
-		     true -> NFdropped_links_count
-		  end}.
+merge_msg_status_pb(#status_pb{code = PFcode,
+			       message = PFmessage},
+		    #status_pb{code = NFcode, message = NFmessage}, _) ->
+    #status_pb{code =
+		   if NFcode =:= undefined -> PFcode;
+		      true -> NFcode
+		   end,
+	       message =
+		   if NFmessage =:= undefined -> PFmessage;
+		      true -> NFmessage
+		   end}.
 
-merge_msg_u_int_64_value_pb(#u_int_64_value_pb{value =
+merge_msg_u_int_32_value_pb(#u_int_32_value_pb{value =
 						   PFvalue},
-			    #u_int_64_value_pb{value = NFvalue}, _) ->
-    #u_int_64_value_pb{value =
+			    #u_int_32_value_pb{value = NFvalue}, _) ->
+    #u_int_32_value_pb{value =
 			   if NFvalue =:= undefined -> PFvalue;
 			      true -> NFvalue
 			   end}.
-
-merge_msg_time_events_pb(#time_events_pb{time_event =
-					     PFtime_event,
-					 dropped_annotations_count =
-					     PFdropped_annotations_count,
-					 dropped_message_events_count =
-					     PFdropped_message_events_count},
-			 #time_events_pb{time_event = NFtime_event,
-					 dropped_annotations_count =
-					     NFdropped_annotations_count,
-					 dropped_message_events_count =
-					     NFdropped_message_events_count},
-			 TrUserData) ->
-    #time_events_pb{time_event =
-			if PFtime_event /= undefined,
-			   NFtime_event /= undefined ->
-			       'erlang_++'(PFtime_event, NFtime_event,
-					   TrUserData);
-			   PFtime_event == undefined -> NFtime_event;
-			   NFtime_event == undefined -> PFtime_event
-			end,
-		    dropped_annotations_count =
-			if NFdropped_annotations_count =:= undefined ->
-			       PFdropped_annotations_count;
-			   true -> NFdropped_annotations_count
-			end,
-		    dropped_message_events_count =
-			if NFdropped_message_events_count =:= undefined ->
-			       PFdropped_message_events_count;
-			   true -> NFdropped_message_events_count
-			end}.
 
 merge_msg_span_pb(#span_pb{trace_id = PFtrace_id,
 			   span_id = PFspan_id,
@@ -6565,16 +6565,11 @@ verify_msg(Msg) -> verify_msg(Msg, []).
 verify_msg(Msg, Opts) ->
     TrUserData = proplists:get_value(user_data, Opts),
     case Msg of
-      #bool_value_pb{} ->
-	  v_msg_bool_value_pb(Msg, [bool_value_pb], TrUserData);
-      #message_event_pb{} ->
-	  v_msg_message_event_pb(Msg, [message_event_pb],
-				 TrUserData);
+      #float_value_pb{} ->
+	  v_msg_float_value_pb(Msg, [float_value_pb], TrUserData);
       #truncatable_string_pb{} ->
 	  v_msg_truncatable_string_pb(Msg,
 				      [truncatable_string_pb], TrUserData);
-      #module_pb{} ->
-	  v_msg_module_pb(Msg, [module_pb], TrUserData);
       #attribute_value_pb{} ->
 	  v_msg_attribute_value_pb(Msg, [attribute_value_pb],
 				   TrUserData);
@@ -6582,15 +6577,17 @@ verify_msg(Msg, Opts) ->
 	  v_msg_attributes_pb(Msg, [attributes_pb], TrUserData);
       #annotation_pb{} ->
 	  v_msg_annotation_pb(Msg, [annotation_pb], TrUserData);
+      #module_pb{} ->
+	  v_msg_module_pb(Msg, [module_pb], TrUserData);
+      #message_event_pb{} ->
+	  v_msg_message_event_pb(Msg, [message_event_pb],
+				 TrUserData);
       #timestamp_pb{} ->
 	  v_msg_timestamp_pb(Msg, [timestamp_pb], TrUserData);
       #time_event_pb{} ->
 	  v_msg_time_event_pb(Msg, [time_event_pb], TrUserData);
-      #float_value_pb{} ->
-	  v_msg_float_value_pb(Msg, [float_value_pb], TrUserData);
-      #int_32_value_pb{} ->
-	  v_msg_int_32_value_pb(Msg, [int_32_value_pb],
-				TrUserData);
+      #time_events_pb{} ->
+	  v_msg_time_events_pb(Msg, [time_events_pb], TrUserData);
       #bytes_value_pb{} ->
 	  v_msg_bytes_value_pb(Msg, [bytes_value_pb], TrUserData);
       #string_value_pb{} ->
@@ -6599,68 +6596,44 @@ verify_msg(Msg, Opts) ->
       #int_64_value_pb{} ->
 	  v_msg_int_64_value_pb(Msg, [int_64_value_pb],
 				TrUserData);
+      #u_int_64_value_pb{} ->
+	  v_msg_u_int_64_value_pb(Msg, [u_int_64_value_pb],
+				  TrUserData);
+      #double_value_pb{} ->
+	  v_msg_double_value_pb(Msg, [double_value_pb],
+				TrUserData);
+      #bool_value_pb{} ->
+	  v_msg_bool_value_pb(Msg, [bool_value_pb], TrUserData);
+      #link_pb{} -> v_msg_link_pb(Msg, [link_pb], TrUserData);
+      #links_pb{} ->
+	  v_msg_links_pb(Msg, [links_pb], TrUserData);
       #stack_frame_pb{} ->
 	  v_msg_stack_frame_pb(Msg, [stack_frame_pb], TrUserData);
       #stack_frames_pb{} ->
 	  v_msg_stack_frames_pb(Msg, [stack_frames_pb],
+				TrUserData);
+      #stack_trace_pb{} ->
+	  v_msg_stack_trace_pb(Msg, [stack_trace_pb], TrUserData);
+      #int_32_value_pb{} ->
+	  v_msg_int_32_value_pb(Msg, [int_32_value_pb],
 				TrUserData);
       #status_pb{} ->
 	  v_msg_status_pb(Msg, [status_pb], TrUserData);
       #u_int_32_value_pb{} ->
 	  v_msg_u_int_32_value_pb(Msg, [u_int_32_value_pb],
 				  TrUserData);
-      #link_pb{} -> v_msg_link_pb(Msg, [link_pb], TrUserData);
-      #stack_trace_pb{} ->
-	  v_msg_stack_trace_pb(Msg, [stack_trace_pb], TrUserData);
-      #double_value_pb{} ->
-	  v_msg_double_value_pb(Msg, [double_value_pb],
-				TrUserData);
-      #links_pb{} ->
-	  v_msg_links_pb(Msg, [links_pb], TrUserData);
-      #u_int_64_value_pb{} ->
-	  v_msg_u_int_64_value_pb(Msg, [u_int_64_value_pb],
-				  TrUserData);
-      #time_events_pb{} ->
-	  v_msg_time_events_pb(Msg, [time_events_pb], TrUserData);
       #span_pb{} -> v_msg_span_pb(Msg, [span_pb], TrUserData);
       _ -> mk_type_error(not_a_known_message, Msg, [])
     end.
 
 
--dialyzer({nowarn_function,v_msg_bool_value_pb/3}).
-v_msg_bool_value_pb(#bool_value_pb{value = F1}, Path,
-		    _) ->
+-dialyzer({nowarn_function,v_msg_float_value_pb/3}).
+v_msg_float_value_pb(#float_value_pb{value = F1}, Path,
+		     _) ->
     if F1 == undefined -> ok;
-       true -> v_type_bool(F1, [value | Path])
+       true -> v_type_float(F1, [value | Path])
     end,
-    ok;
-v_msg_bool_value_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, bool_value_pb}, X, Path).
-
--dialyzer({nowarn_function,v_msg_message_event_pb/3}).
-v_msg_message_event_pb(#message_event_pb{type = F1,
-					 id = F2, uncompressed_size = F3,
-					 compressed_size = F4},
-		       Path, _) ->
-    if F1 == undefined -> ok;
-       true ->
-	   'v_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(F1,
-									    [type
-									     | Path])
-    end,
-    if F2 == undefined -> ok;
-       true -> v_type_uint64(F2, [id | Path])
-    end,
-    if F3 == undefined -> ok;
-       true -> v_type_uint64(F3, [uncompressed_size | Path])
-    end,
-    if F4 == undefined -> ok;
-       true -> v_type_uint64(F4, [compressed_size | Path])
-    end,
-    ok;
-v_msg_message_event_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, message_event_pb}, X,
-		  Path).
+    ok.
 
 -dialyzer({nowarn_function,v_msg_truncatable_string_pb/3}).
 v_msg_truncatable_string_pb(#truncatable_string_pb{value
@@ -6677,23 +6650,6 @@ v_msg_truncatable_string_pb(#truncatable_string_pb{value
 v_msg_truncatable_string_pb(X, Path, _TrUserData) ->
     mk_type_error({expected_msg, truncatable_string_pb}, X,
 		  Path).
-
--dialyzer({nowarn_function,v_msg_module_pb/3}).
-v_msg_module_pb(#module_pb{module = F1, build_id = F2},
-		Path, TrUserData) ->
-    if F1 == undefined -> ok;
-       true ->
-	   v_msg_truncatable_string_pb(F1, [module | Path],
-				       TrUserData)
-    end,
-    if F2 == undefined -> ok;
-       true ->
-	   v_msg_truncatable_string_pb(F2, [build_id | Path],
-				       TrUserData)
-    end,
-    ok;
-v_msg_module_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, module_pb}, X, Path).
 
 -dialyzer({nowarn_function,v_msg_attribute_value_pb/3}).
 v_msg_attribute_value_pb(#attribute_value_pb{value =
@@ -6746,6 +6702,48 @@ v_msg_annotation_pb(#annotation_pb{description = F1,
 v_msg_annotation_pb(X, Path, _TrUserData) ->
     mk_type_error({expected_msg, annotation_pb}, X, Path).
 
+-dialyzer({nowarn_function,v_msg_module_pb/3}).
+v_msg_module_pb(#module_pb{module = F1, build_id = F2},
+		Path, TrUserData) ->
+    if F1 == undefined -> ok;
+       true ->
+	   v_msg_truncatable_string_pb(F1, [module | Path],
+				       TrUserData)
+    end,
+    if F2 == undefined -> ok;
+       true ->
+	   v_msg_truncatable_string_pb(F2, [build_id | Path],
+				       TrUserData)
+    end,
+    ok;
+v_msg_module_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, module_pb}, X, Path).
+
+-dialyzer({nowarn_function,v_msg_message_event_pb/3}).
+v_msg_message_event_pb(#message_event_pb{type = F1,
+					 id = F2, uncompressed_size = F3,
+					 compressed_size = F4},
+		       Path, _) ->
+    if F1 == undefined -> ok;
+       true ->
+	   'v_enum_opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'(F1,
+									    [type
+									     | Path])
+    end,
+    if F2 == undefined -> ok;
+       true -> v_type_uint64(F2, [id | Path])
+    end,
+    if F3 == undefined -> ok;
+       true -> v_type_uint64(F3, [uncompressed_size | Path])
+    end,
+    if F4 == undefined -> ok;
+       true -> v_type_uint64(F4, [compressed_size | Path])
+    end,
+    ok;
+v_msg_message_event_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, message_event_pb}, X,
+		  Path).
+
 -dialyzer({nowarn_function,v_msg_timestamp_pb/3}).
 v_msg_timestamp_pb(#timestamp_pb{seconds = F1,
 				 nanos = F2},
@@ -6782,21 +6780,31 @@ v_msg_time_event_pb(#time_event_pb{time = F1,
 v_msg_time_event_pb(X, Path, _TrUserData) ->
     mk_type_error({expected_msg, time_event_pb}, X, Path).
 
--dialyzer({nowarn_function,v_msg_float_value_pb/3}).
-v_msg_float_value_pb(#float_value_pb{value = F1}, Path,
-		     _) ->
-    if F1 == undefined -> ok;
-       true -> v_type_float(F1, [value | Path])
+-dialyzer({nowarn_function,v_msg_time_events_pb/3}).
+v_msg_time_events_pb(#time_events_pb{time_event = F1,
+				     dropped_annotations_count = F2,
+				     dropped_message_events_count = F3},
+		     Path, TrUserData) ->
+    if is_list(F1) ->
+	   _ = [v_msg_time_event_pb(Elem, [time_event | Path],
+				    TrUserData)
+		|| Elem <- F1],
+	   ok;
+       true ->
+	   mk_type_error({invalid_list_of, {msg, time_event_pb}},
+			 F1, [time_event | Path])
     end,
-    ok.
-
--dialyzer({nowarn_function,v_msg_int_32_value_pb/3}).
-v_msg_int_32_value_pb(#int_32_value_pb{value = F1},
-		      Path, _) ->
-    if F1 == undefined -> ok;
-       true -> v_type_int32(F1, [value | Path])
+    if F2 == undefined -> ok;
+       true ->
+	   v_type_int32(F2, [dropped_annotations_count | Path])
     end,
-    ok.
+    if F3 == undefined -> ok;
+       true ->
+	   v_type_int32(F3, [dropped_message_events_count | Path])
+    end,
+    ok;
+v_msg_time_events_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, time_events_pb}, X, Path).
 
 -dialyzer({nowarn_function,v_msg_bytes_value_pb/3}).
 v_msg_bytes_value_pb(#bytes_value_pb{value = F1}, Path,
@@ -6821,6 +6829,74 @@ v_msg_int_64_value_pb(#int_64_value_pb{value = F1},
        true -> v_type_int64(F1, [value | Path])
     end,
     ok.
+
+-dialyzer({nowarn_function,v_msg_u_int_64_value_pb/3}).
+v_msg_u_int_64_value_pb(#u_int_64_value_pb{value = F1},
+			Path, _) ->
+    if F1 == undefined -> ok;
+       true -> v_type_uint64(F1, [value | Path])
+    end,
+    ok.
+
+-dialyzer({nowarn_function,v_msg_double_value_pb/3}).
+v_msg_double_value_pb(#double_value_pb{value = F1},
+		      Path, _) ->
+    if F1 == undefined -> ok;
+       true -> v_type_double(F1, [value | Path])
+    end,
+    ok.
+
+-dialyzer({nowarn_function,v_msg_bool_value_pb/3}).
+v_msg_bool_value_pb(#bool_value_pb{value = F1}, Path,
+		    _) ->
+    if F1 == undefined -> ok;
+       true -> v_type_bool(F1, [value | Path])
+    end,
+    ok;
+v_msg_bool_value_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, bool_value_pb}, X, Path).
+
+-dialyzer({nowarn_function,v_msg_link_pb/3}).
+v_msg_link_pb(#link_pb{trace_id = F1, span_id = F2,
+		       type = F3, attributes = F4},
+	      Path, TrUserData) ->
+    if F1 == undefined -> ok;
+       true -> v_type_bytes(F1, [trace_id | Path])
+    end,
+    if F2 == undefined -> ok;
+       true -> v_type_bytes(F2, [span_id | Path])
+    end,
+    if F3 == undefined -> ok;
+       true ->
+	   'v_enum_opencensus.proto.trace.Span.Link.Type'(F3,
+							  [type | Path])
+    end,
+    if F4 == undefined -> ok;
+       true ->
+	   v_msg_attributes_pb(F4, [attributes | Path], TrUserData)
+    end,
+    ok;
+v_msg_link_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, link_pb}, X, Path).
+
+-dialyzer({nowarn_function,v_msg_links_pb/3}).
+v_msg_links_pb(#links_pb{link = F1,
+			 dropped_links_count = F2},
+	       Path, TrUserData) ->
+    if is_list(F1) ->
+	   _ = [v_msg_link_pb(Elem, [link | Path], TrUserData)
+		|| Elem <- F1],
+	   ok;
+       true ->
+	   mk_type_error({invalid_list_of, {msg, link_pb}}, F1,
+			 [link | Path])
+    end,
+    if F2 == undefined -> ok;
+       true -> v_type_int32(F2, [dropped_links_count | Path])
+    end,
+    ok;
+v_msg_links_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, links_pb}, X, Path).
 
 -dialyzer({nowarn_function,v_msg_stack_frame_pb/3}).
 v_msg_stack_frame_pb(#stack_frame_pb{function_name = F1,
@@ -6884,6 +6960,30 @@ v_msg_stack_frames_pb(#stack_frames_pb{frame = F1,
 v_msg_stack_frames_pb(X, Path, _TrUserData) ->
     mk_type_error({expected_msg, stack_frames_pb}, X, Path).
 
+-dialyzer({nowarn_function,v_msg_stack_trace_pb/3}).
+v_msg_stack_trace_pb(#stack_trace_pb{stack_frames = F1,
+				     stack_trace_hash_id = F2},
+		     Path, TrUserData) ->
+    if F1 == undefined -> ok;
+       true ->
+	   v_msg_stack_frames_pb(F1, [stack_frames | Path],
+				 TrUserData)
+    end,
+    if F2 == undefined -> ok;
+       true -> v_type_uint64(F2, [stack_trace_hash_id | Path])
+    end,
+    ok;
+v_msg_stack_trace_pb(X, Path, _TrUserData) ->
+    mk_type_error({expected_msg, stack_trace_pb}, X, Path).
+
+-dialyzer({nowarn_function,v_msg_int_32_value_pb/3}).
+v_msg_int_32_value_pb(#int_32_value_pb{value = F1},
+		      Path, _) ->
+    if F1 == undefined -> ok;
+       true -> v_type_int32(F1, [value | Path])
+    end,
+    ok.
+
 -dialyzer({nowarn_function,v_msg_status_pb/3}).
 v_msg_status_pb(#status_pb{code = F1, message = F2},
 		Path, _) ->
@@ -6907,106 +7007,6 @@ v_msg_u_int_32_value_pb(#u_int_32_value_pb{value = F1},
 v_msg_u_int_32_value_pb(X, Path, _TrUserData) ->
     mk_type_error({expected_msg, u_int_32_value_pb}, X,
 		  Path).
-
--dialyzer({nowarn_function,v_msg_link_pb/3}).
-v_msg_link_pb(#link_pb{trace_id = F1, span_id = F2,
-		       type = F3, attributes = F4},
-	      Path, TrUserData) ->
-    if F1 == undefined -> ok;
-       true -> v_type_bytes(F1, [trace_id | Path])
-    end,
-    if F2 == undefined -> ok;
-       true -> v_type_bytes(F2, [span_id | Path])
-    end,
-    if F3 == undefined -> ok;
-       true ->
-	   'v_enum_opencensus.proto.trace.Span.Link.Type'(F3,
-							  [type | Path])
-    end,
-    if F4 == undefined -> ok;
-       true ->
-	   v_msg_attributes_pb(F4, [attributes | Path], TrUserData)
-    end,
-    ok;
-v_msg_link_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, link_pb}, X, Path).
-
--dialyzer({nowarn_function,v_msg_stack_trace_pb/3}).
-v_msg_stack_trace_pb(#stack_trace_pb{stack_frames = F1,
-				     stack_trace_hash_id = F2},
-		     Path, TrUserData) ->
-    if F1 == undefined -> ok;
-       true ->
-	   v_msg_stack_frames_pb(F1, [stack_frames | Path],
-				 TrUserData)
-    end,
-    if F2 == undefined -> ok;
-       true -> v_type_uint64(F2, [stack_trace_hash_id | Path])
-    end,
-    ok;
-v_msg_stack_trace_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, stack_trace_pb}, X, Path).
-
--dialyzer({nowarn_function,v_msg_double_value_pb/3}).
-v_msg_double_value_pb(#double_value_pb{value = F1},
-		      Path, _) ->
-    if F1 == undefined -> ok;
-       true -> v_type_double(F1, [value | Path])
-    end,
-    ok.
-
--dialyzer({nowarn_function,v_msg_links_pb/3}).
-v_msg_links_pb(#links_pb{link = F1,
-			 dropped_links_count = F2},
-	       Path, TrUserData) ->
-    if is_list(F1) ->
-	   _ = [v_msg_link_pb(Elem, [link | Path], TrUserData)
-		|| Elem <- F1],
-	   ok;
-       true ->
-	   mk_type_error({invalid_list_of, {msg, link_pb}}, F1,
-			 [link | Path])
-    end,
-    if F2 == undefined -> ok;
-       true -> v_type_int32(F2, [dropped_links_count | Path])
-    end,
-    ok;
-v_msg_links_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, links_pb}, X, Path).
-
--dialyzer({nowarn_function,v_msg_u_int_64_value_pb/3}).
-v_msg_u_int_64_value_pb(#u_int_64_value_pb{value = F1},
-			Path, _) ->
-    if F1 == undefined -> ok;
-       true -> v_type_uint64(F1, [value | Path])
-    end,
-    ok.
-
--dialyzer({nowarn_function,v_msg_time_events_pb/3}).
-v_msg_time_events_pb(#time_events_pb{time_event = F1,
-				     dropped_annotations_count = F2,
-				     dropped_message_events_count = F3},
-		     Path, TrUserData) ->
-    if is_list(F1) ->
-	   _ = [v_msg_time_event_pb(Elem, [time_event | Path],
-				    TrUserData)
-		|| Elem <- F1],
-	   ok;
-       true ->
-	   mk_type_error({invalid_list_of, {msg, time_event_pb}},
-			 F1, [time_event | Path])
-    end,
-    if F2 == undefined -> ok;
-       true ->
-	   v_type_int32(F2, [dropped_annotations_count | Path])
-    end,
-    if F3 == undefined -> ok;
-       true ->
-	   v_type_int32(F3, [dropped_message_events_count | Path])
-    end,
-    ok;
-v_msg_time_events_pb(X, Path, _TrUserData) ->
-    mk_type_error({expected_msg, time_events_pb}, X, Path).
 
 -dialyzer({nowarn_function,v_msg_span_pb/3}).
 v_msg_span_pb(#span_pb{trace_id = F1, span_id = F2,
@@ -7339,33 +7339,14 @@ get_msg_defs() ->
      {{enum, 'opencensus.proto.trace.Span.Link.Type'},
       [{'TYPE_UNSPECIFIED', 0}, {'CHILD_LINKED_SPAN', 1},
        {'PARENT_LINKED_SPAN', 2}]},
-     {{msg, bool_value_pb},
-      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bool},
+     {{msg, float_value_pb},
+      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, float},
 	{occurrence, optional}, {opts, []}]]},
-     {{msg, message_event_pb},
-      [[{name, type}, {fnum, 1}, {rnum, 2},
-	{type,
-	 {enum,
-	  'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'}},
-	{occurrence, optional}, {opts, []}],
-       [{name, id}, {fnum, 2}, {rnum, 3}, {type, uint64},
-	{occurrence, optional}, {opts, []}],
-       [{name, uncompressed_size}, {fnum, 3}, {rnum, 4},
-	{type, uint64}, {occurrence, optional}, {opts, []}],
-       [{name, compressed_size}, {fnum, 4}, {rnum, 5},
-	{type, uint64}, {occurrence, optional}, {opts, []}]]},
      {{msg, truncatable_string_pb},
       [[{name, value}, {fnum, 1}, {rnum, 2}, {type, string},
 	{occurrence, optional}, {opts, []}],
        [{name, truncated_byte_count}, {fnum, 2}, {rnum, 3},
 	{type, int32}, {occurrence, optional}, {opts, []}]]},
-     {{msg, module_pb},
-      [[{name, module}, {fnum, 1}, {rnum, 2},
-	{type, {msg, truncatable_string_pb}},
-	{occurrence, optional}, {opts, []}],
-       [{name, build_id}, {fnum, 2}, {rnum, 3},
-	{type, {msg, truncatable_string_pb}},
-	{occurrence, optional}, {opts, []}]]},
      {{msg, attribute_value_pb},
       [[{name, value}, {rnum, 2},
 	{fields,
@@ -7389,6 +7370,25 @@ get_msg_defs() ->
        [{name, attributes}, {fnum, 2}, {rnum, 3},
 	{type, {msg, attributes_pb}}, {occurrence, optional},
 	{opts, []}]]},
+     {{msg, module_pb},
+      [[{name, module}, {fnum, 1}, {rnum, 2},
+	{type, {msg, truncatable_string_pb}},
+	{occurrence, optional}, {opts, []}],
+       [{name, build_id}, {fnum, 2}, {rnum, 3},
+	{type, {msg, truncatable_string_pb}},
+	{occurrence, optional}, {opts, []}]]},
+     {{msg, message_event_pb},
+      [[{name, type}, {fnum, 1}, {rnum, 2},
+	{type,
+	 {enum,
+	  'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'}},
+	{occurrence, optional}, {opts, []}],
+       [{name, id}, {fnum, 2}, {rnum, 3}, {type, uint64},
+	{occurrence, optional}, {opts, []}],
+       [{name, uncompressed_size}, {fnum, 3}, {rnum, 4},
+	{type, uint64}, {occurrence, optional}, {opts, []}],
+       [{name, compressed_size}, {fnum, 4}, {rnum, 5},
+	{type, uint64}, {occurrence, optional}, {opts, []}]]},
      {{msg, timestamp_pb},
       [[{name, seconds}, {fnum, 1}, {rnum, 2}, {type, int64},
 	{occurrence, optional}, {opts, []}],
@@ -7406,12 +7406,16 @@ get_msg_defs() ->
 	  [{name, message_event}, {fnum, 3}, {rnum, 3},
 	   {type, {msg, message_event_pb}}, {occurrence, optional},
 	   {opts, []}]]}]]},
-     {{msg, float_value_pb},
-      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, float},
-	{occurrence, optional}, {opts, []}]]},
-     {{msg, int_32_value_pb},
-      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int32},
-	{occurrence, optional}, {opts, []}]]},
+     {{msg, time_events_pb},
+      [[{name, time_event}, {fnum, 1}, {rnum, 2},
+	{type, {msg, time_event_pb}}, {occurrence, repeated},
+	{opts, []}],
+       [{name, dropped_annotations_count}, {fnum, 2},
+	{rnum, 3}, {type, int32}, {occurrence, optional},
+	{opts, []}],
+       [{name, dropped_message_events_count}, {fnum, 3},
+	{rnum, 4}, {type, int32}, {occurrence, optional},
+	{opts, []}]]},
      {{msg, bytes_value_pb},
       [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bytes},
 	{occurrence, optional}, {opts, []}]]},
@@ -7421,6 +7425,32 @@ get_msg_defs() ->
      {{msg, int_64_value_pb},
       [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int64},
 	{occurrence, optional}, {opts, []}]]},
+     {{msg, u_int_64_value_pb},
+      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint64},
+	{occurrence, optional}, {opts, []}]]},
+     {{msg, double_value_pb},
+      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, double},
+	{occurrence, optional}, {opts, []}]]},
+     {{msg, bool_value_pb},
+      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bool},
+	{occurrence, optional}, {opts, []}]]},
+     {{msg, link_pb},
+      [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
+	{occurrence, optional}, {opts, []}],
+       [{name, span_id}, {fnum, 2}, {rnum, 3}, {type, bytes},
+	{occurrence, optional}, {opts, []}],
+       [{name, type}, {fnum, 3}, {rnum, 4},
+	{type, {enum, 'opencensus.proto.trace.Span.Link.Type'}},
+	{occurrence, optional}, {opts, []}],
+       [{name, attributes}, {fnum, 4}, {rnum, 5},
+	{type, {msg, attributes_pb}}, {occurrence, optional},
+	{opts, []}]]},
+     {{msg, links_pb},
+      [[{name, link}, {fnum, 1}, {rnum, 2},
+	{type, {msg, link_pb}}, {occurrence, repeated},
+	{opts, []}],
+       [{name, dropped_links_count}, {fnum, 2}, {rnum, 3},
+	{type, int32}, {occurrence, optional}, {opts, []}]]},
      {{msg, stack_frame_pb},
       [[{name, function_name}, {fnum, 1}, {rnum, 2},
 	{type, {msg, truncatable_string_pb}},
@@ -7447,6 +7477,15 @@ get_msg_defs() ->
 	{opts, []}],
        [{name, dropped_frames_count}, {fnum, 2}, {rnum, 3},
 	{type, int32}, {occurrence, optional}, {opts, []}]]},
+     {{msg, stack_trace_pb},
+      [[{name, stack_frames}, {fnum, 1}, {rnum, 2},
+	{type, {msg, stack_frames_pb}}, {occurrence, optional},
+	{opts, []}],
+       [{name, stack_trace_hash_id}, {fnum, 2}, {rnum, 3},
+	{type, uint64}, {occurrence, optional}, {opts, []}]]},
+     {{msg, int_32_value_pb},
+      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int32},
+	{occurrence, optional}, {opts, []}]]},
      {{msg, status_pb},
       [[{name, code}, {fnum, 1}, {rnum, 2}, {type, int32},
 	{occurrence, optional}, {opts, []}],
@@ -7455,45 +7494,6 @@ get_msg_defs() ->
      {{msg, u_int_32_value_pb},
       [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint32},
 	{occurrence, optional}, {opts, []}]]},
-     {{msg, link_pb},
-      [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
-	{occurrence, optional}, {opts, []}],
-       [{name, span_id}, {fnum, 2}, {rnum, 3}, {type, bytes},
-	{occurrence, optional}, {opts, []}],
-       [{name, type}, {fnum, 3}, {rnum, 4},
-	{type, {enum, 'opencensus.proto.trace.Span.Link.Type'}},
-	{occurrence, optional}, {opts, []}],
-       [{name, attributes}, {fnum, 4}, {rnum, 5},
-	{type, {msg, attributes_pb}}, {occurrence, optional},
-	{opts, []}]]},
-     {{msg, stack_trace_pb},
-      [[{name, stack_frames}, {fnum, 1}, {rnum, 2},
-	{type, {msg, stack_frames_pb}}, {occurrence, optional},
-	{opts, []}],
-       [{name, stack_trace_hash_id}, {fnum, 2}, {rnum, 3},
-	{type, uint64}, {occurrence, optional}, {opts, []}]]},
-     {{msg, double_value_pb},
-      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, double},
-	{occurrence, optional}, {opts, []}]]},
-     {{msg, links_pb},
-      [[{name, link}, {fnum, 1}, {rnum, 2},
-	{type, {msg, link_pb}}, {occurrence, repeated},
-	{opts, []}],
-       [{name, dropped_links_count}, {fnum, 2}, {rnum, 3},
-	{type, int32}, {occurrence, optional}, {opts, []}]]},
-     {{msg, u_int_64_value_pb},
-      [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint64},
-	{occurrence, optional}, {opts, []}]]},
-     {{msg, time_events_pb},
-      [[{name, time_event}, {fnum, 1}, {rnum, 2},
-	{type, {msg, time_event_pb}}, {occurrence, repeated},
-	{opts, []}],
-       [{name, dropped_annotations_count}, {fnum, 2},
-	{rnum, 3}, {type, int32}, {occurrence, optional},
-	{opts, []}],
-       [{name, dropped_message_events_count}, {fnum, 3},
-	{rnum, 4}, {type, int32}, {occurrence, optional},
-	{opts, []}]]},
      {{msg, span_pb},
       [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
 	{occurrence, optional}, {opts, []}],
@@ -7537,28 +7537,28 @@ get_msg_defs() ->
 
 
 get_msg_names() ->
-    [bool_value_pb, message_event_pb, truncatable_string_pb,
-     module_pb, attribute_value_pb, attributes_pb,
-     annotation_pb, timestamp_pb, time_event_pb,
-     float_value_pb, int_32_value_pb, bytes_value_pb,
-     string_value_pb, int_64_value_pb, stack_frame_pb,
-     stack_frames_pb, status_pb, u_int_32_value_pb, link_pb,
-     stack_trace_pb, double_value_pb, links_pb,
-     u_int_64_value_pb, time_events_pb, span_pb].
+    [float_value_pb, truncatable_string_pb,
+     attribute_value_pb, attributes_pb, annotation_pb,
+     module_pb, message_event_pb, timestamp_pb,
+     time_event_pb, time_events_pb, bytes_value_pb,
+     string_value_pb, int_64_value_pb, u_int_64_value_pb,
+     double_value_pb, bool_value_pb, link_pb, links_pb,
+     stack_frame_pb, stack_frames_pb, stack_trace_pb,
+     int_32_value_pb, status_pb, u_int_32_value_pb, span_pb].
 
 
 get_group_names() -> [].
 
 
 get_msg_or_group_names() ->
-    [bool_value_pb, message_event_pb, truncatable_string_pb,
-     module_pb, attribute_value_pb, attributes_pb,
-     annotation_pb, timestamp_pb, time_event_pb,
-     float_value_pb, int_32_value_pb, bytes_value_pb,
-     string_value_pb, int_64_value_pb, stack_frame_pb,
-     stack_frames_pb, status_pb, u_int_32_value_pb, link_pb,
-     stack_trace_pb, double_value_pb, links_pb,
-     u_int_64_value_pb, time_events_pb, span_pb].
+    [float_value_pb, truncatable_string_pb,
+     attribute_value_pb, attributes_pb, annotation_pb,
+     module_pb, message_event_pb, timestamp_pb,
+     time_event_pb, time_events_pb, bytes_value_pb,
+     string_value_pb, int_64_value_pb, u_int_64_value_pb,
+     double_value_pb, bool_value_pb, link_pb, links_pb,
+     stack_frame_pb, stack_frames_pb, stack_trace_pb,
+     int_32_value_pb, status_pb, u_int_32_value_pb, span_pb].
 
 
 get_enum_names() ->
@@ -7581,33 +7581,14 @@ fetch_enum_def(EnumName) ->
     end.
 
 
-find_msg_def(bool_value_pb) ->
-    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bool},
+find_msg_def(float_value_pb) ->
+    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, float},
       {occurrence, optional}, {opts, []}]];
-find_msg_def(message_event_pb) ->
-    [[{name, type}, {fnum, 1}, {rnum, 2},
-      {type,
-       {enum,
-	'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'}},
-      {occurrence, optional}, {opts, []}],
-     [{name, id}, {fnum, 2}, {rnum, 3}, {type, uint64},
-      {occurrence, optional}, {opts, []}],
-     [{name, uncompressed_size}, {fnum, 3}, {rnum, 4},
-      {type, uint64}, {occurrence, optional}, {opts, []}],
-     [{name, compressed_size}, {fnum, 4}, {rnum, 5},
-      {type, uint64}, {occurrence, optional}, {opts, []}]];
 find_msg_def(truncatable_string_pb) ->
     [[{name, value}, {fnum, 1}, {rnum, 2}, {type, string},
       {occurrence, optional}, {opts, []}],
      [{name, truncated_byte_count}, {fnum, 2}, {rnum, 3},
       {type, int32}, {occurrence, optional}, {opts, []}]];
-find_msg_def(module_pb) ->
-    [[{name, module}, {fnum, 1}, {rnum, 2},
-      {type, {msg, truncatable_string_pb}},
-      {occurrence, optional}, {opts, []}],
-     [{name, build_id}, {fnum, 2}, {rnum, 3},
-      {type, {msg, truncatable_string_pb}},
-      {occurrence, optional}, {opts, []}]];
 find_msg_def(attribute_value_pb) ->
     [[{name, value}, {rnum, 2},
       {fields,
@@ -7631,6 +7612,25 @@ find_msg_def(annotation_pb) ->
      [{name, attributes}, {fnum, 2}, {rnum, 3},
       {type, {msg, attributes_pb}}, {occurrence, optional},
       {opts, []}]];
+find_msg_def(module_pb) ->
+    [[{name, module}, {fnum, 1}, {rnum, 2},
+      {type, {msg, truncatable_string_pb}},
+      {occurrence, optional}, {opts, []}],
+     [{name, build_id}, {fnum, 2}, {rnum, 3},
+      {type, {msg, truncatable_string_pb}},
+      {occurrence, optional}, {opts, []}]];
+find_msg_def(message_event_pb) ->
+    [[{name, type}, {fnum, 1}, {rnum, 2},
+      {type,
+       {enum,
+	'opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type'}},
+      {occurrence, optional}, {opts, []}],
+     [{name, id}, {fnum, 2}, {rnum, 3}, {type, uint64},
+      {occurrence, optional}, {opts, []}],
+     [{name, uncompressed_size}, {fnum, 3}, {rnum, 4},
+      {type, uint64}, {occurrence, optional}, {opts, []}],
+     [{name, compressed_size}, {fnum, 4}, {rnum, 5},
+      {type, uint64}, {occurrence, optional}, {opts, []}]];
 find_msg_def(timestamp_pb) ->
     [[{name, seconds}, {fnum, 1}, {rnum, 2}, {type, int64},
       {occurrence, optional}, {opts, []}],
@@ -7648,12 +7648,16 @@ find_msg_def(time_event_pb) ->
 	[{name, message_event}, {fnum, 3}, {rnum, 3},
 	 {type, {msg, message_event_pb}}, {occurrence, optional},
 	 {opts, []}]]}]];
-find_msg_def(float_value_pb) ->
-    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, float},
-      {occurrence, optional}, {opts, []}]];
-find_msg_def(int_32_value_pb) ->
-    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int32},
-      {occurrence, optional}, {opts, []}]];
+find_msg_def(time_events_pb) ->
+    [[{name, time_event}, {fnum, 1}, {rnum, 2},
+      {type, {msg, time_event_pb}}, {occurrence, repeated},
+      {opts, []}],
+     [{name, dropped_annotations_count}, {fnum, 2},
+      {rnum, 3}, {type, int32}, {occurrence, optional},
+      {opts, []}],
+     [{name, dropped_message_events_count}, {fnum, 3},
+      {rnum, 4}, {type, int32}, {occurrence, optional},
+      {opts, []}]];
 find_msg_def(bytes_value_pb) ->
     [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bytes},
       {occurrence, optional}, {opts, []}]];
@@ -7663,6 +7667,32 @@ find_msg_def(string_value_pb) ->
 find_msg_def(int_64_value_pb) ->
     [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int64},
       {occurrence, optional}, {opts, []}]];
+find_msg_def(u_int_64_value_pb) ->
+    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint64},
+      {occurrence, optional}, {opts, []}]];
+find_msg_def(double_value_pb) ->
+    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, double},
+      {occurrence, optional}, {opts, []}]];
+find_msg_def(bool_value_pb) ->
+    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, bool},
+      {occurrence, optional}, {opts, []}]];
+find_msg_def(link_pb) ->
+    [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
+      {occurrence, optional}, {opts, []}],
+     [{name, span_id}, {fnum, 2}, {rnum, 3}, {type, bytes},
+      {occurrence, optional}, {opts, []}],
+     [{name, type}, {fnum, 3}, {rnum, 4},
+      {type, {enum, 'opencensus.proto.trace.Span.Link.Type'}},
+      {occurrence, optional}, {opts, []}],
+     [{name, attributes}, {fnum, 4}, {rnum, 5},
+      {type, {msg, attributes_pb}}, {occurrence, optional},
+      {opts, []}]];
+find_msg_def(links_pb) ->
+    [[{name, link}, {fnum, 1}, {rnum, 2},
+      {type, {msg, link_pb}}, {occurrence, repeated},
+      {opts, []}],
+     [{name, dropped_links_count}, {fnum, 2}, {rnum, 3},
+      {type, int32}, {occurrence, optional}, {opts, []}]];
 find_msg_def(stack_frame_pb) ->
     [[{name, function_name}, {fnum, 1}, {rnum, 2},
       {type, {msg, truncatable_string_pb}},
@@ -7689,6 +7719,15 @@ find_msg_def(stack_frames_pb) ->
       {opts, []}],
      [{name, dropped_frames_count}, {fnum, 2}, {rnum, 3},
       {type, int32}, {occurrence, optional}, {opts, []}]];
+find_msg_def(stack_trace_pb) ->
+    [[{name, stack_frames}, {fnum, 1}, {rnum, 2},
+      {type, {msg, stack_frames_pb}}, {occurrence, optional},
+      {opts, []}],
+     [{name, stack_trace_hash_id}, {fnum, 2}, {rnum, 3},
+      {type, uint64}, {occurrence, optional}, {opts, []}]];
+find_msg_def(int_32_value_pb) ->
+    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, int32},
+      {occurrence, optional}, {opts, []}]];
 find_msg_def(status_pb) ->
     [[{name, code}, {fnum, 1}, {rnum, 2}, {type, int32},
       {occurrence, optional}, {opts, []}],
@@ -7697,45 +7736,6 @@ find_msg_def(status_pb) ->
 find_msg_def(u_int_32_value_pb) ->
     [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint32},
       {occurrence, optional}, {opts, []}]];
-find_msg_def(link_pb) ->
-    [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
-      {occurrence, optional}, {opts, []}],
-     [{name, span_id}, {fnum, 2}, {rnum, 3}, {type, bytes},
-      {occurrence, optional}, {opts, []}],
-     [{name, type}, {fnum, 3}, {rnum, 4},
-      {type, {enum, 'opencensus.proto.trace.Span.Link.Type'}},
-      {occurrence, optional}, {opts, []}],
-     [{name, attributes}, {fnum, 4}, {rnum, 5},
-      {type, {msg, attributes_pb}}, {occurrence, optional},
-      {opts, []}]];
-find_msg_def(stack_trace_pb) ->
-    [[{name, stack_frames}, {fnum, 1}, {rnum, 2},
-      {type, {msg, stack_frames_pb}}, {occurrence, optional},
-      {opts, []}],
-     [{name, stack_trace_hash_id}, {fnum, 2}, {rnum, 3},
-      {type, uint64}, {occurrence, optional}, {opts, []}]];
-find_msg_def(double_value_pb) ->
-    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, double},
-      {occurrence, optional}, {opts, []}]];
-find_msg_def(links_pb) ->
-    [[{name, link}, {fnum, 1}, {rnum, 2},
-      {type, {msg, link_pb}}, {occurrence, repeated},
-      {opts, []}],
-     [{name, dropped_links_count}, {fnum, 2}, {rnum, 3},
-      {type, int32}, {occurrence, optional}, {opts, []}]];
-find_msg_def(u_int_64_value_pb) ->
-    [[{name, value}, {fnum, 1}, {rnum, 2}, {type, uint64},
-      {occurrence, optional}, {opts, []}]];
-find_msg_def(time_events_pb) ->
-    [[{name, time_event}, {fnum, 1}, {rnum, 2},
-      {type, {msg, time_event_pb}}, {occurrence, repeated},
-      {opts, []}],
-     [{name, dropped_annotations_count}, {fnum, 2},
-      {rnum, 3}, {type, int32}, {occurrence, optional},
-      {opts, []}],
-     [{name, dropped_message_events_count}, {fnum, 3},
-      {rnum, 4}, {type, int32}, {occurrence, optional},
-      {opts, []}]];
 find_msg_def(span_pb) ->
     [[{name, trace_id}, {fnum, 1}, {rnum, 2}, {type, bytes},
       {occurrence, optional}, {opts, []}],

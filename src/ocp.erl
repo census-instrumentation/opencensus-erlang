@@ -20,6 +20,7 @@
 -module(ocp).
 
 -export([with_tags/1,
+         update_tags/1,
 
          with_span_ctx/1,
 
@@ -31,6 +32,8 @@
          current_tags/0,
 
          finish_span/0,
+
+         record/2,
 
          put_attribute/2,
          put_attributes/1,
@@ -92,6 +95,15 @@
 -spec with_tags(opencensus:tags()) -> maybe(opencensus:tags()).
 with_tags(Map) ->
     put(?TAG_CTX, Map).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Merges the tags in the current context with a map of tags.
+%% @end
+%%--------------------------------------------------------------------
+-spec update_tags(maps:map()) -> opencensus:tags().
+update_tags(Map) ->
+    put(?TAG_CTX, oc_tags:update(current_tags(), Map)).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -164,6 +176,17 @@ finish_span() ->
     Ret = oc_trace:finish_span(CurrentCtx),
     with_span_ctx(ParentCtx),
     Ret.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Records a measurement with tags from the pdict context.
+%%
+%% Raises `{unknown_measure, MeasureName}' if measure doesn't exist.
+%% @end
+%%--------------------------------------------------------------------
+-spec record(oc_stat_measure:name(), number()) -> ok.
+record(MeasureName, Value) ->
+    oc_stat:record(current_tags(), MeasureName, Value).
 
 %%--------------------------------------------------------------------
 %% @doc

@@ -18,7 +18,8 @@
 -module(opencensus).
 
 -export([generate_trace_id/0,
-         generate_span_id/0]).
+         generate_span_id/0,
+         http_status_to_trace_status/1]).
 
 -include("opencensus.hrl").
 
@@ -75,6 +76,35 @@ generate_trace_id() ->
 -spec generate_span_id() -> span_id().
 generate_span_id() ->
     uniform(2 bsl 63). %% 2 shifted left by 63 == 2 ^ 64
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Convert HTTP status code to Trace status code.
+%% @end
+%%--------------------------------------------------------------------
+-spec http_status_to_trace_status(integer()) -> integer().
+http_status_to_trace_status(S) when S >= 0 andalso S =< 199 ->
+    2;
+http_status_to_trace_status(S) when S >= 200 andalso S =< 399 ->
+    0;
+http_status_to_trace_status(400) ->
+    3;
+http_status_to_trace_status(504) ->
+    4;
+http_status_to_trace_status(404) ->
+    5;
+http_status_to_trace_status(403) ->
+    7;
+http_status_to_trace_status(401) ->
+    16;
+http_status_to_trace_status(429) ->
+    8;
+http_status_to_trace_status(501) ->
+    12;
+http_status_to_trace_status(503) ->
+    14;
+http_status_to_trace_status(S) ->
+    S.
 
 %%
 

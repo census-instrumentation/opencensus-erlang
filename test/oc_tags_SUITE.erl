@@ -35,14 +35,14 @@ encode_decode_headers(_Config) ->
     Empty = #{},
     EmptyHeader = oc_tag_ctx_header:encode(Empty),
     ?assertMatch(<<"0">>, EmptyHeader),
-    ?assertMatch(Empty, oc_tag_ctx_header:decode(EmptyHeader)),
+    ?assertMatch({ok, Empty}, oc_tag_ctx_header:decode(EmptyHeader)),
 
     T = #{'key-1' => "value-1",
           "key-2" => "value-2"},
     Header = oc_tag_ctx_header:encode(T),
     ?assertMatch("AAAFa2V5LTEHdmFsdWUtMQAFa2V5LTIHdmFsdWUtMg==", Header),
-    ?assertMatch(#{"key-1" := "value-1",
-                   "key-2" := "value-2"}, oc_tag_ctx_header:decode(Header)),
+    ?assertMatch({ok, #{"key-1" := "value-1",
+                        "key-2" := "value-2"}}, oc_tag_ctx_header:decode(Header)),
     ok.
 
 invalid_tags(_Config) ->

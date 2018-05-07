@@ -55,32 +55,35 @@ normalize_proto_string(PS) when is_binary(PS) ->
 normalize_proto_string(PS) ->
     PS.
 
--spec decode(binary()) -> {ok, #{}} | {error, any()}.
+-spec decode(binary()) -> {ok, oc_tags:tags()} | {error, any()}.
+decode(<<>>) ->
+    {ok, oc_tags:new()};
 decode(<<?VERSION:8/integer, TagContext/binary>>) ->
     case size(TagContext) of
         Size when Size =< ?SIZE_LIMIT ->
-            decode(TagContext, #{});
+            decode(TagContext, {ok, oc_tags:new()});
         _ ->
+            %% no partial failures
             {error, {?MODULE, decoding_too_large}}
     end;
 decode(<<V:8/integer, _/binary>>) ->
     {error, {?MODULE, {unsupported_version, V}}}.
 
-decode(<<>>, Map) ->
-    {ok, Map};
-decode(<<?TAG_CONTEXT_FIELD_ID:8/integer, Rest0/binary>>, Map) ->
+-spec decode(binary(), {ok, oc_tags:tags()} | {error, any()}) -> {ok, oc_tags:tags()} | {error, any()}.
+decode(<<>>, TagsOrError) ->
+    TagsOrError;
+decode(_, Error={error, _}) ->
+    Error;
+decode(<<?TAG_CONTEXT_FIELD_ID:8/integer, Rest0/binary>>, {ok, Tags}) ->
     {KeySize, Rest1} = decode_varint(Rest0),
     <<Key:KeySize/binary, Rest2/binary>> = Rest1,
     {ValueSize, Rest3} = decode_varint(Rest2),
     <<Value:ValueSize/binary, Rest4/binary>> = Rest3,
     Key1 = unicode:characters_to_list(Key, latin1),
     Value1 = unicode:characters_to_list(Value, latin1),
-    case oc_tags:verify_key(Key1) andalso oc_tags:verify_value(Value1) of
-        true ->
-            decode(Rest4, Map#{Key1 => Value1});
-        false ->
-            {error, {oc_tags, invalid_tag}}
-    end.
+
+    %% add tag and continue processing if no failure
+    decode(Rest4, oc_tags:put(Key1, Value1, Tags)).
 
 format_error(encoding_too_large) ->
     io_lib:format("invalid tag context: size greater than the limit of ~p bytes", [?SIZE_LIMIT]);
