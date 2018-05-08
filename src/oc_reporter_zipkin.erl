@@ -20,6 +20,7 @@
 -module(oc_reporter_zipkin).
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 -behaviour(oc_reporter).
 
@@ -43,15 +44,15 @@ report(Spans, {Address, LocalEndpoint}) ->
                 {ok, {{_, 202, _}, _, _}} ->
                     ok;
                 {ok, {{_, Code, _}, _, Message}} ->
-                    error_logger:error_msg("Zipkin: Unable to send spans, Zipkin reported an error: ~p : ~p",
-                                           [Code, Message]);
+                    ?LOG_ERROR("Zipkin: Unable to send spans, Zipkin reported an error: ~p : ~p",
+                              [Code, Message]);
 
                 {error, Reason} ->
-                    error_logger:error_msg("Zipkin: Unable to send spans, client error: ~p", [Reason])
+                    ?LOG_ERROR("Zipkin: Unable to send spans, client error: ~p", [Reason])
             end
     catch
         error:Error ->
-            error_logger:error_msg("Zipkin: Can't spans encode to json: ~p", [Error])
+            ?LOG_ERROR("Zipkin: Can't spans encode to json: ~p", [Error])
     end.
 
 zipkin_span(Span, LocalEndpoint) ->

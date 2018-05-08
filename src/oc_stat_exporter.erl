@@ -32,6 +32,7 @@
 -type exporter() :: module().
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 -callback export(ViewData, Config) -> ok when
       ViewData :: oc_stat_view:view_data(),
@@ -103,9 +104,9 @@ export(Exporters) ->
     [try
          Exporter:export(Measurements, Config)
      catch
-         Class:Exception ->
-             error_logger:info_msg("stat exporter ~p threw ~p:~p, stacktrace=~p",
-                                   [Exporter, Class, Exception, erlang:get_stacktrace()])
+        ?WITH_STACKTRACE(Class, Exception, Stacktrace)
+             ?LOG_INFO("stat exporter ~p threw ~p:~p, stacktrace=~p",
+                       [Exporter, Class, Exception, Stacktrace])
      end
      || {Exporter, Config} <- Exporters],
     ok.
