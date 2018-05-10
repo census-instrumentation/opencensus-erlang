@@ -2,6 +2,7 @@
 
 # Module ocp #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
@@ -11,7 +12,22 @@ ocp uses the pdict instead of a ctx variable for tracking context.
 
 ## Description ##
 The functions fetch the current span context from the pdict and
-passes it through to the oc_trace function of the same name.<a name="index"></a>
+passes it through to the oc_trace function of the same name.
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-maybe">maybe()</a> ###
+
+
+<pre><code>
+maybe(T) = T | undefined
+</code></pre>
+
+<a name="index"></a>
 
 ## Function Index ##
 
@@ -22,7 +38,8 @@ Add an Annotation or MessageEvent to the list of TimeEvents in the
 current span.</td></tr><tr><td valign="top"><a href="#add_time_event-2">add_time_event/2</a></td><td></td></tr><tr><td valign="top"><a href="#current_span_ctx-0">current_span_ctx/0</a></td><td></td></tr><tr><td valign="top"><a href="#current_tags-0">current_tags/0</a></td><td></td></tr><tr><td valign="top"><a href="#finish_span-0">finish_span/0</a></td><td>
 Finishes the span in the current pdict context.</td></tr><tr><td valign="top"><a href="#put_attribute-2">put_attribute/2</a></td><td>
 Put an attribute (a key/value pair) in the attribute map of a span.</td></tr><tr><td valign="top"><a href="#put_attributes-1">put_attributes/1</a></td><td>
-Merge a map of attributes with the attributes of current span.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>
+Merge a map of attributes with the attributes of current span.</td></tr><tr><td valign="top"><a href="#record-2">record/2</a></td><td>
+Records a measurement with tags from the pdict context.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>
 Set Status of current span.</td></tr><tr><td valign="top"><a href="#spawn-1">spawn/1</a></td><td>
 Starts a new process using <code>erlang:spawn/1</code> with current_span_ctx
 and current_tags from the calling process.</td></tr><tr><td valign="top"><a href="#spawn-2">spawn/2</a></td><td>
@@ -51,7 +68,8 @@ and current_tags from the calling process.</td></tr><tr><td valign="top"><a href
 Starts a new process using <code>erlang:spawn_opt/4</code> with current_span_ctx
 and current_tags from the calling process.</td></tr><tr><td valign="top"><a href="#spawn_opt-5">spawn_opt/5</a></td><td>
 Starts a new process using <code>erlang:spawn_opt/5</code> with current_span_ctx
-and current_tags from the calling process.</td></tr><tr><td valign="top"><a href="#with_child_span-1">with_child_span/1</a></td><td>
+and current_tags from the calling process.</td></tr><tr><td valign="top"><a href="#update_tags-1">update_tags/1</a></td><td>
+Merges the tags in the current context with a map of tags.</td></tr><tr><td valign="top"><a href="#with_child_span-1">with_child_span/1</a></td><td>
 Starts a new span as a child of the current span and replaces it.</td></tr><tr><td valign="top"><a href="#with_child_span-2">with_child_span/2</a></td><td>
 Starts a new span with attributes as a child of the current span
 and replaces it.</td></tr><tr><td valign="top"><a href="#with_child_span-3">with_child_span/3</a></td><td>
@@ -150,6 +168,19 @@ put_attributes(NewAttributes::#{<a href="unicode.md#type-unicode_binary">unicode
 
 Merge a map of attributes with the attributes of current span.
 The new values overwrite the old if any keys are the same.
+
+<a name="record-2"></a>
+
+### record/2 ###
+
+<pre><code>
+record(MeasureName::<a href="oc_stat_measure.md#type-name">oc_stat_measure:name()</a>, Value::number()) -&gt; ok
+</code></pre>
+<br />
+
+Records a measurement with tags from the pdict context.
+
+Raises `{unknown_measure, MeasureName}` if measure doesn't exist.
 
 <a name="set_status-2"></a>
 
@@ -287,6 +318,17 @@ and current_tags from the calling process.
 
 Starts a new process using `erlang:spawn_opt/5` with current_span_ctx
 and current_tags from the calling process.
+
+<a name="update_tags-1"></a>
+
+### update_tags/1 ###
+
+<pre><code>
+update_tags(Map::<a href="maps.md#type-map">maps:map()</a>) -&gt; <a href="opencensus.md#type-tags">opencensus:tags()</a>
+</code></pre>
+<br />
+
+Merges the tags in the current context with a map of tags.
 
 <a name="with_child_span-1"></a>
 

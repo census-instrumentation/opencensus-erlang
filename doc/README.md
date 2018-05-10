@@ -192,6 +192,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_span.md" class="module">oc_span</a></td></tr>
 <tr><td><a href="oc_span_ctx_binary.md" class="module">oc_span_ctx_binary</a></td></tr>
 <tr><td><a href="oc_span_ctx_header.md" class="module">oc_span_ctx_header</a></td></tr>
+<tr><td><a href="oc_span_transform.md" class="module">oc_span_transform</a></td></tr>
 <tr><td><a href="oc_stat.md" class="module">oc_stat</a></td></tr>
 <tr><td><a href="oc_stat_aggregation.md" class="module">oc_stat_aggregation</a></td></tr>
 <tr><td><a href="oc_stat_aggregation_count.md" class="module">oc_stat_aggregation_count</a></td></tr>
@@ -202,14 +203,13 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_stat_exporter.md" class="module">oc_stat_exporter</a></td></tr>
 <tr><td><a href="oc_stat_exporter_stdout.md" class="module">oc_stat_exporter_stdout</a></td></tr>
 <tr><td><a href="oc_stat_measure.md" class="module">oc_stat_measure</a></td></tr>
+<tr><td><a href="oc_stat_transform.md" class="module">oc_stat_transform</a></td></tr>
 <tr><td><a href="oc_stat_view.md" class="module">oc_stat_view</a></td></tr>
 <tr><td><a href="oc_std_encoder.md" class="module">oc_std_encoder</a></td></tr>
 <tr><td><a href="oc_tag_ctx_binary.md" class="module">oc_tag_ctx_binary</a></td></tr>
 <tr><td><a href="oc_tag_ctx_header.md" class="module">oc_tag_ctx_header</a></td></tr>
 <tr><td><a href="oc_tags.md" class="module">oc_tags</a></td></tr>
 <tr><td><a href="oc_trace.md" class="module">oc_trace</a></td></tr>
-<tr><td><a href="oc_trace_pb.md" class="module">oc_trace_pb</a></td></tr>
-<tr><td><a href="oc_transform.md" class="module">oc_transform</a></td></tr>
 <tr><td><a href="ocp.md" class="module">ocp</a></td></tr>
 <tr><td><a href="opencensus.md" class="module">opencensus</a></td></tr>
 <tr><td><a href="opencensus_app.md" class="module">opencensus_app</a></td></tr>

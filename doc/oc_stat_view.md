@@ -20,11 +20,41 @@ collected and sent to exporters.
 
 
 
+### <a name="type-aggregation">aggregation()</a> ###
+
+
+<pre><code>
+aggregation() = module()
+</code></pre>
+
+
+
+
+### <a name="type-aggregation_options">aggregation_options()</a> ###
+
+
+<pre><code>
+aggregation_options() = any()
+</code></pre>
+
+
+
+
 ### <a name="type-description">description()</a> ###
 
 
 <pre><code>
 description() = binary() | string()
+</code></pre>
+
+
+
+
+### <a name="type-measure_name">measure_name()</a> ###
+
+
+<pre><code>
+measure_name() = atom() | binary() | string()
 </code></pre>
 
 

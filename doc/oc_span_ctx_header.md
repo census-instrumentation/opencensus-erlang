@@ -2,11 +2,26 @@
 
 # Module oc_span_ctx_header #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 Functions to support the http header format of the tracecontext spec
 Implements the spec found here.
+
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-maybe">maybe()</a> ###
+
+
+<pre><code>
+maybe(T) = T | undefined
+</code></pre>
 
 <a name="index"></a>
 

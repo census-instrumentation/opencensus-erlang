@@ -2,6 +2,7 @@
 
 # Module oc_span_ctx_binary #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
@@ -11,7 +12,22 @@ Functions to support the binary format trace context serialization.
 
 ## Description ##
 Implements the spec found here
-[`https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md`](https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md)<a name="index"></a>
+[`https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md`](https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md)
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-maybe">maybe()</a> ###
+
+
+<pre><code>
+maybe(T) = T | undefined
+</code></pre>
+
+<a name="index"></a>
 
 ## Function Index ##
 

@@ -21,7 +21,7 @@
 ### decode/1 ###
 
 <pre><code>
-decode(X1::binary()) -&gt; {ok, #{}} | {error, any()}
+decode(X1::binary()) -&gt; {ok, <a href="oc_tags.md#type-tags">oc_tags:tags()</a>} | {error, any()}
 </code></pre>
 <br />
 

@@ -2,7 +2,7 @@
 
 # OpenCensus Erlang library #
 
-__Version:__ 0.4.0
+__Version:__ 0.5.0
 
 ## Erlang stats collection and distributed tracing framework
 
@@ -26,14 +26,21 @@ Or to use the latest from git master branch:
 {deps, [{opencensus, {git, "https://github.com/census-instrumentation/opencensus-erlang.git", {branch, "master"}}}]}.
 ```
 
+### <a name="Tags">Tags</a> ###
+
+Tags represent propagated key-value pairs. They are propagated using the pdict or `Ctx` record in the same process and can be encoded to be transmitted on the wire. 
+
+```erlang
+ocp:update_tags(#{http_server_method => "GET"}).
+```
+
+### <a name="Tracing">Tracing</a> ###
 
 #### <a name="Creating_Spans">Creating Spans</a> ####
 
 Span data is stored and manipulated in an ETS table. Span context must be tracked in order to create child span's, propagate span context across process or node boundaries and for the library to which span data to manipulate in the context it is called.
 
 `opencensus` provides two methods for tracking this context, the process dictionary and a variable holding a `ctx` record.
-
-<h5><a name="Process_Dictionary_as_Context">Process Dictionary as Context</a></h5>
 
 With `ocp` the span context is tracked in the current process`s process dictionary.
 
@@ -45,93 +52,26 @@ some_fun() ->
                       end).
 ```
 
-<h5><a name="Parse_Transform">Parse Transform</a></h5>
-
-The parse transform provides an attribute to decorate functions with that will start a span, wrap the contents in a `try` and finish the span in an `after` clause. Add the parse transform to the compile opts in `rebar.config`:
-
-```erlang
-{erl_opts, [{parse_transform, oc_transform}]}.
-```
-
-And use:
-
-```erlang
--span([]).
-function_to_trace() ->
-  ...
-  SpanCtx = ocp:current_span(), %% ocp works in a decorated function too
-  ...
-```
-
-Since the tranformed functions use the process dictionary to store the context you can interact with the current span the same way as you do with `ocp`, covered in the previous section.
-
-<h5><a name="Manual_Context_Tracking">Manual Context Tracking</a></h5>
-
-`ctx` is a generic context library for Erlang. OpenCensus provides the option to use it in place of the process dictionary for tracking the span context.
-
-In this example a function is passed a `ctx` variable `Ctx` that some instrumented library could have set the span context based on the incoming metadata of a request, like HTTP headers. The `oc_trace:new_span` function will check `Ctx` for a span context and create a child span of that span context if it exists, otherwise a root span will be created. We can pass the span context to another function, we could also createa a new `ctx` to pass (`oc_trace:with_span(Ctx, SpanCtx)`), to be further updated or have new children created:
-
-```erlang
-handler(Ctx, NextHandler) ->
-  SpanCtx = oc_trace:with_child_span(Ctx, <<"span-name">>),
-  try
-    oc_trace:put_attribute(<<"key">>, <<"value">>, SpanCtx),
-    {Code, Message} = NextHandler(SpanCtx),
-    oc_trace:set_status(Code, Message, SpanCtx)
-  after
-    oc_trace:finish_span(SpanCtx)
-  end.
-```
-
-<h5><a name="Manual_Span_Data_Handling">Manual Span Data Handling</a></h5>
-
-The module `oc_span` has the functional span data manipulation functions, meaning ETS is not involved. Most users will not need this, but for potential alternative span data stores or context trackers they are necessary.
-
-
-#### <a name="Working_with_Spans">Working with Spans</a> ####
-
-<h5><a name="Attributes">Attributes</a></h5>
-
-A span has a map of attributes providing details about the span. The key is a binary string and the value of the attribute can be a binary string, integer, or boolean.
-
-```erlang
-Span1 = oc_trace:put_attribute(<<"/instance_id">>, <<"my-instance">>, SpanCtx),
-```
-
-<h5><a name="Time_Events">Time Events</a></h5>
-
-A time event is a timestamped annotation with user-supplied key-value pairs or a message event to represent a message (not specificly an Erlang message) sent to or received from another span.
-
-The `message_event` consists of a type, identifier and size of the message. `Id` is an identifier for the event's message that can be used to match `SENT` and `RECEIVED` `message_event`s. For example, this field could represent a sequence ID for a streaming RPC. It is recommended to be unique within a Span. If `CompressedSize` is `0` it is assumed to be the same as `UncompressedSize`.
-
-```erlang
-Event = opencensus:message_event(?MESSAGE_EVENT_TYPE_SENT, Id, UncompressedSize, CompressedSize)
-oc_trace:add_time_event(Event, SpanCtx),
-```
-
-<h5><a name="Links">Links</a></h5>
-
-Links are useful in cases like a job queue. A job is created with a span context and when run wants to report a new span. The job isn't a direct child of the span that inserted it into the queue, but it is related. The job creates a link to the span that created it.
-
-```erlang
-SpanCtx = oc_trace:with_child_span(Ctx, <<"running job">>),
-Link = oc_trace:link(?LINK_TYPE_PARENT_LINKED_SPAN, TraceId, ParentSpanId, #{}),
-oc_trace:add_link(Link, SpanCtx),
-... run job ...
-oc_trace:finish_span(SpanCtx).
-```
-
+More details on working with spans can be found [here](span.md) and in the modules docuemntation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
+Opencensus comes with two forms of span context encoding for sending over the wire. `oc_span_ctx_header` encodes a span context suitable for transfering as an HTTP header and `oc_span_ctx_binary` will encode and decode a binary form used in GRPC and other binary protocols.
+
+For example, creating the header for sending with an HTTP client might look like:
+
+```erlang
+EncodedSpanCtx = oc_span_ctx_header:encode(ocp:current_span_ctx()),
+Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
+```
 
 #### <a name="Samplers">Samplers</a> ####
 
-[__oc_sampler_never:__](oc_sampler_never.md) Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
+[oc_sampler_never](oc_sampler_never.md): Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
 
-[__oc_sampler_always:__](oc_sampler_always.md) Enable every new trace for sampling.
+[oc_sampler_always](oc_sampler_always.md): Enable every new trace for sampling.
 
-[__oc_sampler_probability:__](oc_sampler_probability.md) Takes a probability, default 0.5, that any new trace will be sampled.
+[oc_sampler_probability](oc_sampler_probability.md): Takes a probability, default 0.5, that any new trace will be sampled.
 
 
 #### <a name="Reporters">Reporters</a> ####
@@ -140,17 +80,61 @@ oc_trace:finish_span(SpanCtx).
 
 [Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
 
+### <a name="Stats">Stats</a> ###
 
-#### <a name="Tags">Tags</a> ####
+OpenCensus stats collection happens in two stages:
+
+* Definition of measures and recording of data points
+* Definition of views and aggregation of the recorded data
+
+#### <a name="Defining_Measures">Defining Measures</a> ####
 
 ```erlang
-Ctx1 = oc_tags:new_ctx(Ctx, #{"method" => "GET"})
+oc_stat_measure:new('opencensus.io/http/server/server_latency', "Time between first byte of "
+                    "request headers read to last byte of response sent, or terminal error.",
+                    milli_seconds).
 ```
+
+#### <a name="Recording">Recording</a> ####
+
+Measurements are data points associated with a measure. `ocp:record` implicitly tags the set of Measurements with the tags from the pdict context:
 
 ```erlang
-Tags = oc_tags:from_ctx(Ctx)
+ocp:record('opencensus.io/http/server/server_latency', ServerLatency),
 ```
 
+#### <a name="Views">Views</a> ####
+
+Views are how Neasures are aggregated. You can think of them as queries over the set of recorded data points (measurements).
+
+Views have two parts: the tags to group by and the aggregation type used.
+
+Currently four types of aggregations are supported:
+
+* `oc_stat_aggregation_count`: Count aggregation is used to count the number of times a sample was recorded.
+* `oc_stat_aggregation_distribution`: Distribution aggregation is used to provide a histogram of the values of the samples.
+* `oc_stat_aggregation_sum`: Sum aggregation is used to sum up all sample values.
+* `oc_stat_aggregation_latest`: Saves only the last datapoint.
+
+Here we create a view with the distribution aggregation over our measure:
+
+```erlang
+oc_stat_view:subscribe(#{name => "opencensus.io/http/server/server_latency",
+                         description => "Latency distribution of HTTP requests",
+                         tags => [http_server_method, http_server_path],
+                         measure => 'opencensus.io/http/server/server_blatency',
+                         aggregation => {oc_stat_aggregation_distribution, 
+                                         [{buckets, [0, 100, 300, 650, 800, 1000]}]}})
+```
+
+#### <a name="Stat Exporters">Stat Exporters</a> ####
+
+[Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports stat views as Prometheus metrics. Simply register as a collector:
+
+```
+prometheus_registry:register_collector(oc_stat_exporter_prometheus)
+```
+  
 ### Development
 
 ```sh

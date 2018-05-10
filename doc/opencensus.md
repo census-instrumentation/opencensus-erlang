@@ -19,7 +19,7 @@ opencensus main module.
 
 
 <pre><code>
-annotation() = #annotation{}
+annotation() = #annotation{description = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a> | undefined, attributes = <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}
 </code></pre>
 
 
@@ -49,7 +49,7 @@ attributes() = #{<a href="unicode.md#type-unicode_binary">unicode:unicode_binary
 
 
 <pre><code>
-link() = #link{}
+link() = #link{type = <a href="opencensus.md#type-link_type">opencensus:link_type()</a>, trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a>, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a>, attributes = <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}
 </code></pre>
 
 
@@ -59,7 +59,7 @@ link() = #link{}
 
 
 <pre><code>
-link_type() = ?LINK_TYPE_UNSPECIFIED | ?LINK_TYPE_CHILD_LINKED_SPAN | ?LINK_TYPE_PARENT_LINKED_SPAN
+link_type() = TYPE_UNSPECIFIED | CHILD_LINKED_SPAN | PARENT_LINKED_SPAN
 </code></pre>
 
 
@@ -79,7 +79,7 @@ links() = [<a href="#type-link">link()</a>]
 
 
 <pre><code>
-message_event() = #message_event{}
+message_event() = #message_event{type = <a href="opencensus.md#type-message_event_type">opencensus:message_event_type()</a>, id = integer(), uncompressed_size = integer(), compressed_size = integer()}
 </code></pre>
 
 
@@ -89,7 +89,7 @@ message_event() = #message_event{}
 
 
 <pre><code>
-message_event_type() = ?MESSAGE_EVENT_TYPE_UNSPECIFIED | ?MESSAGE_EVENT_TYPE_SENT | ?MESSAGE_EVENT_TYPE_RECEIVED
+message_event_type() = TYPE_UNSPECIFIED | SENT | RECEIVED
 </code></pre>
 
 
@@ -99,7 +99,7 @@ message_event_type() = ?MESSAGE_EVENT_TYPE_UNSPECIFIED | ?MESSAGE_EVENT_TYPE_SEN
 
 
 <pre><code>
-span() = #span{}
+span() = #span{name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a>, trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, parent_span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, trace_options = integer() | undefined, kind = <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, start_time = <a href="wts.md#type-timestamp">wts:timestamp()</a>, end_time = <a href="wts.md#type-timestamp">wts:timestamp()</a> | undefined, attributes = <a href="opencensus.md#type-attributes">opencensus:attributes()</a>, stack_trace = <a href="opencensus.md#type-stack_trace">opencensus:stack_trace()</a> | undefined, links = <a href="opencensus.md#type-links">opencensus:links()</a>, time_events = <a href="opencensus.md#type-time_events">opencensus:time_events()</a>, status = <a href="opencensus.md#type-status">opencensus:status()</a> | undefined, same_process_as_parent_span = boolean() | undefined, child_span_count = integer() | undefined}
 </code></pre>
 
 
@@ -109,7 +109,7 @@ span() = #span{}
 
 
 <pre><code>
-span_ctx() = #span_ctx{}
+span_ctx() = #span_ctx{trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, trace_options = integer() | undefined}
 </code></pre>
 
 
@@ -139,7 +139,7 @@ stack_trace() = [<a href="erlang.md#type-stack_item">erlang:stack_item()</a>]
 
 
 <pre><code>
-status() = #status{}
+status() = #status{code = integer(), message = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a>}
 </code></pre>
 
 
@@ -179,7 +179,8 @@ trace_id() = non_neg_integer()
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#generate_span_id-0">generate_span_id/0</a></td><td>
 Generates a 64 bit random integer to use as a span id.</td></tr><tr><td valign="top"><a href="#generate_trace_id-0">generate_trace_id/0</a></td><td>
-Generates a 128 bit random integer to use as a trace id.</td></tr></table>
+Generates a 128 bit random integer to use as a trace id.</td></tr><tr><td valign="top"><a href="#http_status_to_trace_status-1">http_status_to_trace_status/1</a></td><td>
+Convert HTTP status code to Trace status code.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -207,4 +208,15 @@ generate_trace_id() -&gt; <a href="#type-trace_id">trace_id()</a>
 <br />
 
 Generates a 128 bit random integer to use as a trace id.
+
+<a name="http_status_to_trace_status-1"></a>
+
+### http_status_to_trace_status/1 ###
+
+<pre><code>
+http_status_to_trace_status(S::integer()) -&gt; integer()
+</code></pre>
+<br />
+
+Convert HTTP status code to Trace status code.
 

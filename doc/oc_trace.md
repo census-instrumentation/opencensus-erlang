@@ -2,6 +2,7 @@
 
 # Module oc_trace #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
@@ -13,7 +14,22 @@ The main module for working with the span in a current context.
 This
 module provides functions for getting the current span context from
 a ctx variable, creating new spans, and manipulating the span data
-for the span in the current context.<a name="index"></a>
+for the span in the current context.
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-maybe">maybe()</a> ###
+
+
+<pre><code>
+maybe(T) = T | undefined
+</code></pre>
+
+<a name="index"></a>
 
 ## Function Index ##
 
@@ -212,7 +228,7 @@ Create a new span, detached from any context.
 start_span(Name, SpanCtx, Options) -&gt; SpanCtx
 </code></pre>
 
-<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a></code></li><li><code>Options = #{remote_parent =&gt; boolean(), sampler =&gt; module(), attributes =&gt; <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}</code></li></ul>
+<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a></code></li><li><code>Options = #{remote_parent =&gt; boolean(), sampler =&gt; module(), kind =&gt; <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, attributes =&gt; <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}</code></li></ul>
 
 <a name="with_child_span-2"></a>
 
