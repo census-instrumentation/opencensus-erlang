@@ -27,8 +27,7 @@
          handle_call/3,
          handle_cast/2,
          handle_info/2,
-         terminate/2,
-         code_change/3]).
+         terminate/2]).
 
 -include("opencensus.hrl").
 -include("oc_logger.hrl").
@@ -59,7 +58,7 @@ start_link() ->
     maybe_init_ets(),
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
--spec store_span(opencensus:span()) -> ok | {error, invalid_span} | {error, no_report_buffer}.
+-spec store_span(opencensus:span()) -> true | {error, invalid_span} | {error, no_report_buffer}.
 store_span(Span=#span{}) ->
     try
         [{_, Buffer}] = ets:lookup(?BUFFER_STATUS, current_buffer),
@@ -95,9 +94,6 @@ handle_info(report_spans, State=#state{reporter=Reporter,
     Ref1 = erlang:send_after(SendInterval, self(), report_spans),
     send_spans(Reporter, Config),
     {noreply, State#state{timer_ref=Ref1}}.
-
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
 
 terminate(_, #state{timer_ref=Ref}) ->
     erlang:cancel_timer(Ref),

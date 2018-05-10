@@ -1,15 +1,23 @@
+%%%------------------------------------------------------------------------
+%% Copyright 2018, OpenCensus Authors
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+%%
+%% @doc Server with no logic, simply owns the span ets table.
+%% @end
+%%%-------------------------------------------------------------------------
 -module(oc_server).
 
--export([start_link/0,
-
-         add_span/1,
-         finish_span/1,
-         put_attribute/3,
-         put_attributes/2,
-         add_time_event/2,
-         add_time_event/3,
-         set_status/3,
-         add_link/2]).
+-export([start_link/0]).
 
 -export([init/1,
          handle_call/3,
@@ -23,41 +31,13 @@ start_link() ->
     maybe_init_ets(),
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-add_span(Span) ->
-    gen_server:cast(?MODULE, {add_span, Span}).
-
-finish_span(SpanCtx) ->
-    gen_server:cast(?MODULE, {finish_span, SpanCtx}).
-
-put_attribute(Key, Value, SpanCtx) ->
-    gen_server:cast(?MODULE, {put_attribute, Key, Value, SpanCtx}).
-
-put_attributes(NewAttributes, SpanCtx) ->
-    gen_server:cast(?MODULE, {put_attributes, NewAttributes, SpanCtx}).
-
-add_time_event(TimeEvent, Span) ->
-    add_time_event(wts:timestamp(), TimeEvent, Span).
-
-add_time_event(Timestamp, TimeEvent, SpanCtx) ->
-    gen_server:cast(?MODULE, {add_time_event, Timestamp, TimeEvent, SpanCtx}).
-
-set_status(Code, Message, SpanCtx) ->
-    gen_server:cast(?MODULE, {set_status, Code, Message, SpanCtx}).
-
-add_link(Link, SpanCtx) ->
-    gen_server:cast(?MODULE, {add_link, Link, SpanCtx}).
-
 init([]) ->
     {ok, #state{}}.
 
 handle_call(_, _From, State) ->
     {noreply, State}.
 
-handle_cast({add_span, Span}, State) ->
-    ets:insert(?SPAN_TAB, Span),
-    {noreply, State};
-handle_cast({finish_span, SpanId}, State) ->
-    ets:update_element(?SPAN_TAB, SpanId, [{#span.end_time, wts:timestamp()}]),
+handle_cast(_, State) ->
     {noreply, State}.
 
 maybe_init_ets() ->
