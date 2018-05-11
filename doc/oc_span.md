@@ -2,10 +2,25 @@
 
 # Module oc_span #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 Functions for functional manipulation of span data.
+
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-maybe">maybe()</a> ###
+
+
+<pre><code>
+maybe(T) = T | undefined
+</code></pre>
 
 <a name="index"></a>
 
@@ -75,7 +90,7 @@ Create an Annotation.
 ### finish_span/1 ###
 
 <pre><code>
-finish_span(Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; ok
+finish_span(Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; true
 </code></pre>
 <br />
 

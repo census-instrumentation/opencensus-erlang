@@ -44,7 +44,7 @@ value() = binary() | <a href="unicode.md#type-latin1_charlist">unicode:latin1_ch
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format_error-1">format_error/1</a></td><td></td></tr><tr><td valign="top"><a href="#from_ctx-1">from_ctx/1</a></td><td></td></tr><tr><td valign="top"><a href="#new-0">new/0</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr><tr><td valign="top"><a href="#new_ctx-2">new_ctx/2</a></td><td></td></tr><tr><td valign="top"><a href="#put-3">put/3</a></td><td></td></tr><tr><td valign="top"><a href="#to_map-1">to_map/1</a></td><td></td></tr><tr><td valign="top"><a href="#verify_key-1">verify_key/1</a></td><td></td></tr><tr><td valign="top"><a href="#verify_value-1">verify_value/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format_error-1">format_error/1</a></td><td></td></tr><tr><td valign="top"><a href="#from_ctx-1">from_ctx/1</a></td><td></td></tr><tr><td valign="top"><a href="#new-0">new/0</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr><tr><td valign="top"><a href="#new-2">new/2</a></td><td></td></tr><tr><td valign="top"><a href="#new_ctx-2">new_ctx/2</a></td><td></td></tr><tr><td valign="top"><a href="#put-3">put/3</a></td><td></td></tr><tr><td valign="top"><a href="#to_map-1">to_map/1</a></td><td></td></tr><tr><td valign="top"><a href="#update-2">update/2</a></td><td></td></tr><tr><td valign="top"><a href="#verify_key-1">verify_key/1</a></td><td></td></tr><tr><td valign="top"><a href="#verify_value-1">verify_value/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -84,6 +84,15 @@ new(Map::<a href="maps.md#type-map">maps:map()</a>) -&gt; <a href="#type-tags">t
 </code></pre>
 <br />
 
+<a name="new-2"></a>
+
+### new/2 ###
+
+<pre><code>
+new(Ctx::<a href="ctx.md#type-t">ctx:t()</a>, Map::<a href="maps.md#type-map">maps:map()</a>) -&gt; <a href="ctx.md#type-t">ctx:t()</a>
+</code></pre>
+<br />
+
 <a name="new_ctx-2"></a>
 
 ### new_ctx/2 ###
@@ -98,7 +107,7 @@ new_ctx(Ctx::<a href="ctx.md#type-t">ctx:t()</a>, Tags::<a href="#type-tags">tag
 ### put/3 ###
 
 <pre><code>
-put(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>, Tags::<a href="#type-tags">tags()</a>) -&gt; {ok, <a href="#type-tags">tags()</a>} | {error, term()}
+put(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>, Tags::<a href="#type-tags">tags()</a>) -&gt; {ok, <a href="#type-tags">tags()</a>} | {error, any()}
 </code></pre>
 <br />
 
@@ -108,6 +117,15 @@ put(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>
 
 <pre><code>
 to_map(Tags::<a href="#type-tags">tags()</a>) -&gt; <a href="maps.md#type-map">maps:map()</a>
+</code></pre>
+<br />
+
+<a name="update-2"></a>
+
+### update/2 ###
+
+<pre><code>
+update(Tags::<a href="#type-tags">tags()</a>, Map::<a href="maps.md#type-map">maps:map()</a>) -&gt; <a href="#type-tags">tags()</a>
 </code></pre>
 <br />
 

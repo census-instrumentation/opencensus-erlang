@@ -76,8 +76,7 @@ unit() = atom()
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#exists-1">exists/1</a></td><td>
 Returns a measure with the <code>Name</code> or <code>false</code>..</td></tr><tr><td valign="top"><a href="#new-3">new/3</a></td><td>
-Creates and registers a measure.</td></tr><tr><td valign="top"><a href="#parse_transform-2">parse_transform/2</a></td><td>
-<code>oc_stat_measure</code> is also a parse transform.</td></tr></table>
+Creates and registers a measure.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -106,15 +105,4 @@ new(Name::<a href="#type-name">name()</a>, Description::<a href="#type-descripti
 
 Creates and registers a measure. If a measure with the same name
 already exists, old measure returned.
-
-<a name="parse_transform-2"></a>
-
-### parse_transform/2 ###
-
-`parse_transform(Forms, Options) -> any()`
-
-`oc_stat_measure` is also a parse transform. It can detect `oc_stat:record` calls
-with constant measure names and generate remote measure module call from that.
-At the run-time this means we don't have to do a lookup for the module name and
-if measure doesn't exist, `{unknown_measure, Name}` error will be thrown.
 

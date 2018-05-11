@@ -9,8 +9,13 @@ make
 
 # fix internal doc links
 sed -i 's/https:\/\/github\.com\/doc\/\(.*\)\.md/\1.html/g' *.html
-sed -i 's/\"\(.*\)\.md\"/\"\1.html\"/g' *.html
-sed -i 's/\"\(.*\)\.md#\(.*\)\"/\"\1.html#\2\"/g' *.html
+sed -i 's/\"\([a-zA-Z_-]*\)\.md\([a-zA-Z_-#]*\)\"/\"\1.html\2\"/g' *.html
+sed -i 's/\"doc\/\([a-zA-Z_-]*\)\.md\"/\"\1.html\"/g' *.html
+sed -i 's/\"\([a-zA-Z_-]*\)\.md\"/\"\1.html\"/g' *.html
+sed -i 's/<br \/>//g' *.html
+
+# sed -i 's/\"\(.*\)\.md\"/\"\1.html\"/g' *.html
+# sed -i 's/\"\(.*\)\.md#\(.*\)\"/\"\1.html#\2\"/g' *.html
 
 # fix external doc links
 sed -i 's/maps\.html\#/http:\/\/erlang.org\/doc\/man\/maps\.html#/g' *.html
