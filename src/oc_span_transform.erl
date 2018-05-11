@@ -17,7 +17,7 @@
 %% @end
 %%%-----------------------------------------------------------------------
 
--module(oc_transform).
+-module(oc_span_transform).
 
 -export([parse_transform/2,
          format_error/1]).

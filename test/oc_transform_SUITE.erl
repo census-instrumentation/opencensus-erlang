@@ -4,7 +4,7 @@
 %%% ---------------------------------------------------------------------------
 -module(oc_transform_SUITE).
 
--compile({parse_transform, oc_transform}).
+-compile({parse_transform, oc_span_transform}).
 
 -compile(export_all).
 
