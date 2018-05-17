@@ -52,7 +52,7 @@ some_fun() ->
                       end).
 ```
 
-More details on working with spans can be found [here](span.md) and in the modules docuemntation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
+More details on working with spans can be found [here](span.md) and in the modules documentation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
