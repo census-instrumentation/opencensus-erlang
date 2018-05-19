@@ -22,12 +22,15 @@
 
 -export([new/1,
          new/5,
-         register/5,
+         new/6,
          register/1,
+         register/5,
+         register/6,
          deregister/1,
          is_registered/1,
-         subscribe/5,
          subscribe/1,
+         subscribe/5,
+         subscribe/6,
          unsubscribe/1,
          is_subscribed/1,
          export/1]).
@@ -62,7 +65,9 @@
 -define(MEASURES_TABLE, oc_stat_view_subs).
 
 -record(view, {name                        :: name() | '_',
-               measure                     :: measure_name() | '_',
+               measure                     :: oc_stat_measure:measure()
+                                            | measure_name() | '_',
+               unit                        :: oc_stat_measure:unit(),
                subscribed          = false :: boolean(),
                description         = ""    :: description() | '_',
                ctags               = #{}   :: oc_tags:tags() | '_',
@@ -97,10 +102,14 @@ new(Map) when is_map(Map) ->
 %% in order to start aggregating data.
 %% @end
 new(Name, Measure, Description, Tags, Aggregation) ->
+    new(Name, Measure, undefined, Description, Tags, Aggregation).
+
+new(Name, Measure, Unit, Description, Tags, Aggregation) ->
     {CTags, Keys} = normalize_tags(Tags),
     {AggregationModule, AggregationOptions} = normalize_aggregation(Aggregation),
     #view{name=Name,
           measure=Measure,
+          unit=Unit,
           description=Description,
           ctags=CTags,
           tags=Keys,
@@ -116,7 +125,10 @@ new(Name, Measure, Description, Tags, Aggregation) ->
 %% view with `Name' already registered.
 %% @end
 register(Name, Measure, Description, Tags, Aggregation) ->
-    register(new(Name, Measure, Description, Tags, Aggregation)).
+    register(new(Name, Measure, undefined, Description, Tags, Aggregation)).
+
+register(Name, Measure, Unit, Description, Tags, Aggregation) ->
+    register(new(Name, Measure, Unit, Description, Tags, Aggregation)).
 
 %% @doc
 %% Registers the view. Aggregation initialized with AggregationOptions.
@@ -161,7 +173,10 @@ is_registered(Name) ->
 %% Returns `{error, {unknown_measure, Measure}}' if `Measure' is unknown.
 %% @end
 subscribe(Name, Measure, Description, Tags, Aggregation) ->
-    View = new(Name, Measure, Description, Tags, Aggregation),
+    subscribe(Name, Measure, undefined, Description, Tags, Aggregation).
+
+subscribe(Name, Measure, Unit, Description, Tags, Aggregation) ->
+    View = new(Name, Measure, Unit, Description, Tags, Aggregation),
     gen_server:call(?STAT_SERVER, {view_register_subscribe, View}).
 
 %% @doc
@@ -225,14 +240,18 @@ is_subscribed(Name) ->
 %% @end
 -spec export(view()) -> view_data().
 export(#view{name=Name, description=Description,
+             unit=VUnit, measure=Measure,
              ctags=CTags, tags=Keys,
              aggregation=AggregationModule,
              aggregation_options=AggregationOptions}) ->
+    %% TODO: maybe just store multiplier as unit measure??
+    MUnit = oc_stat_measure:unit(Measure),
+    Data = AggregationModule:export(Name, AggregationOptions),
     #{name => Name,
       description => Description,
       ctags => CTags,
       tags => lists:reverse(Keys),
-      data => AggregationModule:export(Name, AggregationOptions)}.
+      data => oc_stat_aggregation:convert(Data, MUnit, VUnit)}.
 
 %% =============================================================================
 %% internal
@@ -258,11 +277,16 @@ all_subscribed_() ->
 
 %% @private
 register_(#view{measure=Measure}=View) ->
-    register_(oc_stat_measure:exists(Measure), View).
+    case oc_stat_measure:exists(Measure) of
+        false -> {error, {unknown_measure, Measure}};
+        RMeasure ->
+            case validate_view_unit_and_measure(View, RMeasure) of
+                {error, _} = Error -> Error;
+                UView -> register__(UView)
+            end
+    end.
 
-register_(false, #view{measure=Measure}) ->
-    {error, {unknown_measure, Measure}};
-register_(_, #view{name=Name}=View) ->
+register__(#view{name=Name}=View) ->
     SView = View#view{subscribed=true},
     case ets:lookup(?VIEWS_TABLE, Name) of
         [View] ->
@@ -359,6 +383,23 @@ vs_from_view(#view{name=Name,
          tags=Keys,
          aggregation=AggregationModule,
          aggregation_options=AggregationOptions}.
+
+validate_view_unit_and_measure(#view{unit=undefined}=View, Measure) ->
+    MUnit = oc_stat_measure:unit(Measure),
+    case oc_stat_unit:must_convert(MUnit) of
+        true ->
+            {error, {invalid_unit, "view must override measure unit", MUnit}};
+        false ->
+            View#view{measure=Measure}
+    end;
+validate_view_unit_and_measure(#view{unit=VUnit}=View, Measure) ->
+    MUnit = oc_stat_measure:unit(Measure),
+    case oc_stat_unit:is_comparable(VUnit, MUnit) of
+        false ->
+            {error, {not_comparable_units, MUnit, VUnit}};
+        true ->
+            View#view{measure=Measure}
+    end.
 
 init_view_aggregation(#view{name=Name,
                             tags=Keys,

@@ -19,6 +19,8 @@
 
 -module(oc_stat_aggregation).
 
+-export([convert/3]).
+
 -export_types(data/0).
 
 -type data_rows(AggregationValue) :: [#{tags := tv(),
@@ -49,3 +51,26 @@
 -callback export(oc_stat_view:name(), any()) -> data().
 
 -callback clear_rows(oc_stat_view:name(), any()) -> ok.
+
+convert(Data, _From, undefined) ->
+    Data;
+convert(#{type := count}=Data, _From, _To) ->
+    Data;
+convert(#{type := Type,
+          rows := Rows}, From, To) ->
+    #{type => Type,
+      rows => convert_rows(Type, Rows, From, To)}.
+
+convert_rows(latest, Rows, From, To) ->
+    [Row#{value => oc_stat_unit:convert(Value, From, To)}
+     || #{value := Value}=Row <- Rows];
+convert_rows(sum, Rows, From, To) ->
+    [Row#{value => Value#{sum => oc_stat_unit:convert(Sum, From, To),
+                          mean => oc_stat_unit:convert(Mean, From, To)}}
+     || #{value := #{sum := Sum,
+                     mean := Mean}=Value}=Row <- Rows];
+convert_rows(distribution, Rows, From, To) ->
+    [Row#{value => Value#{sum => oc_stat_unit:convert(Sum, From, To),
+                          mean => oc_stat_unit:convert(Mean, From, To)}}
+     || #{value := #{sum := Sum,
+                     mean := Mean}=Value}=Row <- Rows].

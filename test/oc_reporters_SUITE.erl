@@ -46,7 +46,6 @@ init_per_testcase(zipkin_reporter, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
-
 end_per_testcase(_, _Config) ->
     ok = application:stop(opencensus),
     ok.

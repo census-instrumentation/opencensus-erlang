@@ -33,7 +33,8 @@
 
 %% user api
 -export([new/3,
-         exists/1]).
+         exists/1,
+         unit/1]).
 
 %% codegen
 -export([measure_module/1,
@@ -81,13 +82,19 @@ new(Name, Description, Unit) ->
 %% @doc
 %% Returns a measure with the `Name' or `false'..
 %% @end
--spec exists(name()) -> measure() | false.
+-spec exists(name() | measure()) -> measure() | false.
+exists(#measure{name=Name}) ->
+    exists(Name);
 exists(Name) ->
     case ets:lookup(?MEASURES_TABLE, Name) of
         [Measure] ->
             Measure;
         _ -> false
     end.
+
+-spec unit(measure()) -> unit().
+unit(#measure{unit=Unit}) ->
+    Unit.
 
 %% =============================================================================
 %% internal
@@ -109,10 +116,10 @@ insert_measure_(#measure{module=Module}=Measure) ->
     Measure.
 
 %% @private
-add_subscription_(Name, VS) ->
-    case exists(Name) of
+add_subscription_(Measure, VS) ->
+    case exists(Measure) of
         false ->
-            {error, {unknown_measure, Name}};
+            {error, {unknown_measure, Measure}};
         #measure{module=Module} ->
             Subs = Module:subs(),
             regen_record(Module, [VS | Subs]),
