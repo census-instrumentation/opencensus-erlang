@@ -94,8 +94,8 @@
 %% Creates a View from a map.
 %% @end
 new(Map) when is_map(Map) ->
-    new(maps:get(name, Map), maps:get(measure, Map), maps:get(description, Map),
-        maps:get(tags, Map, []), maps:get(aggregation, Map)).
+    new(maps:get(name, Map), maps:get(measure, Map), maps:get(unit, Map, undefined),
+        maps:get(description, Map), maps:get(tags, Map, []), maps:get(aggregation, Map)).
 
 %% @doc
 %% Creates a View. This view needs to be registered and subscribed to a measure

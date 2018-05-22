@@ -37,7 +37,7 @@
               | data(distribution, #{count := non_neg_integer(),
                                      mean := number(),
                                      sum := number(),
-                                     buckets := [{number, non_neg_integer()}]}).
+                                     buckets := [{number(), non_neg_integer()}]}).
 
 -type keys() :: [oc_tags:key()].
 -type tv()   :: [oc_tags:value()].
@@ -54,14 +54,15 @@
 
 convert(Data, _From, undefined) ->
     Data;
-convert(#{type := count}=Data, _From, _To) ->
-    Data;
 convert(#{type := Type,
           rows := Rows}, From, To) ->
     #{type => Type,
       rows => convert_rows(Type, Rows, From, To)}.
 
 convert_rows(latest, Rows, From, To) ->
+    [Row#{value => oc_stat_unit:convert(Value, From, To)}
+     || #{value := Value}=Row <- Rows];
+convert_rows(count, Rows, From, To) ->
     [Row#{value => oc_stat_unit:convert(Value, From, To)}
      || #{value := Value}=Row <- Rows];
 convert_rows(sum, Rows, From, To) ->
@@ -71,6 +72,16 @@ convert_rows(sum, Rows, From, To) ->
                      mean := Mean}=Value}=Row <- Rows];
 convert_rows(distribution, Rows, From, To) ->
     [Row#{value => Value#{sum => oc_stat_unit:convert(Sum, From, To),
-                          mean => oc_stat_unit:convert(Mean, From, To)}}
+                          mean => oc_stat_unit:convert(Mean, From, To),
+                          buckets => convert_buckets(Buckets, From, To)}}
      || #{value := #{sum := Sum,
-                     mean := Mean}=Value}=Row <- Rows].
+                     mean := Mean,
+                     buckets := Buckets}=Value}=Row <- Rows].
+
+convert_buckets(Buckets, From, To) ->
+    [{maybe_convert_bound(Bound, From, To), Counter} || {Bound, Counter} <- Buckets].
+
+maybe_convert_bound(infinity, _From, _To) ->
+    infinity;
+maybe_convert_bound(Bound, From, To) ->
+    oc_stat_unit:convert(Bound, From, To).
