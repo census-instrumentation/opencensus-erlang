@@ -52,6 +52,7 @@
 
 -callback clear_rows(oc_stat_view:name(), any()) -> ok.
 
+%% @private
 convert(Data, _From, undefined) ->
     Data;
 convert(#{type := Type,

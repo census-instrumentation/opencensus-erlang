@@ -7,6 +7,7 @@
 
 all() ->
     [conversion,
+     no_conversion,
      errors].
 
 init_per_suite(Config) ->
@@ -40,6 +41,24 @@ conversion(_Config) ->
                                          value := #{count := 2,
                                                     mean := 0.6006,
                                                     sum := 1.2012}}],
+                              type := sum}}],
+                 oc_stat:export()).
+
+no_conversion(_Config) ->
+    oc_stat_measure:new(http_request_duration, "Http request duration", microsecond),
+    oc_stat_view:subscribe(http_request_duration_microsecond,
+                           http_request_duration, "desc", [], oc_stat_aggregation_sum),
+    oc_stat:record(#{}, http_request_duration, 1200000),
+    oc_stat:record(#{}, http_request_duration, 1200000000),
+
+    ?assertMatch([#{name := http_request_duration_microsecond,
+                    description := "desc",
+                    tags := [],
+                    ctags := #{},
+                    data := #{rows := [#{tags := [],
+                                         value := #{count := 2,
+                                                    mean := 6.006e8,
+                                                    sum := 1201200000}}],
                               type := sum}}],
                  oc_stat:export()).
 
