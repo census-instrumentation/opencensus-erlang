@@ -52,7 +52,7 @@ some_fun() ->
                       end).
 ```
 
-More details on working with spans can be found [here](span.md) and in the modules docuemntation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
+More details on working with spans can be found [here](span.md) and in the modules documentation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
@@ -109,7 +109,7 @@ Views are how Neasures are aggregated. You can think of them as queries over the
 
 Views have two parts: the tags to group by and the aggregation type used.
 
-Currently three types of aggregations are supported:
+Currently four types of aggregations are supported:
 
 * `oc_stat_aggregation_count`: Count aggregation is used to count the number of times a sample was recorded.
 * `oc_stat_aggregation_distribution`: Distribution aggregation is used to provide a histogram of the values of the samples.

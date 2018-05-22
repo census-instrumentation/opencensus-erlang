@@ -76,7 +76,7 @@ unit() = atom()
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#exists-1">exists/1</a></td><td>
 Returns a measure with the <code>Name</code> or <code>false</code>..</td></tr><tr><td valign="top"><a href="#new-3">new/3</a></td><td>
-Creates and registers a measure.</td></tr></table>
+Creates and registers a measure.</td></tr><tr><td valign="top"><a href="#unit-1">unit/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -88,7 +88,7 @@ Creates and registers a measure.</td></tr></table>
 ### exists/1 ###
 
 <pre><code>
-exists(Name::<a href="#type-name">name()</a>) -&gt; <a href="#type-measure">measure()</a> | false
+exists(Measure::<a href="#type-name">name()</a> | <a href="#type-measure">measure()</a>) -&gt; <a href="#type-measure">measure()</a> | false
 </code></pre>
 <br />
 
@@ -105,4 +105,13 @@ new(Name::<a href="#type-name">name()</a>, Description::<a href="#type-descripti
 
 Creates and registers a measure. If a measure with the same name
 already exists, old measure returned.
+
+<a name="unit-1"></a>
+
+### unit/1 ###
+
+<pre><code>
+unit(Measure::<a href="#type-measure">measure()</a>) -&gt; <a href="#type-unit">unit()</a>
+</code></pre>
+<br />
 
