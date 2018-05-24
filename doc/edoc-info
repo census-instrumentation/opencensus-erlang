@@ -8,5 +8,6 @@
           oc_stat_aggregation_distribution,oc_stat_aggregation_latest,
           oc_stat_aggregation_sum,oc_stat_config,oc_stat_exporter,
           oc_stat_exporter_stdout,oc_stat_measure,oc_stat_transform,
-          oc_stat_view,oc_std_encoder,oc_tag_ctx_binary,oc_tag_ctx_header,
-          oc_tags,oc_trace,ocp,opencensus,opencensus_app,opencensus_sup]}.
+          oc_stat_unit,oc_stat_view,oc_std_encoder,oc_tag_ctx_binary,
+          oc_tag_ctx_header,oc_tags,oc_trace,ocp,opencensus,opencensus_app,
+          opencensus_sup]}.
