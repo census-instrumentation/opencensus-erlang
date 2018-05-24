@@ -23,12 +23,12 @@
                          rows :=
                              [#{tags := [],
                                 value := #{buckets := [{0, 0},
-                                                       {65536, 3},
+                                                       {65536, 6},
                                                        {4294967296, 0},
                                                        {infinity, 0}],
-                                           count := 3,
-                                           mean := 2048.0,
-                                           sum := 6144}}]}},
+                                           count := 6,
+                                           mean := 1024.5,
+                                           sum := 6147}}]}},
              #{name := "video_count",
                description :=
                    "number of videos processed processed over time",
@@ -36,16 +36,16 @@
                tags := [type],
                data := #{type := count,
                          rows := [#{tags := ["mpeg"],
-                                    value := 3}]}},
+                                    value := 6}]}},
              #{name := "video_sum",
                description := "video_size_sum",
                ctags := #{sum_tag := value},
                tags := [category, type],
                data := #{type := sum,
                          rows := [#{tags := ["category1", "mpeg"],
-                                    value := #{count := 3,
-                                               mean := 2048.0,
-                                               sum := 6144}}]}}]).
+                                    value := #{count := 6,
+                                               mean := 1024.5,
+                                               sum := 6147}}]}}]).
 
 all() ->
     [
@@ -193,7 +193,6 @@ parse_transform(_Config) ->
 
 full(_Config) ->
     oc_stat_measure:new('my.org/measures/video_size', "", ""),
-    oc_stat_measure:new('my.org/measures/video_count', "", ""),
 
     {ok, _} = oc_stat_view:subscribe(
                 #{
@@ -206,7 +205,7 @@ full(_Config) ->
 
     {ok, _} = oc_stat_view:subscribe(
                 "video_count",
-                'my.org/measures/video_count',
+                'my.org/measures/video_size',
                 "number of videos processed processed over time",
                 [#{ctag => value},
                  type],
@@ -231,11 +230,11 @@ full(_Config) ->
              category => "category1"},
     Ctx = oc_tags:new_ctx(ctx:new(), Tags),
 
-    oc_stat:record(Ctx, 'my.org/measures/video_count', 1),
-    oc_stat:record(Tags, [{'my.org/measures/video_count', 1},
+    oc_stat:record(Ctx, 'my.org/measures/video_size', 1),
+    oc_stat:record(Tags, [{'my.org/measures/video_size', 1},
                           {'my.org/measures/video_size', 1024}]),
     oc_stat:record(Tags, 'my.org/measures/video_size', 4096),
-    oc_stat:record(Ctx, [{'my.org/measures/video_count', 1},
+    oc_stat:record(Ctx, [{'my.org/measures/video_size', 1},
                          {'my.org/measures/video_size', 1024}]),
 
     ?assertMatch(?VD,

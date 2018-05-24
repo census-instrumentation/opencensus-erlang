@@ -47,7 +47,7 @@ conversion(_Config) ->
                                              millisecond, second)),
 
     ?assertMatch(#{rows := [#{tags := [],
-                              value := 120.120}],
+                              value := 120120}],
                    type := count},
                  oc_stat_aggregation:convert(#{rows => [#{tags => [],
                                                           value => 120120}],

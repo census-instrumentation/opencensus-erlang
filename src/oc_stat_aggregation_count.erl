@@ -39,13 +39,13 @@ type() ->
     count.
 
 -spec add_sample(oc_stat_view:name(), oc_tags:tags(), number(), any()) -> ok.
-add_sample(Name, Tags, Value, Options) ->
-    case counters_simple:inc(Name, Tags, Value) of
+add_sample(Name, Tags, _Value, Options) ->
+    case counters_simple:inc(Name, Tags, 1) of
         unknown ->
-            case counters_simple:new(Name, Tags, Value) of
+            case counters_simple:new(Name, Tags, 1) of
                 ok -> ok;
                 false ->
-                    add_sample(Name, Tags, Value, Options)
+                    add_sample(Name, Tags, 1, Options)
             end;
         _ ->
             ok
