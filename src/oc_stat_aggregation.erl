@@ -60,10 +60,9 @@ convert(#{type := Type,
     #{type => Type,
       rows => convert_rows(Type, Rows, From, To)}.
 
+convert_rows(count, Rows, _From, _To) ->
+    Rows;
 convert_rows(latest, Rows, From, To) ->
-    [Row#{value => oc_stat_unit:convert(Value, From, To)}
-     || #{value := Value}=Row <- Rows];
-convert_rows(count, Rows, From, To) ->
     [Row#{value => oc_stat_unit:convert(Value, From, To)}
      || #{value := Value}=Row <- Rows];
 convert_rows(sum, Rows, From, To) ->
