@@ -54,6 +54,7 @@
 -dialyzer({nowarn_function, update_trace_options/2}).
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 %% sampling bit is the first bit in 8-bit trace options
 -define(IS_ENABLED(X), (X band 1) =/= 0).
@@ -165,6 +166,9 @@ new_span_(Name, Span=#span_ctx{trace_id=TraceId}, Kind, RemoteParent) when Remot
 new_span_(Name, Parent=#span_ctx{trace_id=TraceId,
                                  span_id=ParentSpanId}, Kind, _RemoteParent) ->
     SpanId = opencensus:generate_span_id(),
+
+    ?SET_LOG_METADATA(TraceId, SpanId),
+
     ets:insert(?SPAN_TAB, #span{trace_id=TraceId,
                                 span_id=SpanId,
                                 start_time=wts:timestamp(),
