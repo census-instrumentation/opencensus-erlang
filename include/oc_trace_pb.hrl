@@ -7,76 +7,28 @@
 
 -define(oc_trace_pb_gpb_version, "4.1.6").
 
+-ifndef('DOUBLE_VALUE_PB_PB_H').
+-define('DOUBLE_VALUE_PB_PB_H', true).
+-record(double_value_pb,
+        {value = 0.0            :: float() | integer() | infinity | '-infinity' | nan | undefined % = 1
+        }).
+-endif.
+
+-ifndef('MESSAGE_EVENT_PB_PB_H').
+-define('MESSAGE_EVENT_PB_PB_H', true).
+-record(message_event_pb,
+        {type = 'TYPE_UNSPECIFIED' :: 'TYPE_UNSPECIFIED' | 'SENT' | 'RECEIVED' | integer() | undefined, % = 1, enum opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type
+         id = 0                 :: non_neg_integer() | undefined, % = 2, 32 bits
+         uncompressed_size = 0  :: non_neg_integer() | undefined, % = 3, 32 bits
+         compressed_size = 0    :: non_neg_integer() | undefined % = 4, 32 bits
+        }).
+-endif.
+
 -ifndef('TRUNCATABLE_STRING_PB_PB_H').
 -define('TRUNCATABLE_STRING_PB_PB_H', true).
 -record(truncatable_string_pb,
         {value = <<>>           :: iodata() | undefined, % = 1
          truncated_byte_count = 0 :: integer() | undefined % = 2, 32 bits
-        }).
--endif.
-
--ifndef('MODULE_PB_PB_H').
--define('MODULE_PB_PB_H', true).
--record(module_pb,
-        {module = undefined     :: #truncatable_string_pb{} | undefined, % = 1
-         build_id = undefined   :: #truncatable_string_pb{} | undefined % = 2
-        }).
--endif.
-
--ifndef('STACK_FRAME_PB_PB_H').
--define('STACK_FRAME_PB_PB_H', true).
--record(stack_frame_pb,
-        {function_name = undefined :: #truncatable_string_pb{} | undefined, % = 1
-         original_function_name = undefined :: #truncatable_string_pb{} | undefined, % = 2
-         file_name = undefined  :: #truncatable_string_pb{} | undefined, % = 3
-         line_number = 0        :: integer() | undefined, % = 4, 32 bits
-         column_number = 0      :: integer() | undefined, % = 5, 32 bits
-         load_module = undefined :: #module_pb{} | undefined, % = 6
-         source_version = undefined :: #truncatable_string_pb{} | undefined % = 7
-        }).
--endif.
-
--ifndef('STRING_VALUE_PB_PB_H').
--define('STRING_VALUE_PB_PB_H', true).
--record(string_value_pb,
-        {value = <<>>           :: iodata() | undefined % = 1
-        }).
--endif.
-
--ifndef('STACK_FRAMES_PB_PB_H').
--define('STACK_FRAMES_PB_PB_H', true).
--record(stack_frames_pb,
-        {frame = []             :: [#stack_frame_pb{}] | undefined, % = 1
-         dropped_frames_count = 0 :: integer() | undefined % = 2, 32 bits
-        }).
--endif.
-
--ifndef('STACK_TRACE_PB_PB_H').
--define('STACK_TRACE_PB_PB_H', true).
--record(stack_trace_pb,
-        {stack_frames = undefined :: #stack_frames_pb{} | undefined, % = 1
-         stack_trace_hash_id = 0 :: non_neg_integer() | undefined % = 2, 32 bits
-        }).
--endif.
-
--ifndef('BYTES_VALUE_PB_PB_H').
--define('BYTES_VALUE_PB_PB_H', true).
--record(bytes_value_pb,
-        {value = <<>>           :: iodata() | undefined % = 1
-        }).
--endif.
-
--ifndef('BOOL_VALUE_PB_PB_H').
--define('BOOL_VALUE_PB_PB_H', true).
--record(bool_value_pb,
-        {value = false          :: boolean() | 0 | 1 | undefined % = 1
-        }).
--endif.
-
--ifndef('U_INT_64_VALUE_PB_PB_H').
--define('U_INT_64_VALUE_PB_PB_H', true).
--record(u_int_64_value_pb,
-        {value = 0              :: non_neg_integer() | undefined % = 1, 32 bits
         }).
 -endif.
 
@@ -92,16 +44,6 @@
 -record(attributes_pb,
         {attribute_map = #{}    :: #{iodata() := #attribute_value_pb{}} | undefined, % = 1
          dropped_attributes_count = 0 :: integer() | undefined % = 2, 32 bits
-        }).
--endif.
-
--ifndef('MESSAGE_EVENT_PB_PB_H').
--define('MESSAGE_EVENT_PB_PB_H', true).
--record(message_event_pb,
-        {type = 'TYPE_UNSPECIFIED' :: 'TYPE_UNSPECIFIED' | 'SENT' | 'RECEIVED' | integer() | undefined, % = 1, enum opencensus.proto.trace.Span.TimeEvent.MessageEvent.Type
-         id = 0                 :: non_neg_integer() | undefined, % = 2, 32 bits
-         uncompressed_size = 0  :: non_neg_integer() | undefined, % = 3, 32 bits
-         compressed_size = 0    :: non_neg_integer() | undefined % = 4, 32 bits
         }).
 -endif.
 
@@ -129,6 +71,22 @@
         }).
 -endif.
 
+-ifndef('TIME_EVENTS_PB_PB_H').
+-define('TIME_EVENTS_PB_PB_H', true).
+-record(time_events_pb,
+        {time_event = []        :: [#time_event_pb{}] | undefined, % = 1
+         dropped_annotations_count = 0 :: integer() | undefined, % = 2, 32 bits
+         dropped_message_events_count = 0 :: integer() | undefined % = 3, 32 bits
+        }).
+-endif.
+
+-ifndef('BOOL_VALUE_PB_PB_H').
+-define('BOOL_VALUE_PB_PB_H', true).
+-record(bool_value_pb,
+        {value = false          :: boolean() | 0 | 1 | undefined % = 1
+        }).
+-endif.
+
 -ifndef('LINK_PB_PB_H').
 -define('LINK_PB_PB_H', true).
 -record(link_pb,
@@ -136,6 +94,57 @@
          span_id = <<>>         :: iodata() | undefined, % = 2
          type = 'TYPE_UNSPECIFIED' :: 'TYPE_UNSPECIFIED' | 'CHILD_LINKED_SPAN' | 'PARENT_LINKED_SPAN' | integer() | undefined, % = 3, enum opencensus.proto.trace.Span.Link.Type
          attributes = undefined :: #attributes_pb{} | undefined % = 4
+        }).
+-endif.
+
+-ifndef('FLOAT_VALUE_PB_PB_H').
+-define('FLOAT_VALUE_PB_PB_H', true).
+-record(float_value_pb,
+        {value = 0.0            :: float() | integer() | infinity | '-infinity' | nan | undefined % = 1
+        }).
+-endif.
+
+-ifndef('BYTES_VALUE_PB_PB_H').
+-define('BYTES_VALUE_PB_PB_H', true).
+-record(bytes_value_pb,
+        {value = <<>>           :: iodata() | undefined % = 1
+        }).
+-endif.
+
+-ifndef('MODULE_PB_PB_H').
+-define('MODULE_PB_PB_H', true).
+-record(module_pb,
+        {module = undefined     :: #truncatable_string_pb{} | undefined, % = 1
+         build_id = undefined   :: #truncatable_string_pb{} | undefined % = 2
+        }).
+-endif.
+
+-ifndef('STACK_FRAME_PB_PB_H').
+-define('STACK_FRAME_PB_PB_H', true).
+-record(stack_frame_pb,
+        {function_name = undefined :: #truncatable_string_pb{} | undefined, % = 1
+         original_function_name = undefined :: #truncatable_string_pb{} | undefined, % = 2
+         file_name = undefined  :: #truncatable_string_pb{} | undefined, % = 3
+         line_number = 0        :: integer() | undefined, % = 4, 32 bits
+         column_number = 0      :: integer() | undefined, % = 5, 32 bits
+         load_module = undefined :: #module_pb{} | undefined, % = 6
+         source_version = undefined :: #truncatable_string_pb{} | undefined % = 7
+        }).
+-endif.
+
+-ifndef('STACK_FRAMES_PB_PB_H').
+-define('STACK_FRAMES_PB_PB_H', true).
+-record(stack_frames_pb,
+        {frame = []             :: [#stack_frame_pb{}] | undefined, % = 1
+         dropped_frames_count = 0 :: integer() | undefined % = 2, 32 bits
+        }).
+-endif.
+
+-ifndef('STACK_TRACE_PB_PB_H').
+-define('STACK_TRACE_PB_PB_H', true).
+-record(stack_trace_pb,
+        {stack_frames = undefined :: #stack_frames_pb{} | undefined, % = 1
+         stack_trace_hash_id = 0 :: non_neg_integer() | undefined % = 2, 32 bits
         }).
 -endif.
 
@@ -147,10 +156,11 @@
         }).
 -endif.
 
--ifndef('INT_32_VALUE_PB_PB_H').
--define('INT_32_VALUE_PB_PB_H', true).
--record(int_32_value_pb,
-        {value = 0              :: integer() | undefined % = 1, 32 bits
+-ifndef('STATUS_PB_PB_H').
+-define('STATUS_PB_PB_H', true).
+-record(status_pb,
+        {code = 0               :: integer() | undefined, % = 1, 32 bits
+         message = <<>>         :: iodata() | undefined % = 2
         }).
 -endif.
 
@@ -158,30 +168,6 @@
 -define('U_INT_32_VALUE_PB_PB_H', true).
 -record(u_int_32_value_pb,
         {value = 0              :: non_neg_integer() | undefined % = 1, 32 bits
-        }).
--endif.
-
--ifndef('TIME_EVENTS_PB_PB_H').
--define('TIME_EVENTS_PB_PB_H', true).
--record(time_events_pb,
-        {time_event = []        :: [#time_event_pb{}] | undefined, % = 1
-         dropped_annotations_count = 0 :: integer() | undefined, % = 2, 32 bits
-         dropped_message_events_count = 0 :: integer() | undefined % = 3, 32 bits
-        }).
--endif.
-
--ifndef('INT_64_VALUE_PB_PB_H').
--define('INT_64_VALUE_PB_PB_H', true).
--record(int_64_value_pb,
-        {value = 0              :: integer() | undefined % = 1, 32 bits
-        }).
--endif.
-
--ifndef('STATUS_PB_PB_H').
--define('STATUS_PB_PB_H', true).
--record(status_pb,
-        {code = 0               :: integer() | undefined, % = 1, 32 bits
-         message = <<>>         :: iodata() | undefined % = 2
         }).
 -endif.
 
@@ -205,17 +191,31 @@
         }).
 -endif.
 
--ifndef('FLOAT_VALUE_PB_PB_H').
--define('FLOAT_VALUE_PB_PB_H', true).
--record(float_value_pb,
-        {value = 0.0            :: float() | integer() | infinity | '-infinity' | nan | undefined % = 1
+-ifndef('STRING_VALUE_PB_PB_H').
+-define('STRING_VALUE_PB_PB_H', true).
+-record(string_value_pb,
+        {value = <<>>           :: iodata() | undefined % = 1
         }).
 -endif.
 
--ifndef('DOUBLE_VALUE_PB_PB_H').
--define('DOUBLE_VALUE_PB_PB_H', true).
--record(double_value_pb,
-        {value = 0.0            :: float() | integer() | infinity | '-infinity' | nan | undefined % = 1
+-ifndef('INT_64_VALUE_PB_PB_H').
+-define('INT_64_VALUE_PB_PB_H', true).
+-record(int_64_value_pb,
+        {value = 0              :: integer() | undefined % = 1, 32 bits
+        }).
+-endif.
+
+-ifndef('INT_32_VALUE_PB_PB_H').
+-define('INT_32_VALUE_PB_PB_H', true).
+-record(int_32_value_pb,
+        {value = 0              :: integer() | undefined % = 1, 32 bits
+        }).
+-endif.
+
+-ifndef('U_INT_64_VALUE_PB_PB_H').
+-define('U_INT_64_VALUE_PB_PB_H', true).
+-record(u_int_64_value_pb,
+        {value = 0              :: non_neg_integer() | undefined % = 1, 32 bits
         }).
 -endif.
 
