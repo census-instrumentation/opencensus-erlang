@@ -58,7 +58,9 @@ never_sample(Config) ->
                          oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
 
-    ?assertEqual(0, length(L)).
+    ?assertEqual(0, length(L)),
+    %% no garbage in ETS
+    ?assertEqual(0, ets:info(?SPAN_TAB, size)).
 
 always_sample(Config) ->
     Limit = ?config(limit, Config),
@@ -67,7 +69,9 @@ always_sample(Config) ->
                          SpanContext = oc_trace:start_span(<<"span">>, undefined),
                          oc_trace:is_enabled(SpanContext)
                      end, lists:seq(1, Limit)),
-    ?assertEqual(Limit, length(L)).
+    ?assertEqual(Limit, length(L)),
+    %% all spans are in ETS
+    ?assertEqual(Limit, ets:info(?SPAN_TAB, size)).
 
 probability_sample(Config) ->
     Limit = ?config(limit, Config),
