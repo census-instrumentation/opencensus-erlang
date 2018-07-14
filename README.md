@@ -80,6 +80,18 @@ Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
 
 [Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
 
+### <a name="Logging">Logging</a> ###
+
+OTP-21 includes a new logging framework. When a context is created with a span (for example `ocp:with_child_span/1` or `oc_trace:with_child_span/2`) opencensus will update the current process's logger metadata to include the `trace_id` and `span_id` with the latest ids under the key `span_ctx`. To use these with the default formatter you can create a custom template that includes them if they exist like so:
+
+```
+{logger_formatter,
+  #{template => [time, " ", pid, " ",
+                 {[span_ctx, trace_id], ["trace_id=", [span_ctx, trace_id], " "], []},
+                 {[span_ctx, span_id], ["span_id=", [span_ctx, span_id], " "], []},
+                 msg, "\n"]}}
+```
+
 ### <a name="Stats">Stats</a> ###
 
 OpenCensus stats collection happens in two stages:

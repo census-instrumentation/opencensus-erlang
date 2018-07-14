@@ -100,7 +100,8 @@ parent_span_ctx(undefined) ->
 -spec with_span_ctx(Ctx, SpanCtx) -> Ctx when
       Ctx :: ctx:t(),
       SpanCtx :: opencensus:span_ctx().
-with_span_ctx(Ctx, SpanCtx=#span_ctx{}) ->
+with_span_ctx(Ctx, SpanCtx) ->
+    ?SET_LOG_METADATA(SpanCtx),
     ctx:with_value(Ctx, ?SPAN_CTX, SpanCtx).
 
 %%--------------------------------------------------------------------
@@ -171,9 +172,6 @@ new_span_(Name, Parent=#span_ctx{trace_id=TraceId,
                                  trace_options=TraceOptions,
                                  span_id=ParentSpanId}, Kind, _RemoteParent) when ?IS_ENABLED(TraceOptions) ->
     SpanId = opencensus:generate_span_id(),
-
-    ?SET_LOG_METADATA(TraceId, SpanId),
-
     Span = #span{trace_id=TraceId,
                  span_id=SpanId,
                  start_time=wts:timestamp(),
@@ -181,15 +179,11 @@ new_span_(Name, Parent=#span_ctx{trace_id=TraceId,
                  kind=Kind,
                  name=Name,
                  attributes=#{}},
-
     ets:insert(?SPAN_TAB, Span),
 
     Parent#span_ctx{span_id=SpanId};
 new_span_(_Name, Parent, _Kind, _RemoteParent) ->
     SpanId = opencensus:generate_span_id(),
-
-    ?SET_LOG_METADATA(TraceId, SpanId),
-
     %% if discarded by sampler, create no span
     Parent#span_ctx{span_id=SpanId}.
 
