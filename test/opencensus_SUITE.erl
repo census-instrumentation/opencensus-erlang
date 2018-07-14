@@ -67,7 +67,10 @@ child_spans(Config) ->
     ?assert(SpanData#span.end_time > SpanData#span.start_time).
 
 noops(_Config) ->
-    SpanCtx = #span_ctx{trace_options=0},
+    %% start with a disabled span ctx
+    SpanCtx = #span_ctx{trace_id=opencensus:generate_trace_id(),
+                        span_id=opencensus:generate_span_id(),
+                        trace_options=0},
 
     ChildSpanName1 = <<"child-span-1">>,
     ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
