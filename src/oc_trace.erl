@@ -129,6 +129,10 @@ with_child_span(Ctx, Name, Options) ->
 %% Create a new span, detached from any context.
 %% @end
 %%--------------------------------------------------------------------
+
+-spec start_span(Name, SpanCtx) -> SpanCtx when
+      Name :: unicode:unicode_binary(),
+      SpanCtx :: opencensus:span_ctx().
 start_span(Name, SpanCtx) ->
     new_span_(Name, SpanCtx, ?SPAN_KIND_UNSPECIFIED, false).
 
@@ -164,18 +168,29 @@ new_span_(Name, Span=#span_ctx{trace_id=TraceId}, Kind, RemoteParent) when Remot
     new_span_(Name, #span_ctx{trace_id=TraceId,
                               trace_options=TraceOptions}, Kind, false);
 new_span_(Name, Parent=#span_ctx{trace_id=TraceId,
-                                 span_id=ParentSpanId}, Kind, _RemoteParent) ->
+                                 trace_options=TraceOptions,
+                                 span_id=ParentSpanId}, Kind, _RemoteParent) when ?IS_ENABLED(TraceOptions) ->
     SpanId = opencensus:generate_span_id(),
 
     ?SET_LOG_METADATA(TraceId, SpanId),
 
-    ets:insert(?SPAN_TAB, #span{trace_id=TraceId,
-                                span_id=SpanId,
-                                start_time=wts:timestamp(),
-                                parent_span_id=ParentSpanId,
-                                kind=Kind,
-                                name=Name,
-                                attributes=#{}}),
+    Span = #span{trace_id=TraceId,
+                 span_id=SpanId,
+                 start_time=wts:timestamp(),
+                 parent_span_id=ParentSpanId,
+                 kind=Kind,
+                 name=Name,
+                 attributes=#{}},
+
+    ets:insert(?SPAN_TAB, Span),
+
+    Parent#span_ctx{span_id=SpanId};
+new_span_(_Name, Parent, _Kind, _RemoteParent) ->
+    SpanId = opencensus:generate_span_id(),
+
+    ?SET_LOG_METADATA(TraceId, SpanId),
+
+    %% if discarded by sampler, create no span
     Parent#span_ctx{span_id=SpanId}.
 
 %%
