@@ -82,13 +82,8 @@ current_span_ctx(Ctx) ->
                              maybe(opencensus:span_ctx()).
 parent_span_ctx(#span_ctx{span_id=SpanId}) ->
     parent_span_ctx_for_span_id(SpanId);
-parent_span_ctx(#span{parent_span_id=undefined}) ->
-    undefined;
-parent_span_ctx(#span{parent_span_id=ParentId}) ->
-    span_ctx_for_span_id(ParentId);
-parent_span_ctx(undefined) ->
-    undefined.
-
+parent_span_ctx(Span) ->
+    span_ctx_for_parent_span_id(Span).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -349,11 +344,11 @@ parent_span_ctx_for_span_id(SpanId) ->
     case ets:lookup(?SPAN_TAB, SpanId) of
         [] ->
             undefined;
-        [#span{parent_span_id=ParentSpanId}] ->
-            span_ctx_for_span_id(ParentSpanId)
+        [Span] ->
+            parent_span_ctx(Span)
     end.
 
-span_ctx_for_span_id(SpanId) ->
+span_ctx_for_parent_span_id(#span{parent_span_id=SpanId}) when SpanId =/= undefined ->
     case ets:lookup(?SPAN_TAB, SpanId) of
         [] ->
             undefined;
@@ -362,4 +357,6 @@ span_ctx_for_span_id(SpanId) ->
             #span_ctx{trace_id=TraceId,
                       span_id=SpanId,
                       trace_options=TraceOptions}
-    end.
+    end;
+span_ctx_for_parent_span_id(_) ->
+    undefined.
