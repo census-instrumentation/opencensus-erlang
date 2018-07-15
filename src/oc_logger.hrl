@@ -12,9 +12,15 @@
 -endif.
 
 -ifdef('21.0').
--define(SET_LOG_METADATA(TraceId, SpanId),
-        logger:update_process_metadata(#{trace_id => io_lib:format("~32.16.0b", [TraceId]),
-                                         span_id => io_lib:format("~16.16.0b", [SpanId])})).
+-define(SET_LOG_METADATA(SpanCtx),
+        case SpanCtx of
+            undefined ->
+                logger:update_process_metadata(#{span_ctx => undefined});
+            _ ->
+                logger:update_process_metadata(#{span_ctx => #{trace_id => io_lib:format("~32.16.0b", [SpanCtx#span_ctx.trace_id]),
+                                                               span_id => io_lib:format("~16.16.0b", [SpanCtx#span_ctx.span_id]),
+                                                               trace_options => integer_to_list(SpanCtx#span_ctx.trace_options)}})
+        end).
 -else.
--define(SET_LOG_METADATA(TraceId, SpanId), skip).
+-define(SET_LOG_METADATA(SpanCtx), skip).
 -endif.
