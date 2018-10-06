@@ -120,6 +120,13 @@ zipkin_reporter(_Config) ->
                                     #{attributes => #{<<"attr1">> => <<"val1">>,
                                                       <<"attr_as_function">> =>
                                                           fun () -> <<"val2">> end}}),
+
+        Annotation = oc_span:annotation( <<"description">>, #{<<"key1">> => <<"value1">>,
+                                                              <<"key2">> => <<"value2">>}),
+        MessageEvent = oc_span:message_event('SENT', 5555, 200, 100),
+        oc_trace:add_time_event(Annotation, Child),
+        oc_trace:add_time_event(MessageEvent, Child),
+
         oc_trace:finish_span(Child),
         oc_trace:finish_span(Parent),
 
@@ -138,7 +145,14 @@ zipkin_reporter(_Config) ->
                                 <<"shared">> := false,
                                 <<"tags">> := #{},
                                 <<"traceId">> := ParentTraceId},
-                              #{<<"annotations">> := [],
+                              #{<<"annotations">> :=
+                                    [#{<<"timestamp">> := _,
+                                       <<"value">> :=
+                                           <<"description Attributes:{key1=value1, key2=value2}">>},
+                                     #{<<"timestamp">> := _,
+                                       <<"value">> :=
+                                           <<"MessageEvent:{type=SENT, id=5555, uncompressed_size=200, "
+                                             "compressed_size=100}">>}],
                                 <<"debug">> := false,
                                 <<"id">> := ChildSpanId,
                                 <<"localEndpoint">> := #{<<"serviceName">> := "ct-service"},
