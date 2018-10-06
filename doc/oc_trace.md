@@ -216,7 +216,11 @@ Set Status. Returns true if the data was successfully updated.
 
 ### start_span/2 ###
 
-`start_span(Name, SpanCtx) -> any()`
+<pre><code>
+start_span(Name, SpanCtx) -&gt; SpanCtx
+</code></pre>
+
+<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a></code></li></ul>
 
 Create a new span, detached from any context.
 
