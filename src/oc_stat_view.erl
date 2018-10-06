@@ -61,6 +61,9 @@
 %% enable ets:fun2ms parse transform
 -include_lib("stdlib/include/ms_transform.hrl").
 
+-dialyzer({nowarn_function, subscribe_/1}).
+-dialyzer({nowarn_function, mark_view_as_subscribed_/1}).
+
 -define(VIEWS_TABLE, ?MODULE).
 -define(MEASURES_TABLE, oc_stat_view_subs).
 
