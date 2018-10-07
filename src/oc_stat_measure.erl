@@ -68,6 +68,11 @@
 
 -define(MEASURES_TABLE, ?MODULE).
 
+-dialyzer({nowarn_function, regen_module/3}).
+-dialyzer({nowarn_function, insert_measure_/1}).
+-dialyzer({nowarn_function, regen_record/2}).
+-dialyzer({nowarn_function, delete_measure/1}).
+
 %% @doc
 %% Creates and registers a measure. If a measure with the same name
 %% already exists, old measure returned.
