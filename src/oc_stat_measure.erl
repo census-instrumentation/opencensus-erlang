@@ -38,6 +38,7 @@
 
 %% codegen
 -export([measure_module/1,
+         record_module/1,
          module_name/1,
          maybe_module_name/1,
          regen_record/2,
@@ -56,10 +57,11 @@
                unit/0,
                measure/0]).
 
--record(measure, {name        :: name(),
-                  module      :: module(),
-                  description :: description(),
-                  unit        :: unit()}).
+-record(measure, {name          :: name(),
+                  module        :: module(),
+                  record_module :: module(),
+                  description   :: description(),
+                  unit          :: unit()}).
 
 -type name()        :: atom() | binary() | string().
 -type description() :: binary() | string().
@@ -79,9 +81,11 @@
 %% @end
 -spec new(name(), description(), unit()) -> oc_stat_view:measure().
 new(Name, Description, Unit) ->
+    RecordModule = application:get_env(opencensus, stat_record_module, oc_stat_measure:module_name(Name)),
     gen_server:call(oc_stat, {measure_register,
                               #measure{name=Name,
                                        module=oc_stat_measure:module_name(Name),
+                                       record_module=RecordModule,
                                        description=Description,
                                        unit=Unit}}).
 %% @doc
@@ -163,6 +167,13 @@ measure_module(Name) ->
         _ -> erlang:error({unknown_measure, Name})
     end.
 
+record_module(Name) ->
+    case ets:lookup(?MEASURES_TABLE, Name) of
+        [#measure{record_module=Module}] ->
+            Module;
+        _ -> erlang:error({unknown_measure, Name})
+    end.
+
 %% @private
 -spec module_name(name()) -> module().
 module_name(Name) ->
@@ -208,11 +219,11 @@ regen_module(ModuleName, RecordBody, Subs) ->
              1}},
            {attribute, 1, module, ModuleName},
            {attribute, 1, export,
-            [{record, 2}]},
+            [{record, 3}]},
            {attribute, 1, export,
             [{subs, 0}]},
-           {function, 1, record, 2,
-            [{clause, 1, [{var, 1, 'ContextTags'}, {var, 1, 'Value'}], [],
+           {function, 1, record, 3,
+            [{clause, 1, [{var, 1, '_MeasureName'}, {var, 1, 'ContextTags'}, {var, 1, 'Value'}], [],
               RecordBody ++ [{atom, 1, ok}]
              }]},
            {function, 1, subs, 0,

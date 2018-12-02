@@ -32,6 +32,13 @@ start_link() ->
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
+    StatCollector = #{id => oc_stat_collector,
+                      start => {oc_stat_collector, start_link, []},
+                      restart => permanent,
+                      shutdown => 1000,
+                      type => worker,
+                      modules => [oc_stat_collector]},
+
     Reporter = #{id => oc_reporter,
                  start => {oc_reporter, start_link, []},
                  restart => permanent,
@@ -60,6 +67,14 @@ init([]) ->
                     type => worker,
                     modules => [oc_server]},
 
+    Children =
+        case application:get_env(opencensus, stat_record_module, undefined) of
+            oc_stat_collector ->
+                [Reporter, Exporter, ViewServer, TraceServer, StatCollector];
+            _ ->
+                [Reporter, Exporter, ViewServer, TraceServer]
+        end,
+
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, Exporter, ViewServer, TraceServer]}}.
+            period => 5}, Children}}.

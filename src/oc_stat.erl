@@ -35,8 +35,8 @@
 
 -define(RECORD(Tags, MeasureName, Value),
         begin
-            Module = oc_stat_measure:measure_module(MeasureName),
-            Module:record(Tags, Value),
+            Module = oc_stat_measure:record_module(MeasureName),
+            Module:record(MeasureName, Tags, Value),
             ok
         end).
 
