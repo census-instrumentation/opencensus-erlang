@@ -27,6 +27,9 @@
          handle_cast/2,
          handle_info/2]).
 
+-record(state, {workers :: [],
+                num_workers :: integer()}).
+
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
@@ -43,7 +46,8 @@ init([]) ->
                           Pid
                   end, lists:seq(1, NumSchedulers)),
     persistent_term:put(?MODULE, list_to_tuple(Workers)),
-    {ok, Workers}.
+    {ok, #state{workers=Workers,
+                num_workers=NumSchedulers}}.
 
 handle_call(_, _From, State) ->
     {noreply, State}.
@@ -51,13 +55,32 @@ handle_call(_, _From, State) ->
 handle_cast(_, State) ->
     {noreply, State}.
 
-handle_info({'EXIT', FromPid, _Reason}, Workers) ->
-    case lists:member(FromPid, Workers) of
-        true ->
-            {ok, Pid} = oc_stat_collector:start_link(),
-            Workers1 = [Pid | lists:delete(FromPid, Workers)],
-            persistent_term:put(?MODULE, list_to_tuple(Workers1)),
-            {noreply, Workers1};
-        false ->
-            {noreply, Workers}
+handle_info({'EXIT', FromPid, _Reason}, State=#state{workers=Workers}) ->
+    %% hopefully this goes behind any other immediate EXITs in the mailbox
+    %% so we only update once if more than 1 crash at the same time
+    self() ! update_workers,
+    {noreply, State#state{workers=lists:delete(FromPid, Workers)}};
+handle_info(update_workers, State=#state{workers=Workers,
+                                         num_workers=NumWorkers}) ->
+    flush_update_workers(),
+    case NumWorkers - length(Workers) of
+        N when N > 0 ->
+            Workers1 =
+                lists:map(fun(_) ->
+                                  {ok, Pid} = oc_stat_collector:start_link(),
+                                  Pid
+                          end, lists:seq(1, N)),
+            persistent_term:put(?MODULE, list_to_tuple(Workers1++Workers)),
+            {noreply, State#state{workers=Workers1}};
+        _ ->
+            {noreply, State}
+    end.
+
+flush_update_workers() ->
+    receive
+        update_workers ->
+            flush_update_workers()
+    after
+        0 ->
+            ok
     end.
