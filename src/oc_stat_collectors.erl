@@ -12,7 +12,7 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc Worker process for sending recorded stats.
+%% @doc Starts and monitors stat collecting worker processes.
 %% @end
 %%%-----------------------------------------------------------------------
 -module(oc_stat_collectors).
