@@ -30,7 +30,7 @@
 -define(ZERO_SPANID, <<"0000000000000000">>).
 
 field_name() ->
-    <<"Trace-Parent">>.
+    <<"traceparent">>.
 
 -spec encode(opencensus:span_ctx()) -> maybe(iolist()).
 encode(#span_ctx{trace_id=TraceId,
