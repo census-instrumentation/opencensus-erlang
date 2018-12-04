@@ -80,6 +80,8 @@ Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
 
 [Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
 
+[DataDog][oc_datadog]: Export spans to DataDog APM
+
 ### <a name="Logging">Logging</a> ###
 
 OTP-21 includes a new logging framework. When a context is created with a span (for example `ocp:with_child_span/1` or `oc_trace:with_child_span/2`) opencensus will update the current process's logger metadata to include the `trace_id`, `span_id` and `trace_options` with the latest ids under the key `span_ctx`, `trace_options` will be `1` if the trace is enabled. To use these with the default formatter you can create a custom template that includes them if they exist like so:
@@ -147,7 +149,9 @@ oc_stat_view:subscribe(#{name => "opencensus.io/http/server/server_latency",
 ```
 prometheus_registry:register_collector(oc_stat_exporter_prometheus)
 ```
-  
+
+[DogStatsD][oc_datadog]: Export stat views as DataDog metrics.
+
 ### Development
 
 ```sh
@@ -168,3 +172,5 @@ Language independent interface types for Census are found in the `opencensus-pro
 $ git clone https://github.com/census-instrumentation/opencensus-proto priv/opencensus-proto
 $ rebar3 protobuf compile
 ```
+
+[oc_datadog]: https://github.com/hauleth/oc_datadog
