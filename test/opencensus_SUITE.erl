@@ -14,7 +14,7 @@
 
 all() ->
     [start_finish, child_spans, noops, attributes_test,
-     links, time_events, status].
+     links, time_events, status, ctx_with_span, remote_parent].
 
 init_per_suite(Config) ->
     application:load(opencensus),
@@ -29,6 +29,7 @@ init_per_testcase(_, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
     application:set_env(opencensus, reporter, {oc_tab_reporter, []}),
     application:set_env(opencensus, tab_reporter, #{tid => Tab}),
+    application:set_env(opencensus, sampler, {oc_sampler_always, []}),
     {ok, _} = application:ensure_all_started(opencensus),
     [{tid, Tab} | Config].
 
@@ -45,7 +46,13 @@ start_finish(Config) ->
 
     [SpanData] = ets:lookup(Tab, SpanCtx#span_ctx.span_id),
     ?assertEqual(SpanName1, SpanData#span.name),
-    ?assert(SpanData#span.end_time > SpanData#span.start_time).
+    ?assert(SpanData#span.end_time > SpanData#span.start_time),
+
+    %% attempt updating data of finished span
+    ?assertEqual(false, oc_trace:put_attribute(<<"attr-1">>, <<"value-1">>, SpanCtx)),
+
+    %% finish already finished span
+    ?assertEqual(false, oc_trace:finish_span(SpanCtx)).
 
 child_spans(Config) ->
     Tab = ?config(tid, Config),
@@ -67,15 +74,33 @@ child_spans(Config) ->
     ?assert(SpanData#span.end_time > SpanData#span.start_time).
 
 noops(_Config) ->
-    SpanCtx = #span_ctx{trace_options=0},
+    %% start with a disabled span ctx
+    SpanCtx = #span_ctx{trace_id=opencensus:generate_trace_id(),
+                        span_id=opencensus:generate_span_id(),
+                        trace_options=0},
+
+    ?assertEqual(false, oc_trace:is_enabled(oc_trace:parent_span_ctx(undefined))),
+    ?assertEqual(false, oc_trace:is_enabled(oc_trace:parent_span_ctx(SpanCtx))),
 
     ChildSpanName1 = <<"child-span-1">>,
     ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
+
+    ?assertEqual(false, oc_trace:is_enabled(oc_trace:parent_span_ctx(ChildSpanCtx))),
+
+    %% test noops still return true
+    ?assertEqual(true, oc_trace:put_attribute(<<"attr-1">>, <<"value-1">>, ChildSpanCtx)),
+    Code = 1,
+    Message = <<"I am a status">>,
+    ?assertEqual(true, oc_trace:set_status(Code, Message, ChildSpanCtx)),
+
     oc_trace:finish_span(ChildSpanCtx),
     oc_trace:finish_span(SpanCtx),
 
     ?assertEqual(0, ChildSpanCtx#span_ctx.trace_options),
-    ?assertEqual(0, SpanCtx#span_ctx.trace_options).
+    ?assertEqual(0, SpanCtx#span_ctx.trace_options),
+
+    %% negative test to be sure this doesn't crash when checking for a unfound parent
+    ?assertEqual(undefined, oc_trace:parent_span_ctx(#span{parent_span_id=opencensus:generate_span_id()})).
 
 attributes_test(Config) ->
     Tab = ?config(tid, Config),
@@ -186,3 +211,39 @@ status(Config) ->
     ?assert(SpanData#span.end_time > SpanData#span.start_time),
     ?assertMatch(#status{code=Code,
                          message=Message}, SpanData#span.status).
+
+ctx_with_span(Config) ->
+    Tab = ?config(tid, Config),
+
+    Ctx = oc_trace:with_child_span(ctx:new(), <<"span-1">>, #{}),
+    ChildCtx = oc_trace:with_child_span(Ctx, <<"child-span-1">>),
+
+    ChildSpanCtx = oc_trace:from_ctx(ChildCtx),
+
+    ?FINISH(Tab, ChildSpanCtx),
+    [ChildSpanData] = ets:lookup(Tab, ChildSpanCtx#span_ctx.span_id),
+    ?assertEqual(<<"child-span-1">>, ChildSpanData#span.name),
+    ?assert(ChildSpanData#span.end_time > ChildSpanData#span.start_time),
+
+    SpanCtx = oc_trace:from_ctx(Ctx),
+    ?FINISH(Tab, SpanCtx),
+    [SpanData] = ets:lookup(Tab, SpanCtx#span_ctx.span_id),
+    ?assertEqual(<<"span-1">>, SpanData#span.name).
+
+remote_parent(_Config) ->
+    SpanCtx = #span_ctx{trace_id=opencensus:generate_trace_id(),
+                        span_id=opencensus:generate_span_id(),
+                        trace_options=0},
+
+    ?assertEqual(false, oc_trace:is_enabled(oc_trace:parent_span_ctx(undefined))),
+    ?assertEqual(false, oc_trace:is_enabled(oc_trace:parent_span_ctx(SpanCtx))),
+
+    ChildSpanName1 = <<"child-span-1">>,
+
+    %% with remote parent it will be sampled and should become enabled
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx, #{remote_parent => true}),
+
+    ?assertEqual(true, oc_trace:is_enabled(ChildSpanCtx)),
+
+    oc_trace:finish_span(ChildSpanCtx),
+    oc_trace:finish_span(SpanCtx).

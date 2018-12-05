@@ -66,9 +66,45 @@ zipkin_span(Span, LocalEndpoint) ->
        <<"shared">> => false, %% TODO: get from attributes?
        <<"localEndpoint">> => LocalEndpoint,
        %% <<"remoteEndpoint">> =>  %% TODO: get from attributes?
-       <<"annotations">> => [],
+       <<"annotations">> => to_annotations(Span#span.time_events),
        <<"tags">> => to_tags(Span#span.attributes) %% TODO: merge with oc_tags?
      }.
+
+to_annotations(TimeEvents) ->
+    to_annotations(TimeEvents, []).
+
+to_annotations([], Annotations) ->
+    Annotations;
+to_annotations([{Timestamp, #annotation{description=Description,
+                                        attributes=Attributes}} | Rest], Annotations) ->
+    to_annotations(Rest, [#{<<"timestamp">> => wts:to_absolute(Timestamp),
+                            <<"value">> => annotation_value(Description, Attributes)} | Annotations]);
+to_annotations([{Timestamp, MessageEvent=#message_event{}} | Rest], Annotations) ->
+    to_annotations(Rest, [#{<<"timestamp">> => wts:to_absolute(Timestamp),
+                            <<"value">> => annotation_value(MessageEvent)} | Annotations]).
+
+annotation_value(Description, Attributes) ->
+    AttrString = lists:join(", ", [[Key, "=", to_string(Value)] ||
+                                      {Key, Value} <- maps:to_list(Attributes)]),
+    iolist_to_binary([Description, " Attributes:{", AttrString, "}"]).
+
+annotation_value(#message_event{type=Type,
+                                id=Id,
+                                uncompressed_size=UncompressedSize,
+                                compressed_size=CompressedSize}) ->
+    iolist_to_binary(["MessageEvent:{type=", atom_to_binary(Type, utf8),
+                      ", id=", integer_to_binary(Id),
+                      ", uncompressed_size=", integer_to_binary(UncompressedSize),
+                      ", compressed_size=", integer_to_binary(CompressedSize), "}"]).
+
+
+to_string(Value) when is_function(Value) ->
+    to_string(Value());
+to_string(Value) when is_list(Value) ;
+                      is_binary(Value) ->
+    Value;
+to_string(Value) ->
+    io_lib:format("~p", [Value]).
 
 to_tag(_Name, Value) when is_function(Value) ->
     Value();

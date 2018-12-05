@@ -6,9 +6,12 @@
   {applications,
    [kernel,
     stdlib,
+    compiler,
+    syntax_tools,
     inets,
     wts,
     ctx,
+    jsx,
     counters
    ]},
   {modules, []},

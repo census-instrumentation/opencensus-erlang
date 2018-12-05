@@ -61,6 +61,7 @@
          spawn_opt/5]).
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 -define(FUN_WITH_CTX(Fun),
         begin
@@ -112,6 +113,7 @@ update_tags(Map) ->
 %%--------------------------------------------------------------------
 -spec with_span_ctx(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
 with_span_ctx(SpanCtx) ->
+    ?SET_LOG_METADATA(SpanCtx),
     put(?SPAN_CTX, SpanCtx).
 
 %%--------------------------------------------------------------------
