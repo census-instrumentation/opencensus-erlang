@@ -27,7 +27,7 @@
 -include("opencensus.hrl").
 -include("oc_logger.hrl").
 
--record(data, {sweep_timeout :: integer() | infinity,
+-record(data, {interval :: integer() | infinity,
                strategy :: drop | finish | failed_attribute_and_finish | fun((opencensus:span()) -> ok),
                ttl :: integer()}).
 
@@ -35,18 +35,20 @@ start_link() ->
     gen_statem:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 init([]) ->
-    SweepTimeout = application:get_env(opencensus, sweep_timeout, timer:minutes(5)),
-    Strategy = application:get_env(opencensus, sweep_strategy, drop),
-    TTL = application:get_env(opencensus, span_ttl, timer:minutes(5)),
-    {ok, ready, #data{sweep_timeout=SweepTimeout,
+    SweeperConfig = application:get_env(opencensus, sweeper, #{}),
+
+    Interval = maps:get(interval, SweeperConfig, timer:minutes(5)),
+    Strategy = maps:get(strategy, SweeperConfig, drop),
+    TTL = maps:get(span_ttl, SweeperConfig, timer:minutes(5)),
+    {ok, ready, #data{interval=Interval,
                       strategy=Strategy,
                       ttl=erlang:convert_time_unit(TTL, millisecond, native)},
-     [hibernate, {state_timeout, SweepTimeout, sweep}]}.
+     [hibernate, {state_timeout, Interval, sweep}]}.
 
 callback_mode() ->
     handle_event_function.
 
-handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
+handle_event(state_timeout, sweep, _, #data{interval=Interval,
                                             strategy=drop,
                                             ttl=TTL}) ->
     TooOld = erlang:monotonic_time() - TTL,
@@ -56,25 +58,25 @@ handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
         NumDeleted ->
             ?LOG_INFO("sweep old spans: ttl=~p num_dropped=~p", [TTL, NumDeleted])
     end,
-    {keep_state_and_data, [hibernate, {state_timeout, SweepTimeout, sweep}]};
-handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
+    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
+handle_event(state_timeout, sweep, _, #data{interval=Interval,
                                             strategy=finish,
                                             ttl=TTL}) ->
     Expired = select_expired(TTL),
     [finish_span(Span) || Span <- Expired],
-    {keep_state_and_data, [hibernate, {state_timeout, SweepTimeout, sweep}]};
-handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
+    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
+handle_event(state_timeout, sweep, _, #data{interval=Interval,
                                             strategy=failed_attribute_and_finish,
                                             ttl=TTL}) ->
     Expired = select_expired(TTL),
     [finish_span(oc_span:put_attribute(<<"finished_by_sweeper">>, true, Span)) || Span <- Expired],
-    {keep_state_and_data, [hibernate, {state_timeout, SweepTimeout, sweep}]};
-handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
+    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
+handle_event(state_timeout, sweep, _, #data{interval=Interval,
                                             strategy=Fun,
                                             ttl=TTL}) when is_function(Fun) ->
     Expired = select_expired(TTL),
     [Fun(Span) || Span <- Expired],
-    {keep_state_and_data, [hibernate, {state_timeout, SweepTimeout, sweep}]};
+    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
 handle_event(_, _, _, _Data) ->
     keep_state_and_data.
 

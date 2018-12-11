@@ -26,9 +26,9 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(Type, Config) ->
-    application:set_env(opencensus, sweep_timeout, 250),
-    application:set_env(opencensus, sweep_strategy, Type),
-    application:set_env(opencensus, span_ttl, 500),
+    application:set_env(opencensus, sweeper, #{interval => 250,
+                                               strategy => Type,
+                                               span_ttl => 500}),
 
     application:set_env(opencensus, send_interval_ms, 1),
     application:set_env(opencensus, reporter, {oc_reporter_pid, []}),

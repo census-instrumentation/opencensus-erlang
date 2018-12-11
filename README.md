@@ -86,7 +86,7 @@ Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
 
 Active spans have their data stored in an ETS table. When a span is finished it is removed from the active spans table and moved to a table handled by the reporter process. If a span isn't finished, either because of a mistake in the code creating and finishing spans, or the process with open spans crashes before being able to finish the spans, there would be a memory leak.
 
-The `oc_span_sweeper` process checks for active spans which started greater than a configurable (`span_ttl`) duration, with a default of 5 minutes. There are 4 strategies for handling a span that is older than the time to live (`sweep_strategy`):
+The `oc_span_sweeper` process checks for active spans which started greater than a configurable (`span_ttl`) duration, with a default of 5 minutes. There are 4 strategies for handling a span that is older than the time to live (`strategy`):
 
 * `drop`: Spans are removed from the active span table and a log message is written with the total number of spans being dropped in this sweep.
 * `finish`: Each span is finished as is.
@@ -96,10 +96,12 @@ The `oc_span_sweeper` process checks for active spans which started greater than
 An example configuration in `sys.config` to run a check every 5 minutes, dropping active spans older than 5 minutes can be found in the example project `helloworld`, `examples/helloworld/config/sys.config`, the sweeper snippet looks like:
 
 ``` erlang
-{sweep_timeout, 300000},
-{sweep_strategy, drop},
-{span_ttl, 300000}
+{sweeper, #{interval => 300000,
+            strategy => drop,
+            span_ttl => 300000}}
 ```
+
+To disable sweeping set `interval` to `infinity`.
 
 ### <a name="Logging">Logging</a> ###
 
