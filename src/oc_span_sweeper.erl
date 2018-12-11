@@ -27,10 +27,6 @@
 -include("opencensus.hrl").
 -include("oc_logger.hrl").
 
--define(EXPIRED_MS(Time, Return), [{#span{start_time={'$1', '_'}, _='_'},
-                                    [{'<', '$1', Time}],
-                                    [Return]}]).
-
 -record(data, {sweep_timeout :: integer() | infinity,
                strategy :: drop | finish | failed_attribute_and_finish | fun((opencensus:span()) -> ok),
                ttl :: integer()}).
@@ -54,7 +50,7 @@ handle_event(state_timeout, sweep, _, #data{sweep_timeout=SweepTimeout,
                                             strategy=drop,
                                             ttl=TTL}) ->
     TooOld = erlang:monotonic_time() - TTL,
-    case ets:select_delete(?SPAN_TAB, ?EXPIRED_MS(TooOld, true)) of
+    case ets:select_delete(?SPAN_TAB, expired_match_spec(TooOld, true)) of
         0 ->
             ok;
         NumDeleted ->
@@ -90,10 +86,20 @@ terminate(_Reason, _State, _Data) ->
 
 %%
 
+%% ignore these functions because dialyzer doesn't like match spec use of '_'
+-dialyzer({nowarn_function, expired_match_spec/2}).
+-dialyzer({nowarn_function, finish_span/1}).
+-dialyzer({nowarn_function, select_expired/1}).
+
+expired_match_spec(Time, Return) ->
+    [{#span{start_time={'$1', '_'}, _='_'},
+      [{'<', '$1', Time}],
+      [Return]}].
+
 finish_span(S=#span{span_id=SpanId}) ->
     oc_span:finish_span(S),
     ets:delete(?SPAN_TAB, SpanId).
 
 select_expired(TTL) ->
     TooOld = erlang:monotonic_time() - TTL,
-    ets:select(?SPAN_TAB, ?EXPIRED_MS(TooOld, '$_')).
+    ets:select(?SPAN_TAB, expired_match_spec(TooOld, '$_')).

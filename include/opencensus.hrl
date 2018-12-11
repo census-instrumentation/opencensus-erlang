@@ -43,45 +43,45 @@
 
 -record(span, {
           %% name of the span
-          name                                    :: unicode:unicode_binary() | '_',
+          name                                    :: unicode:unicode_binary(),
 
           %% 128 bit int trace id
-          trace_id                                :: opencensus:trace_id() | undefined | '_',
+          trace_id                                :: opencensus:trace_id() | undefined,
 
           %% 64 bit int span id
-          span_id                                 :: opencensus:span_id() | undefined | '_',
+          span_id                                 :: opencensus:span_id() | undefined,
           %% 64 bit int parent span
-          parent_span_id                          :: opencensus:span_id() | undefined | '_',
+          parent_span_id                          :: opencensus:span_id() | undefined,
 
           %% 8-bit integer, lowest bit is if it is sampled
-          trace_options = 1                       :: integer() | undefined | '_',
+          trace_options = 1                       :: integer() | undefined,
 
-          kind = ?SPAN_KIND_UNSPECIFIED           :: opencensus:span_kind() | '_',
+          kind = ?SPAN_KIND_UNSPECIFIED           :: opencensus:span_kind(),
 
-          start_time                              :: wts:timestamp() | {'$1', '_'},
-          end_time                                :: wts:timestamp() | undefined | '_',
+          start_time                              :: wts:timestamp(),
+          end_time                                :: wts:timestamp() | undefined,
 
-          attributes = #{}                        :: opencensus:attributes() | '_',
+          attributes = #{}                        :: opencensus:attributes(),
 
           %% optional stacktrace from where the span was started
-          stack_trace                             :: opencensus:stack_trace() | undefined | '_',
+          stack_trace                             :: opencensus:stack_trace() | undefined,
 
           %% links to spans in other traces
-          links = []                              :: opencensus:links() | '_',
+          links = []                              :: opencensus:links(),
 
-          time_events = []                        :: opencensus:time_events() | '_',
+          time_events = []                        :: opencensus:time_events(),
 
           %% An optional final status for this span.
-          status = undefined                      :: opencensus:status() | undefined | '_',
+          status = undefined                      :: opencensus:status() | undefined,
 
           %% A highly recommended but not required flag that identifies when a trace
           %% crosses a process boundary. True when the parent_span belongs to the
           %% same process as the current span.
-          same_process_as_parent_span = undefined :: boolean() | undefined | '_',
+          same_process_as_parent_span = undefined :: boolean() | undefined,
 
           %% An optional number of child spans that were generated while this span
           %% was active. If set, allows implementation to detect missing child spans.
-          child_span_count = undefined            :: integer() | undefined | '_'
+          child_span_count = undefined            :: integer() | undefined
          }).
 
 -record(link, {
