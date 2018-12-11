@@ -60,6 +60,13 @@ init([]) ->
                     type => worker,
                     modules => [oc_server]},
 
+    Sweeper = #{id => oc_span_sweeper,
+                start => {oc_span_sweeper, start_link, []},
+                restart => permanent,
+                shutdown => 1000,
+                type => worker,
+                modules => [oc_span_sweeper]},
+
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, Exporter, ViewServer, TraceServer]}}.
+            period => 5}, [Reporter, Exporter, ViewServer, TraceServer, Sweeper]}}.
