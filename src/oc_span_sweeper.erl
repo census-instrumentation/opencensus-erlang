@@ -31,7 +31,7 @@
                                     [{'<', '$1', Time}],
                                     [Return]}]).
 
--record(data, {sweep_timeout :: integer(),
+-record(data, {sweep_timeout :: integer() | infinity,
                strategy :: drop | finish | failed_attribute_and_finish | fun((opencensus:span()) -> ok),
                ttl :: integer()}).
 
