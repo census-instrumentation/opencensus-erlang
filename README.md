@@ -93,6 +93,14 @@ The `oc_span_sweeper` process checks for active spans which started greater than
 * `failed_attribute_and_finish`: An attribute `finished_by_sweeper` with value `true` is added to the span data and then the span is finished.
 * Custom function: Any funtion with type spec `fun((opencensus:span()) -> ok)` can be used. Note that the span is not removed from the active spans table if this method is used and the function must do the removal if it deems it necessary.
 
+An example configuration in `sys.config` to run a check every 5 minutes, dropping active spans older than 5 minutes can be found in the example project `helloworld`, `examples/helloworld/config/sys.config`, the sweeper snippet looks like:
+
+``` erlang
+{sweep_timeout, 300000},
+{sweep_strategy, drop},
+{span_ttl, 300000}
+```
+
 ### <a name="Logging">Logging</a> ###
 
 OTP-21 includes a new logging framework. When a context is created with a span (for example `ocp:with_child_span/1` or `oc_trace:with_child_span/2`) opencensus will update the current process's logger metadata to include the `trace_id`, `span_id` and `trace_options` with the latest ids under the key `span_ctx`, `trace_options` will be `1` if the trace is enabled. To use these with the default formatter you can create a custom template that includes them if they exist like so:
