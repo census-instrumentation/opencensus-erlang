@@ -81,7 +81,12 @@ do_gc(#data{strategy=Strategy,
             ttl=TTL,
             storage_size=MaxSize}) ->
 
-    StorageSize = ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external}),
+    StorageSize = case MaxSize of
+                      infinity ->
+                          0;
+                      _ ->
+                          ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external})
+                  end,
     if
         StorageSize >= 2 * MaxSize ->
             %% High overload kill storage.
