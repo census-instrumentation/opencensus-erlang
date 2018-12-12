@@ -61,8 +61,7 @@ handle_event(state_timeout, sweep, _, #data{interval=Interval,
         NumDeleted ->
             ?LOG_INFO("sweep old spans: ttl=~p num_dropped=~p", [TTL, NumDeleted])
     end,
-    {keep_state_and_data, [{next_event, internal, just_do_it},
-                           hibernate, {state_timeout, Interval, sweep}]};
+    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
 handle_event(state_timeout, sweep, _, #data{interval=Interval} = Data) ->
     do_gc(Data),
     {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
@@ -76,17 +75,16 @@ terminate(_Reason, _State, _Data) ->
     ok.
 
 %%
-
+do_gc(#data{strategy=Strategy,
+            ttl=TTL,
+            storage_size=infinity}) ->
+    sweep_spans(Strategy, TTL);
 do_gc(#data{strategy=Strategy,
             ttl=TTL,
             storage_size=MaxSize}) ->
 
-    StorageSize = case MaxSize of
-                      infinity ->
-                          0;
-                      _ ->
-                          ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external})
-                  end,
+    StorageSize = ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external}),
+
     if
         StorageSize >= 2 * MaxSize ->
             %% High overload kill storage.
