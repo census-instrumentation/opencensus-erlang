@@ -29,7 +29,8 @@
 
 -record(data, {interval :: integer() | infinity,
                strategy :: drop | finish | failed_attribute_and_finish | fun((opencensus:span()) -> ok),
-               ttl :: integer()}).
+               ttl :: integer() | infinity,
+               storage_size :: integer() | infinity}).
 
 start_link() ->
     gen_statem:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -40,9 +41,11 @@ init([]) ->
     Interval = maps:get(interval, SweeperConfig, timer:minutes(5)),
     Strategy = maps:get(strategy, SweeperConfig, drop),
     TTL = maps:get(span_ttl, SweeperConfig, timer:minutes(5)),
+    StorageSize = maps:get(storage_size, SweeperConfig, infinity),
     {ok, ready, #data{interval=Interval,
                       strategy=Strategy,
-                      ttl=erlang:convert_time_unit(TTL, millisecond, native)},
+                      ttl=erlang:convert_time_unit(TTL, millisecond, native),
+                      storage_size=StorageSize},
      [hibernate, {state_timeout, Interval, sweep}]}.
 
 callback_mode() ->
@@ -58,24 +61,10 @@ handle_event(state_timeout, sweep, _, #data{interval=Interval,
         NumDeleted ->
             ?LOG_INFO("sweep old spans: ttl=~p num_dropped=~p", [TTL, NumDeleted])
     end,
-    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
-handle_event(state_timeout, sweep, _, #data{interval=Interval,
-                                            strategy=finish,
-                                            ttl=TTL}) ->
-    Expired = select_expired(TTL),
-    [finish_span(Span) || Span <- Expired],
-    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
-handle_event(state_timeout, sweep, _, #data{interval=Interval,
-                                            strategy=failed_attribute_and_finish,
-                                            ttl=TTL}) ->
-    Expired = select_expired(TTL),
-    [finish_span(oc_span:put_attribute(<<"finished_by_sweeper">>, true, Span)) || Span <- Expired],
-    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
-handle_event(state_timeout, sweep, _, #data{interval=Interval,
-                                            strategy=Fun,
-                                            ttl=TTL}) when is_function(Fun) ->
-    Expired = select_expired(TTL),
-    [Fun(Span) || Span <- Expired],
+    {keep_state_and_data, [{next_event, internal, just_do_it},
+                           hibernate, {state_timeout, Interval, sweep}]};
+handle_event(state_timeout, sweep, _, #data{interval=Interval} = Data) ->
+    do_gc(Data),
     {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
 handle_event(_, _, _, _Data) ->
     keep_state_and_data.
@@ -87,6 +76,40 @@ terminate(_Reason, _State, _Data) ->
     ok.
 
 %%
+
+do_gc(#data{strategy=Strategy,
+            ttl=TTL,
+            storage_size=MaxSize}) ->
+
+    StorageSize = ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external}),
+    if
+        StorageSize >= 2 * MaxSize ->
+            %% High overload kill storage.
+            ets:delete_all_objects(?SPAN_TAB);
+        StorageSize >= MaxSize ->
+            %% Low overload, reduce TTL
+            sweep_spans(Strategy, overload_ttl(TTL));
+        true ->
+            sweep_spans(Strategy, TTL)
+    end.
+
+overload_ttl(infinity) ->
+    infinity;
+overload_ttl(TTL) ->
+    TTL div 10.
+
+sweep_spans(finish, TTL) ->
+    Expired = select_expired(TTL),
+    [finish_span(Span) || Span <- Expired],
+    ok;
+sweep_spans(failed_attribute_and_finish, TTL) ->
+    Expired = select_expired(TTL),
+    [finish_span(oc_span:put_attribute(<<"finished_by_sweeper">>, true, Span)) || Span <- Expired],
+    ok;
+sweep_spans(Fun, TTL) when is_function(Fun) ->
+    Expired = select_expired(TTL),
+    [Fun(Span) || Span <- Expired],
+    ok.
 
 %% ignore these functions because dialyzer doesn't like match spec use of '_'
 -dialyzer({nowarn_function, expired_match_spec/2}).
