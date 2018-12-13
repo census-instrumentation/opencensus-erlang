@@ -44,24 +44,19 @@ init([]) ->
     StorageSize = maps:get(storage_size, SweeperConfig, infinity),
     {ok, ready, #data{interval=Interval,
                       strategy=Strategy,
-                      ttl=erlang:convert_time_unit(TTL, millisecond, native),
+                      ttl=maybe_convert_time_unit(TTL),
                       storage_size=StorageSize},
      [hibernate, {state_timeout, Interval, sweep}]}.
+
+
+maybe_convert_time_unit(infinity) ->
+    infinity;
+maybe_convert_time_unit(TTL) ->
+    erlang:convert_time_unit(TTL, millisecond, native).
 
 callback_mode() ->
     handle_event_function.
 
-handle_event(state_timeout, sweep, _, #data{interval=Interval,
-                                            strategy=drop,
-                                            ttl=TTL}) ->
-    TooOld = erlang:monotonic_time() - TTL,
-    case ets:select_delete(?SPAN_TAB, expired_match_spec(TooOld, true)) of
-        0 ->
-            ok;
-        NumDeleted ->
-            ?LOG_INFO("sweep old spans: ttl=~p num_dropped=~p", [TTL, NumDeleted])
-    end,
-    {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
 handle_event(state_timeout, sweep, _, #data{interval=Interval} = Data) ->
     do_gc(Data),
     {keep_state_and_data, [hibernate, {state_timeout, Interval, sweep}]};
@@ -101,6 +96,16 @@ overload_ttl(infinity) ->
 overload_ttl(TTL) ->
     TTL div 10.
 
+sweep_spans(_, infinity) ->
+    ok;
+sweep_spans(drop, TTL) ->
+    TooOld = erlang:monotonic_time() - TTL,
+    case ets:select_delete(?SPAN_TAB, expired_match_spec(TooOld, true)) of
+        0 ->
+            ok;
+        NumDeleted ->
+            ?LOG_INFO("sweep old spans: ttl=~p num_dropped=~p", [TTL, NumDeleted])
+    end;
 sweep_spans(finish, TTL) ->
     Expired = select_expired(TTL),
     [finish_span(Span) || Span <- Expired],
