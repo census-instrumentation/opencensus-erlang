@@ -30,8 +30,6 @@
          export/2,
          clear_rows/2]).
 
--export_types([value/0]).
-
 init(_Name, _Keys, Options) ->
     Options.
 

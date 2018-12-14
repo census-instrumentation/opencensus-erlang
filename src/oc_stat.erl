@@ -71,7 +71,7 @@ record(Ctx, Measures) ->
     record(Tags, Measures).
 
 %% @doc Exports view_data of all subscribed views
--spec export() -> oc_stat_view:view_data().
+-spec export() -> [oc_stat_view:view_data()].
 export() ->
     [oc_stat_view:export(View) || View <- oc_stat_view:all_subscribed_()].
 

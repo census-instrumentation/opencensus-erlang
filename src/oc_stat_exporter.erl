@@ -25,7 +25,7 @@
          code_change/3,
          terminate/2]).
 
--export_types([exporter/0]).
+-export_type([exporter/0]).
 
 -compile({no_auto_import, [register/2]}).
 

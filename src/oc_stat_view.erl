@@ -48,11 +48,10 @@
          tag_values_/2,
          all_subscribed_/0]).
 
--export_types([name/0,
-               description/0,
-               view/0,
-               view_data/0,
-               measure/0]).
+-export_type([name/0,
+              description/0,
+              view/0,
+              view_data/0]).
 
 -export(['__init_backend__'/0]).
 

@@ -29,9 +29,9 @@
          verify_value/1,
          format_error/1]).
 
--export_types([key/0,
-               value/0,
-               tags/0]).
+-export_type([key/0,
+              value/0,
+              tags/0]).
 
 -include("opencensus.hrl").
 
