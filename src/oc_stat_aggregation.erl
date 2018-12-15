@@ -21,7 +21,7 @@
 
 -export([convert/3]).
 
--export_types(data/0).
+-export_type([data/0]).
 
 -type data_rows(AggregationValue) :: [#{tags := tv(),
                                         value := AggregationValue}].

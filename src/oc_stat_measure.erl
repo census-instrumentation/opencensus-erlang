@@ -51,10 +51,10 @@
 
 -export(['__init_backend__'/0]).
 
--export_types([name/0,
-               description/0,
-               unit/0,
-               measure/0]).
+-export_type([name/0,
+              description/0,
+              unit/0,
+              measure/0]).
 
 -record(measure, {name        :: name(),
                   module      :: module(),
