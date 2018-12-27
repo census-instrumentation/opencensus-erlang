@@ -14,7 +14,8 @@
 -include("opencensus.hrl").
 
 all() ->
-    [drop,
+    [storage_size,
+     drop,
      finish,
      failed_attribute_and_finish].
 
@@ -25,6 +26,17 @@ init_per_suite(Config) ->
 end_per_suite(_Config) ->
     ok.
 
+init_per_testcase(storage_size, Config) ->
+    application:set_env(opencensus, sweeper, #{interval => 250,
+                                               strategy => finish,
+                                               span_ttl => 500,
+                                               storage_size => 100}),
+
+    application:set_env(opencensus, send_interval_ms, 1),
+    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
+    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    {ok, _} = application:ensure_all_started(opencensus),
+    Config;
 init_per_testcase(Type, Config) ->
     application:set_env(opencensus, sweeper, #{interval => 250,
                                                strategy => Type,
@@ -39,6 +51,32 @@ init_per_testcase(Type, Config) ->
 end_per_testcase(_, _Config) ->
     ok = application:stop(opencensus),
     ok.
+
+storage_size(_Config) ->
+    SpanName1 = <<"span-1">>,
+    SpanCtx = oc_trace:start_span(SpanName1, undefined),
+
+    ChildSpanName1 = <<"child-span-1">>,
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
+
+    [ChildSpanData] = ets:lookup(?SPAN_TAB, ChildSpanCtx#span_ctx.span_id),
+    ?assertEqual(ChildSpanName1, ChildSpanData#span.name),
+    ?assertEqual(SpanCtx#span_ctx.span_id, ChildSpanData#span.parent_span_id),
+
+    %% wait until the sweeper sweeps away the parent span
+    ?UNTIL(ets:tab2list(?SPAN_TAB) =:= []),
+
+    %% sleep long enough that the reporter would have run again for sure
+    timer:sleep(10),
+
+    %% should be no reported spans
+    ?assertEqual(no_span, receive
+                              {span, #span{name=N}} when N =:= SpanName1 ->
+                                  got_span
+                          after
+                              0 ->
+                                  no_span
+                          end).
 
 drop(_Config) ->
     SpanName1 = <<"span-1">>,
