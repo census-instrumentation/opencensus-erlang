@@ -25,7 +25,7 @@
 -include("opencensus.hrl").
 
 field_name() ->
-    <<"Trace-State">>.
+    <<"tracestate">>.
 
 -spec encode(oc_tags:tags()) -> maybe(iodata()).
 encode(Tags) when map_size(Tags) =:= 0 ->
