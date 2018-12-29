@@ -43,7 +43,9 @@ encode(#span_ctx{trace_id=TraceId,
     Options = case TraceOptions band 1 of 1 -> <<"01">>; _ -> <<"00">> end,
     EncodedTraceId = io_lib:format("~32.16.0b", [TraceId]),
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
-    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
+    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options];
+encode(undefined) ->
+    [].
 
 -spec decode(iodata()) -> maybe(opencensus:span_ctx()).
 decode(TraceContext) when is_list(TraceContext) ->
