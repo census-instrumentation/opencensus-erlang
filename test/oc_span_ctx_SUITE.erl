@@ -89,6 +89,9 @@ encode_decode_headers(_Config) ->
     InvalidBothIdsHeader = <<"00-00000000000000000000000000000000-0000000000000000-00">>,
     undefined = oc_span_ctx_header:decode(InvalidBothIdsHeader),
 
+    NoCtx = undefined,
+    NoCtxEncoded = oc_span_ctx_header:encode(NoCtx),
+    ?assertEqual(NoCtx, oc_span_ctx_header:decode(NoCtxEncoded)),
 
     %% Encode invalid trace contexts
     InvalidTC = #span_ctx{trace_id = 0,
