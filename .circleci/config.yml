@@ -1,9 +1,9 @@
 defaults: &defaults
-  shell: /bin/bash
+  shell: /bin/sh
   working_directory: /home/circleci/census
   docker:
-    - image: tsloughter/erlang-alpine:20.0.1
-      cmd: ["/bin/bash"]
+    - image: erlang:21.2-alpine
+      cmd: ["/bin/sh"]
 
 version: 2
 jobs:
@@ -41,12 +41,9 @@ jobs:
     steps:
       - checkout
 
-      - attach_workspace:
-          at: /home/circleci/census
-
       - restore_cache:
           keys:
-            - erlang-plt-20.0.1
+            - erlang-plt-21.2
 
       - restore_cache:
           keys:
@@ -57,16 +54,13 @@ jobs:
           command: rebar3 dialyzer
 
       - save-cache:
-          key: erlang-plt-20.0.1
+          key: erlang-plt-21.2
           paths:
-            - /root/.cache/rebar3/rebar3_20.0.1_plt
+            - /root/.cache/rebar3/rebar3_21.2_plt
   xref:
     <<: *defaults
     steps:
       - checkout
-
-      - attach_workspace:
-          at: /home/circleci/census
 
       - restore_cache:
           keys:
@@ -81,9 +75,6 @@ jobs:
     steps:
       - checkout
 
-      - attach_workspace:
-          at: /home/circleci/census
-
       - restore_cache:
           keys:
             - census-{{ checksum "rebar.lock" }}
@@ -96,9 +87,6 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-
-      - attach_workspace:
-          at: /home/circleci/census
 
       - restore_cache:
           keys:
