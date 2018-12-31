@@ -26,7 +26,7 @@ Records one or multiple measurements with the same tags at once.</td></tr></tabl
 ### export/0 ###
 
 <pre><code>
-export() -&gt; <a href="oc_stat_view.md#type-view_data">oc_stat_view:view_data()</a>
+export() -&gt; [<a href="oc_stat_view.md#type-view_data">oc_stat_view:view_data()</a>]
 </code></pre>
 <br />
 
