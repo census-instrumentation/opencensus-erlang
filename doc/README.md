@@ -192,6 +192,7 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_span.md" class="module">oc_span</a></td></tr>
 <tr><td><a href="oc_span_ctx_binary.md" class="module">oc_span_ctx_binary</a></td></tr>
 <tr><td><a href="oc_span_ctx_header.md" class="module">oc_span_ctx_header</a></td></tr>
+<tr><td><a href="oc_span_sweeper.md" class="module">oc_span_sweeper</a></td></tr>
 <tr><td><a href="oc_span_transform.md" class="module">oc_span_transform</a></td></tr>
 <tr><td><a href="oc_stat.md" class="module">oc_stat</a></td></tr>
 <tr><td><a href="oc_stat_aggregation.md" class="module">oc_stat_aggregation</a></td></tr>

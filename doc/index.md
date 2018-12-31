@@ -80,6 +80,29 @@ Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
 
 [Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
 
+[DataDog][oc_datadog]: Export spans to DataDog APM
+
+#### <a name="Sweeper">Cleaning Up Abandoned Spans</a> ####
+
+Active spans have their data stored in an ETS table. When a span is finished it is removed from the active spans table and moved to a table handled by the reporter process. If a span isn't finished, either because of a mistake in the code creating and finishing spans, or the process with open spans crashes before being able to finish the spans, there would be a memory leak.
+
+The `oc_span_sweeper` process checks for active spans which started greater than a configurable (`span_ttl`) duration, with a default of 5 minutes. There are 4 strategies for handling a span that is older than the time to live (`strategy`):
+
+* `drop`: Spans are removed from the active span table and a log message is written with the total number of spans being dropped in this sweep.
+* `finish`: Each span is finished as is.
+* `failed_attribute_and_finish`: An attribute `finished_by_sweeper` with value `true` is added to the span data and then the span is finished.
+* Custom function: Any funtion with type spec `fun((opencensus:span()) -> ok)` can be used. Note that the span is not removed from the active spans table if this method is used and the function must do the removal if it deems it necessary.
+
+An example configuration in `sys.config` to run a check every 5 minutes, dropping active spans older than 5 minutes can be found in the example project `helloworld`, `examples/helloworld/config/sys.config`, the sweeper snippet looks like:
+
+``` erlang
+{sweeper, #{interval => 300000,
+            strategy => drop,
+            span_ttl => 300000}}
+```
+
+To disable sweeping set `interval` to `infinity`.
+
 ### <a name="Logging">Logging</a> ###
 
 OTP-21 includes a new logging framework. When a context is created with a span (for example `ocp:with_child_span/1` or `oc_trace:with_child_span/2`) opencensus will update the current process's logger metadata to include the `trace_id`, `span_id` and `trace_options` with the latest ids under the key `span_ctx`, `trace_options` will be `1` if the trace is enabled. To use these with the default formatter you can create a custom template that includes them if they exist like so:
@@ -147,7 +170,9 @@ oc_stat_view:subscribe(#{name => "opencensus.io/http/server/server_latency",
 ```
 prometheus_registry:register_collector(oc_stat_exporter_prometheus)
 ```
-  
+
+[DogStatsD][oc_datadog]: Export stat views as DataDog metrics.
+
 ### Development
 
 ```sh
@@ -168,3 +193,5 @@ Language independent interface types for Census are found in the `opencensus-pro
 $ git clone https://github.com/census-instrumentation/opencensus-proto priv/opencensus-proto
 $ rebar3 protobuf compile
 ```
+
+[oc_datadog]: https://github.com/hauleth/oc_datadog
