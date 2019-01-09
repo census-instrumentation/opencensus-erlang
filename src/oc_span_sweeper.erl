@@ -24,6 +24,8 @@
          code_change/4,
          terminate/3]).
 
+-export([storage_size/0]).
+
 -include("opencensus.hrl").
 -include("oc_logger.hrl").
 
@@ -31,6 +33,9 @@
                strategy :: drop | finish | failed_attribute_and_finish | fun((opencensus:span()) -> ok),
                ttl :: integer() | infinity,
                storage_size :: integer() | infinity}).
+
+storage_size() ->
+    {ets:info(?SPAN_TAB, size), ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external})}.
 
 start_link() ->
     gen_statem:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -78,7 +83,7 @@ do_gc(#data{strategy=Strategy,
             ttl=TTL,
             storage_size=MaxSize}) ->
 
-    StorageSize = ets:info(?SPAN_TAB, memory) * erlang:system_info({wordsize, external}),
+    {_, StorageSize} = storage_size(),
 
     if
         StorageSize >= 2 * MaxSize ->
