@@ -17,6 +17,8 @@ init_per_suite(Config) ->
     Config.
 
 end_per_suite(_Config) ->
+    application:stop(opencensus),
+    application:unload(opencensus),
     ok.
 
 self_producer_default(_Config) ->
