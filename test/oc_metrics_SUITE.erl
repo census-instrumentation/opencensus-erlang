@@ -13,7 +13,6 @@ all() ->
 init_per_suite(Config) ->
     _ = application:load(opencensus),
     _ = application:ensure_all_started(opencensus),
-    oc_producer_registry:add_producer(test_registry, oc_self_producer),
     Config.
 
 end_per_suite(_Config) ->
@@ -22,6 +21,11 @@ end_per_suite(_Config) ->
     ok.
 
 self_producer_default(_Config) ->
+
+    ?assertMatch([], lists:sort(oc_producer_registry:read_to_list(test_registry))),
+
+    oc_producer_registry:add_producer(test_registry, oc_self_producer),
+
     SpanName1 = <<"span-1">>,
     Span1 = oc_trace:start_span(SpanName1, undefined),
 
@@ -83,5 +87,9 @@ self_producer_default(_Config) ->
                                                        value=2}]}],
                              resource=undefined}] when S2 > 10000,
                                                        lists:sort(oc_producer_registry:read_to_list(test_registry))),
+
+    oc_producer_registry:remove_producer(test_registry, oc_self_producer),
+    ?assertMatch([], lists:sort(oc_producer_registry:read_to_list(test_registry))),
+
     oc_trace:finish_span(ChildSpan1),
     oc_trace:finish_span(Span1).

@@ -44,14 +44,6 @@ read_to_list(Registry) ->
         erase(Ref)
     end.
 
-get_list(Key) ->
-    case get(Key) of
-        undefined ->
-            [];
-        Value ->
-            Value
-    end.
-
 %% @equiv(default, Producer)
 add_producer(Producer) ->
     add_producer(default, Producer).
@@ -74,3 +66,11 @@ remove_producer(Registry, Producer) ->
         _ -> ok
     end,
     ok.
+
+get_list(Key) ->
+    case get(Key) of
+        undefined ->
+            [];
+        Value ->
+            Value
+    end.
