@@ -178,6 +178,8 @@ $ rebar3 protobuf compile
 
 
 <table width="100%" border="0" summary="list of modules">
+<tr><td><a href="oc_producer.md" class="module">oc_producer</a></td></tr>
+<tr><td><a href="oc_producer_registry.md" class="module">oc_producer_registry</a></td></tr>
 <tr><td><a href="oc_reporter.md" class="module">oc_reporter</a></td></tr>
 <tr><td><a href="oc_reporter_noop.md" class="module">oc_reporter_noop</a></td></tr>
 <tr><td><a href="oc_reporter_sequential.md" class="module">oc_reporter_sequential</a></td></tr>
@@ -187,7 +189,9 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_sampler_always.md" class="module">oc_sampler_always</a></td></tr>
 <tr><td><a href="oc_sampler_impl.md" class="module">oc_sampler_impl</a></td></tr>
 <tr><td><a href="oc_sampler_never.md" class="module">oc_sampler_never</a></td></tr>
+<tr><td><a href="oc_sampler_period_or_count.md" class="module">oc_sampler_period_or_count</a></td></tr>
 <tr><td><a href="oc_sampler_probability.md" class="module">oc_sampler_probability</a></td></tr>
+<tr><td><a href="oc_self_producer.md" class="module">oc_self_producer</a></td></tr>
 <tr><td><a href="oc_server.md" class="module">oc_server</a></td></tr>
 <tr><td><a href="oc_span.md" class="module">oc_span</a></td></tr>
 <tr><td><a href="oc_span_ctx_binary.md" class="module">oc_span_ctx_binary</a></td></tr>
