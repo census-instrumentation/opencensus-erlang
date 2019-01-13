@@ -24,14 +24,14 @@
 
 all() ->
     [
-     period_sample_1,
-     period_sample_2,
-     count_sample_1,
-     count_sample_2,
-     count_and_period_sample_1,
-     count_and_period_sample_2,
-     count_and_period_sample_3,
-     count_and_period_sample_4
+     period_sample1,
+     period_sample2,
+     count_sample1,
+     count_sample2,
+     count_and_period_sample1,
+     count_and_period_sample2,
+     count_and_period_sample3,
+     count_and_period_sample4
     ].
 
 init_per_suite(Config) ->
@@ -41,7 +41,7 @@ init_per_suite(Config) ->
     %% delay is a time delay between traces, in milliseconds
     [{limit, 10000}, {delay, 5} | Config].
 
-init_per_testcase(period_sample_1, Config) ->
+init_per_testcase(period_sample1, Config) ->
     Config1 = [{period, 1}, {count, 0} | Config],
 
     application:set_env(opencensus, sampler,
@@ -52,7 +52,7 @@ init_per_testcase(period_sample_1, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(period_sample_2, Config) ->
+init_per_testcase(period_sample2, Config) ->
     Config1 = [{period, 10}, {count, 0} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -62,7 +62,7 @@ init_per_testcase(period_sample_2, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_sample_1, Config) ->
+init_per_testcase(count_sample1, Config) ->
     Config1 = [{period, 0}, {count, 1} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -72,7 +72,7 @@ init_per_testcase(count_sample_1, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_sample_2, Config) ->
+init_per_testcase(count_sample2, Config) ->
     Config1 = [{period, 0}, {count, 10} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -82,7 +82,7 @@ init_per_testcase(count_sample_2, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_and_period_sample_1, Config) ->
+init_per_testcase(count_and_period_sample1, Config) ->
     Config1 = [{period, 5}, {count, 1} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -92,7 +92,7 @@ init_per_testcase(count_and_period_sample_1, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_and_period_sample_2, Config) ->
+init_per_testcase(count_and_period_sample2, Config) ->
     Config1 = [{period, 5}, {count, 50} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -102,7 +102,7 @@ init_per_testcase(count_and_period_sample_2, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_and_period_sample_3, Config) ->
+init_per_testcase(count_and_period_sample3, Config) ->
     Config1 = [{period, 2}, {count, 100} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -112,7 +112,7 @@ init_per_testcase(count_and_period_sample_3, Config) ->
     {ok, _} = application:ensure_all_started(opencensus),
     Config1;
 
-init_per_testcase(count_and_period_sample_4, Config) ->
+init_per_testcase(count_and_period_sample4, Config) ->
     Config1 = [{period, 2}, {count, 100} | Config],
     application:set_env(opencensus, sampler,
                         {oc_sampler_period_or_count, [
@@ -129,7 +129,7 @@ end_per_testcase(_, _Config) ->
 end_per_suite(_Config) ->
     ok.
 
-period_sample_1(Config) ->
+period_sample1(Config) ->
 
     %% expecting 1 trace after every 2 second
     %% count = 0 doesn't affect on result
@@ -138,7 +138,7 @@ period_sample_1(Config) ->
 
     ?assert(abs(DesiredResult - Result) =< 5).
 
-period_sample_2(Config) ->
+period_sample2(Config) ->
     %% expecting 1 trace after every 10 seconds
     %% count = 0 doesn't affect on result
     {Time, Result} = run_tracing(Config),
@@ -146,7 +146,7 @@ period_sample_2(Config) ->
 
     ?assert(abs(DesiredResult - Result) =< 5).
 
-count_sample_1(Config) ->
+count_sample1(Config) ->
     %% all traces will be stored
     %% period = 0 doesn't affect on result
     {Time, Result} = run_tracing(Config),
@@ -154,7 +154,7 @@ count_sample_1(Config) ->
 
     ?assertEqual(DesiredResult, Result).
 
-count_sample_2(Config) ->
+count_sample2(Config) ->
     %% expecting every 10th trace
     %% period = 0 doesn't affect on result
     {Time, Result} = run_tracing(Config),
@@ -162,7 +162,7 @@ count_sample_2(Config) ->
 
     ?assertEqual(DesiredResult, Result).
 
-count_and_period_sample_1(Config) ->
+count_and_period_sample1(Config) ->
     %% all traces will be stored
     %% because count = 1 that means every first
     {Time, Result} = run_tracing(Config),
@@ -170,7 +170,7 @@ count_and_period_sample_1(Config) ->
 
     ?assertEqual(DesiredResult, Result).
 
-count_and_period_sample_2(Config) ->
+count_and_period_sample2(Config) ->
     %% expecting every fifth trace
     %% or 1 trace each 5 seconds
     {Time, Result} = run_tracing(Config),
@@ -178,7 +178,7 @@ count_and_period_sample_2(Config) ->
 
     ?assert(abs(DesiredResult - Result) =< 5).
 
-count_and_period_sample_3(Config) ->
+count_and_period_sample3(Config) ->
     %% expecting every 100th trace
     %% or 1 trace each 2 seconds
     {Time, Result} = run_tracing(Config),
@@ -186,7 +186,7 @@ count_and_period_sample_3(Config) ->
 
     ?assert(abs(DesiredResult - Result) =< 5).
 
-count_and_period_sample_4(Config) ->
+count_and_period_sample4(Config) ->
     %% 1000/100 (0th, 99th, 199th, etc)
     ?assertMatch({_, 100}, run_tracing(Config)),
 

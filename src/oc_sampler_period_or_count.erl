@@ -52,6 +52,14 @@ should_sample(_TraceId, _, _, {Period, CountThreshold}) ->
 
 %% private
 
+-define(COUNT_PART(Count, Now), {{sampler, '$1', '$2'},
+                                 [{'>=', '$2', CountThreshold}],
+                                 [{{sampler, Now, 0}}]}).
+
+-define(PERIOD_PART(Period, Now), {{sampler, '$1', '$2'},
+                                   [{'>=', {'-', Now, '$1'}, Period}],
+                                   [{{sampler, Now, '$2'}}]}).
+
 should_sample(0, 0) ->
     false;
 should_sample(_, 1) ->
@@ -61,18 +69,12 @@ should_sample(0, CountThreshold) ->
 should_sample(Period, 0) ->
     Now = erlang:monotonic_time(),
     ets:select_replace(?ETS_TABLE,
-                       [{{sampler, '$1', '$2'},
-                         [{'>=', {'-', Now, '$1'}, Period}],
-                         [{{sampler, Now, '$2'}}]}]) > 0;
+                       [?PERIOD_PART(Period, Now)]) > 0;
 should_sample(Period, CountThreshold) ->
     Now = erlang:monotonic_time(),
     Res = ets:select_replace(?ETS_TABLE,
-                             [{{sampler, '$1', '$2'},
-                               [{'>=', '$2', CountThreshold}],
-                               [{{sampler, Now, 0}}]},
-                              {{sampler, '$1', '$2'},
-                               [{'>=', {'-', Now, '$1'}, Period}],
-                               [{{sampler, Now, '$2'}}]}
+                             [?COUNT_PART(CountThreshold, Now),
+                              ?PERIOD_PART(Period, Now)
                              ]) > 0,
 
     ets:update_counter(?ETS_TABLE, sampler, {3, 1}),
