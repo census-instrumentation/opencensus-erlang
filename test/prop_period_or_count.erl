@@ -28,8 +28,6 @@ prop_compare_desired_sampling_result_with_factual() ->
     ?FORALL({Period, Count, Limit, Delay},
             {pos_integer(), pos_integer(), pos_integer(), pos_integer()},
             begin
-                %% expecting 1 trace after every 2 second
-                %% count = 0 doesn't affect on result
                 Config = [{limit, Limit},
                           {delay, Delay},
                           {period, Period},
