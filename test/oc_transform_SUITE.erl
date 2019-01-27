@@ -25,7 +25,7 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(_, Config) ->
-    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
+    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
     application:set_env(opencensus, pid_reporter, #{pid => self()}),
 
     {ok, _} = application:ensure_all_started(opencensus),
@@ -52,7 +52,7 @@ trace_transform(_Config) ->
                               ?assertMatch({ST, O} when is_integer(ST)
                                                       andalso is_integer(O), S#span.end_time)
                       after 1000 ->
-                              error(timeout)
+                              ct:fail("Did not receive any message in 1s")
                       end
                   end, [SpanName1, <<"oc_transform_SUITE:traced_function/0">>, <<"my_name">>]).
 

@@ -13,6 +13,7 @@
 
 all() ->
     [pid_reporter,
+     dynamically_register_reporter,
      sequential_reporter].
 
 init_per_suite(Config) ->
@@ -25,15 +26,16 @@ end_per_suite(_Config) ->
 
 init_per_testcase(pid_reporter, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
-    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
+    {ok, _} = application:ensure_all_started(opencensus),
+    Config;
+init_per_testcase(dynamically_register_reporter, Config) ->
+    application:set_env(opencensus, send_interval_ms, 1),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(sequential_reporter, Config) ->
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_reporter_sequential, [{oc_reporter_pid, []},
-                                                                        {oc_reporter_pid, []}]}),
-    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}, {oc_reporter_pid, self()}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
@@ -65,6 +67,39 @@ pid_reporter(_Config) ->
                                                             andalso is_integer(O), S#span.start_time),
                                   ?assertMatch({ST, O} when is_integer(ST)
                                                             andalso is_integer(O), S#span.end_time)
+                          after
+                            5000 -> ct:fail("Do not received any message in requested time (5s)")
+                          end
+                  end, [SpanName1, ChildSpanName1]).
+
+dynamically_register_reporter(_Config) ->
+    oc_reporter:register(oc_reporter_pid, self()),
+
+    SpanName1 = <<"span-1">>,
+    SpanCtx = oc_trace:start_span(SpanName1, undefined),
+
+    ChildSpanName1 = <<"child-span-1">>,
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx),
+
+    [ChildSpanData] = ets:lookup(?SPAN_TAB, ChildSpanCtx#span_ctx.span_id),
+    ?assertEqual(ChildSpanName1, ChildSpanData#span.name),
+    ?assertEqual(SpanCtx#span_ctx.span_id, ChildSpanData#span.parent_span_id),
+
+    oc_trace:finish_span(ChildSpanCtx),
+    oc_trace:finish_span(SpanCtx),
+
+    %% Order the spans are reported is undefined, so use a selective receive to make
+    %% sure we get them all
+    lists:foreach(fun(Name) ->
+                          receive
+                              {span, S=#span{name = Name}} ->
+                                  %% Verify the end time and duration are set when the span was finished
+                                  ?assertMatch({ST, O} when is_integer(ST)
+                                                            andalso is_integer(O), S#span.start_time),
+                                  ?assertMatch({ST, O} when is_integer(ST)
+                                                            andalso is_integer(O), S#span.end_time)
+                          after
+                            5000 -> ct:fail("Do not received any message in requested time (5s)")
                           end
                   end, [SpanName1, ChildSpanName1]).
 
@@ -90,4 +125,3 @@ sequential_reporter(_Config) ->
                          end, SortedNames), %% receive order is undefined though
 
     ?assertMatch(SortedNames, lists:sort(Received)).
-

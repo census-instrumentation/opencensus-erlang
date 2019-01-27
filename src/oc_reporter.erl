@@ -20,8 +20,12 @@
 
 -behaviour(gen_server).
 
+-compile({no_auto_import, [register/2]}).
+
 -export([start_link/0,
-         store_span/1]).
+         store_span/1,
+         register/1,
+         register/2]).
 
 -export([init/1,
          handle_call/3,
@@ -46,8 +50,7 @@
 %% until it returns.
 -callback report(nonempty_list(opencensus:span()), opts()) -> ok.
 
--record(state, {reporter :: module(),
-                reporter_config :: #{},
+-record(state, {reporters :: [{module(), term()}],
                 send_interval_ms :: integer(),
                 timer_ref :: reference()}).
 
@@ -58,6 +61,18 @@
 start_link() ->
     maybe_init_ets(),
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+%% @doc
+%% @equiv register(Reporter, []).
+%% @end
+register(Reporter) -> register(Reporter, []).
+
+%% @doc
+%% Register new traces reporter `Reporter' with `Config'.
+%% @end
+-spec register(module(), term()) -> ok.
+register(Reporter, Options) ->
+    gen_server:call(?MODULE, {register, init_reporter({Reporter, Options})}).
 
 -spec store_span(opencensus:span()) -> true | {error, invalid_span} | {error, no_report_buffer}.
 store_span(Span=#span{}) ->
@@ -73,27 +88,26 @@ store_span(_) ->
 
 init(_Args) ->
     SendInterval = application:get_env(opencensus, send_interval_ms, 500),
-    {Reporter, ReporterOpts} = application:get_env(opencensus, reporter, {oc_reporter_noop, []}),
-    ReporterConfig = Reporter:init(ReporterOpts),
+    Reporters = [init_reporter(Config) || Config <- application:get_env(opencensus, reporters, [])],
     Ref = erlang:send_after(SendInterval, self(), report_spans),
-    {ok, #state{reporter=Reporter,
-                reporter_config=ReporterConfig,
+    {ok, #state{reporters=Reporters,
                 send_interval_ms=SendInterval,
                 timer_ref=Ref}}.
 
+handle_call({register, Reporter}, _From, #state{reporters=Reporters} = State) ->
+    {reply, ok, State#state{reporters=[Reporter | Reporters]}};
 handle_call(_, _From, State) ->
     {noreply, State}.
 
 handle_cast(_, State) ->
     {noreply, State}.
 
-handle_info(report_spans, State=#state{reporter=Reporter,
-                                       reporter_config=Config,
+handle_info(report_spans, State=#state{reporters=Reporters,
                                        send_interval_ms=SendInterval,
                                        timer_ref=Ref}) ->
     erlang:cancel_timer(Ref),
     Ref1 = erlang:send_after(SendInterval, self(), report_spans),
-    send_spans(Reporter, Config),
+    send_spans(Reporters),
     {noreply, State#state{timer_ref=Ref1}}.
 
 code_change(_, State, _) ->
@@ -102,6 +116,11 @@ code_change(_, State, _) ->
 terminate(_, #state{timer_ref=Ref}) ->
     erlang:cancel_timer(Ref),
     ok.
+
+init_reporter({Reporter, Config}) ->
+    {Reporter, Reporter:init(Config)};
+init_reporter(Reporter) when is_atom(Reporter) ->
+    {Reporter, Reporter:init([])}.
 
 maybe_init_ets() ->
     case ets:info(?BUFFER_STATUS, name) of
@@ -115,7 +134,7 @@ maybe_init_ets() ->
             ok
     end.
 
-send_spans(Reporter, Config) ->
+send_spans(Reporters) ->
     [{_, Buffer}] = ets:lookup(?BUFFER_STATUS, current_buffer),
     NewBuffer = case Buffer of
                     ?BUFFER_1 ->
@@ -129,8 +148,9 @@ send_spans(Reporter, Config) ->
             ok;
         Spans ->
             ets:delete_all_objects(Buffer),
-            report(Reporter, Spans, Config)
-
+            [report(Reporter, Spans, Config)
+             || {Reporter, Config} <- Reporters],
+            ok
     end.
 
 report(undefined, _, _) ->
