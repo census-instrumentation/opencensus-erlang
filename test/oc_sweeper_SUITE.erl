@@ -20,10 +20,11 @@ all() ->
      failed_attribute_and_finish].
 
 init_per_suite(Config) ->
-    ok = application:load(opencensus),
+    application:load(opencensus),
     Config.
 
 end_per_suite(_Config) ->
+    application:unload(opencensus),
     ok.
 
 init_per_testcase(storage_size, Config) ->
