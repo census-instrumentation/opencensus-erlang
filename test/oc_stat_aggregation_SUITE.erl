@@ -13,6 +13,7 @@ init_per_suite(Config) ->
     Config.
 
 end_per_suite(_Config) ->
+    application:unload(opencensus),
     ok.
 
 init_per_testcase(_, Config) ->

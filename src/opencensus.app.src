@@ -11,7 +11,6 @@
     inets,
     wts,
     ctx,
-    jsx,
     counters
    ]},
   {modules, []},
