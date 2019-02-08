@@ -22,10 +22,8 @@
 -export([init/1,
          report/2]).
 
-init(_) ->
-    application:get_env(opencensus, pid_reporter, #{}).
+init(Pid) -> Pid.
 
-report(Spans, Opts) ->
-    Pid = maps:get(pid, Opts),
+report(Spans, Pid) ->
     [Pid ! {span, Span} || Span <- Spans],
     ok.

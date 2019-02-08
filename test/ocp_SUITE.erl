@@ -30,7 +30,7 @@ init_per_testcase(_, Config) ->
     Tab = ets:new(reporter_tab, [public, {write_concurrency, true},
                                  {read_concurrency, true}, {keypos, #span.span_id}]),
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_tab_reporter, []}),
+    application:set_env(opencensus, reporters, [{oc_tab_reporter, []}]),
     application:set_env(opencensus, tab_reporter, #{tid => Tab}),
     {ok, _} = application:ensure_all_started(opencensus),
     [{tid, Tab} | Config].

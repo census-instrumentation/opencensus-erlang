@@ -34,8 +34,7 @@ init_per_testcase(storage_size, Config) ->
                                                storage_size => 100}),
 
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
-    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(Type, Config) ->
@@ -44,8 +43,7 @@ init_per_testcase(Type, Config) ->
                                                span_ttl => 500}),
 
     application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporter, {oc_reporter_pid, []}),
-    application:set_env(opencensus, pid_reporter, #{pid => self()}),
+    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
@@ -104,6 +102,8 @@ drop(_Config) ->
                                       andalso is_integer(O), S#span.start_time),
             ?assertMatch({ST, O} when is_integer(ST)
                                       andalso is_integer(O), S#span.end_time)
+    after
+      1000 -> ct:fail("Do not received any message after 1s")
     end,
 
     %% sleep long enough that the reporter would have run again for sure
@@ -137,6 +137,8 @@ finish(_Config) ->
                                                             andalso is_integer(O), S#span.start_time),
                                   ?assertMatch({ST, O} when is_integer(ST)
                                                             andalso is_integer(O), S#span.end_time)
+                          after
+                            1000 -> ct:fail("Do not received any message after 1s")
                           end
                   end, [SpanName1, ChildSpanName1]).
 
@@ -167,4 +169,6 @@ failed_attribute_and_finish(_Config) ->
                                       andalso is_integer(O), S#span.start_time),
             ?assertMatch({ST, O} when is_integer(ST)
                                       andalso is_integer(O), S#span.end_time)
+    after
+      1000 -> ct:fail("Do not received any message after 1s")
     end.
