@@ -369,7 +369,7 @@ tag_values_(Tags, Keys) ->
 
 %% @private
 '__init_backend__'() ->
-    ?VIEWS_TABLE = ets:new(?VIEWS_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
+    ?VIEWS_TABLE = ets:new(?VIEWS_TABLE, [set, named_table, public, {keypos, 2}]),
     ok.
 
 %% =============================================================================

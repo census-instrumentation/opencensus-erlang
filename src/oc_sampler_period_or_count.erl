@@ -31,9 +31,7 @@
 %% public
 
 init(Opts) ->
-    _ = ets:new(?ETS_TABLE, [named_table, public,
-                             {read_concurrency, true},
-                             {write_concurrency, true}]),
+    _ = ets:new(?ETS_TABLE, [named_table, public]),
 
     Period0 = proplists:get_value(period, Opts, ?DEFAULT_PERIOD),
     %% TODO: check Period0 is a non-negative integer

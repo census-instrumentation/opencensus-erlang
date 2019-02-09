@@ -43,8 +43,7 @@ handle_cast(_, State) ->
 maybe_init_ets() ->
     case ets:info(?SPAN_TAB, name) of
         undefined ->
-            ets:new(?SPAN_TAB, [named_table, public, {write_concurrency, true},
-                                {read_concurrency, true}, {keypos, #span.span_id}]);
+            ets:new(?SPAN_TAB, [named_table, public, {write_concurrency, true}, {keypos, #span.span_id}]);
         _ ->
             ok
     end.

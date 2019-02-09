@@ -148,7 +148,7 @@ terminate_() ->
 
 %% @private
 '__init_backend__'() ->
-    ?MEASURES_TABLE = ets:new(?MEASURES_TABLE, [set, named_table, public, {keypos, 2}, {read_concurrency, true}]),
+    ?MEASURES_TABLE = ets:new(?MEASURES_TABLE, [set, named_table, public, {keypos, 2}]),
     ok.
 
 %% =============================================================================
