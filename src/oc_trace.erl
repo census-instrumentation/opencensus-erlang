@@ -49,7 +49,11 @@
 
          message_event/4,
 
-         set_status/3]).
+         set_status/3,
+
+        add_handler/1,
+        add_handler/2,
+        delete_handler/1]).
 
 -dialyzer({nowarn_function, update_trace_options/2}).
 
@@ -327,6 +331,29 @@ link(LinkType, TraceId, SpanId, Attributes) ->
           trace_id=TraceId,
           span_id=SpanId,
           attributes=Attributes}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% @equiv add_handler(Handler, []).
+%% @end
+%%--------------------------------------------------------------------
+add_handler(Handler) -> add_handler(Handler, []).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add new handler
+%% @end
+%%--------------------------------------------------------------------
+add_handler(Handler, Args) ->
+  gen_event:add_handler(oc_trace_reporter, Handler, Args).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Delete handler
+%% @end
+%%--------------------------------------------------------------------
+delete_handler(Handler) ->
+  gen_event:delete_handler(oc_trace_reporter, Handler, []).
 
 %% Internal functions
 
