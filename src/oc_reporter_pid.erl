@@ -17,13 +17,16 @@
 %%%-----------------------------------------------------------------------
 -module(oc_reporter_pid).
 
--behaviour(oc_reporter).
+-behaviour(gen_event).
 
 -export([init/1,
-         report/2]).
+         handle_call/2,
+         handle_event/2]).
 
 init(Pid) -> Pid.
 
-report(Spans, Pid) ->
+handle_call(_Msg, State) -> {ok, ok, State}.
+
+handle_event(Spans, Pid) ->
     [Pid ! {span, Span} || Span <- Spans],
-    ok.
+    {ok, Pid}.

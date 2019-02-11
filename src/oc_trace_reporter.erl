@@ -28,19 +28,6 @@
 -include("opencensus.hrl").
 -include("oc_logger.hrl").
 
-%% behaviour for reporters to implement
--type opts() :: term().
-
-%% Do any initialization of the reporter here and return configuration
-%% that will be passed along with a list of spans to the `report' function.
--callback init(term()) -> opts().
-
-%% This function is called when the configured interval expires with any
-%% spans that have been collected so far and the configuration returned in `init'.
-%% Do whatever needs to be done to report each span here, the caller will block
-%% until it returns.
--callback report(nonempty_list(opencensus:span()), opts()) -> ok.
-
 -define(BUFFER_1, oc_report_buffer1).
 -define(BUFFER_2, oc_report_buffer2).
 -define(BUFFER_STATUS, oc_report_status).
@@ -90,9 +77,9 @@ maybe_init_ets() ->
     case ets:info(?BUFFER_STATUS, name) of
         undefined ->
             [ets:new(Tab, [named_table, public | TableProps]) ||
-                {Tab, TableProps} <- [{?BUFFER_1, [{write_concurrency, true}, {keypos, #span.span_id}]},
-                                      {?BUFFER_2, [{write_concurrency, true}, {keypos, #span.span_id}]},
-                                      {?BUFFER_STATUS, [{read_concurrency, true}]}]],
+             {Tab, TableProps} <- [{?BUFFER_1, [{write_concurrency, true}, {keypos, #span.span_id}]},
+                                   {?BUFFER_2, [{write_concurrency, true}, {keypos, #span.span_id}]},
+                                   {?BUFFER_STATUS, [{read_concurrency, true}]}]],
             ets:insert(?BUFFER_STATUS, {current_buffer, ?BUFFER_1}),
 
             ok;

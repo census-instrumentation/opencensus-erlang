@@ -27,46 +27,19 @@
 -define(SERVER, ?MODULE).
 
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+    supervisor:start_link(?MODULE, []).
 
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
-    Reporter = #{id => oc_reporter,
-                 start => {oc_reporter, start_link, []},
-                 restart => permanent,
-                 shutdown => 1000,
-                 type => worker,
-                 modules => [oc_reporter]},
+    StatOpts = application:get_env(opencensus, metric, []),
+    StatSup = #{id => stat,
+                start => {oc_stat_sup, start_link, [StatOpts]},
+                type => supervisor},
 
-    Exporter = #{id => oc_stat_exporter,
-                 start => {oc_stat_exporter, start_link, []},
-                 restart => permanent,
-                 shutdown => 1000,
-                 type => worker,
-                 modules => [oc_stat_exporter]},
+    TraceOpts = application:get_env(opencensus, trace, []),
+    TraceSup = #{id => traces,
+                 start => {oc_trace_sup, start_link, [TraceOpts]},
+                 type => supervisor},
 
-    ViewServer = #{id => oc_stat,
-                   start => {oc_stat, start_link, []},
-                   restart => permanent,
-                   shutdown => 1000,
-                   type => worker,
-                   modules => [oc_stat]},
-
-    TraceServer = #{id => oc_server,
-                    start => {oc_server, start_link, []},
-                    restart => permanent,
-                    shutdown => 1000,
-                    type => worker,
-                    modules => [oc_server]},
-
-    Sweeper = #{id => oc_span_sweeper,
-                start => {oc_span_sweeper, start_link, []},
-                restart => permanent,
-                shutdown => 1000,
-                type => worker,
-                modules => [oc_span_sweeper]},
-
-    {ok, {#{strategy => one_for_one,
-            intensity => 1,
-            period => 5}, [Reporter, Exporter, ViewServer, TraceServer, Sweeper]}}.
+    {ok, {#{strategy => one_for_one}, [TraceSup, StatSup]}}.

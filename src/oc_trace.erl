@@ -51,9 +51,9 @@
 
          set_status/3,
 
-        add_handler/1,
-        add_handler/2,
-        delete_handler/1]).
+         add_handler/1,
+         add_handler/2,
+         delete_handler/1]).
 
 -dialyzer({nowarn_function, update_trace_options/2}).
 
@@ -345,7 +345,7 @@ add_handler(Handler) -> add_handler(Handler, []).
 %% @end
 %%--------------------------------------------------------------------
 add_handler(Handler, Args) ->
-  gen_event:add_handler(oc_trace_reporter, Handler, Args).
+    gen_event:add_handler(oc_trace_reporter, Handler, Args).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -353,7 +353,7 @@ add_handler(Handler, Args) ->
 %% @end
 %%--------------------------------------------------------------------
 delete_handler(Handler) ->
-  gen_event:delete_handler(oc_trace_reporter, Handler, []).
+    gen_event:delete_handler(oc_trace_reporter, Handler, []).
 
 %% Internal functions
 

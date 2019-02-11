@@ -22,31 +22,32 @@
 -include("opencensus.hrl").
 
 start_link(Opts) ->
-  supervisor:start_link(?MODULE, Opts).
+    supervisor:start_link(?MODULE, Opts).
 
 init(Opts) ->
-  Interval = proplists:get_value(Opts, interval, 500),
-  Handlers = proplists:get_value(Opts, handlers, []),
+    Interval = proplists:get_value(interval, Opts, 500),
+    Handlers = proplists:get_value(handlers, Opts, []),
 
-  Exporter = #{id => exporter,
-               start => {oc_trace_reporter, start_link, [Handlers]}},
-  % TODO: Rename oc_span_sweeper to oc_trace_sweeper
-  Sweeper = #{id => sweeper,
-              start => {oc_span_sweeper, start_link, []}},
-  Timer = #{id => timer,
-            start => {oc_internal_timer, start_link, [{interval, Interval},
-                                                      {module, oc_trace_reporter}]}
-           },
+    Exporter = #{id => exporter,
+                 start => {oc_trace_reporter, start_link, [Handlers]}},
+    % TODO: Rename oc_span_sweeper to oc_trace_sweeper
+    Sweeper = #{id => sweeper,
+                start => {oc_span_sweeper, start_link, []}},
+    Timer = #{id => timer,
+              start => {oc_internal_timer, start_link, [Interval,
+                                                        oc_trace_reporter]}},
 
-  ok = maybe_init_span_tab(),
+    ok = maybe_init_span_tab(),
 
-  {ok, {#{strategy => one_for_one}, [Exporter, Timer, Sweeper]}}.
+    {ok, {#{strategy => one_for_one}, [Exporter, Timer, Sweeper]}}.
 
 maybe_init_span_tab() ->
-  case ets:info(?SPAN_TAB, name) of
-    undefined ->
-      ets:new(?SPAN_TAB, [named_table, public, {write_concurrency, true}, {keypos, #span.span_id}]),
-      ok;
-    _ ->
-      ok
-  end.
+    case ets:info(?SPAN_TAB, name) of
+        undefined ->
+            ets:new(?SPAN_TAB, [named_table, public,
+                                {write_concurrency, true},
+                                {keypos, #span.span_id}]),
+            ok;
+        _ ->
+            ok
+    end.

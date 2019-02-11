@@ -13,20 +13,23 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
--module(oc_reporter_stdout).
+-module(oc_stat_sup).
 
--behaviour(gen_event).
+-export([start_link/1, init/1]).
 
--export([init/1,
-         handle_call/2,
-         handle_event/2]).
+start_link(Opts) ->
+    supervisor:start_link(?MODULE, Opts).
 
-init(_) ->
-    ok.
+init(Opts) ->
+    Interval = proplists:get_value(interval, Opts, 5000),
+    Handlers = proplists:get_value(handlers, Opts, []),
 
-handle_call(_Msg, State) -> {ok, ok, State}.
+    Reporter = #{id => reporter,
+                 start => {oc_stat_reporter, start_link, [Handlers]}},
+    ViewServer = #{id => view_server,
+                   start => {oc_stat, start_link, []}},
+    Timer = #{id => timer,
+              start => {oc_internal_timer, start_link, [Interval,
+                                                        oc_stat_reporter]}},
 
-handle_event({spans, Spans}, State) ->
-    [io:format("~p~n", [Span]) || Span <- Spans],
-
-    {ok, State}.
+    {ok, {#{strategy => one_for_one}, [Reporter, Timer, ViewServer]}}.

@@ -13,20 +13,32 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
--module(oc_reporter_stdout).
+%% @doc
+%% Exporter exports the collected records as view data.
+%% @end
+-module(oc_stat_reporter).
 
--behaviour(gen_event).
+-behaviour(oc_internal_timer).
 
--export([init/1,
-         handle_call/2,
-         handle_event/2]).
+-export([start_link/1,
+         ping/0]).
 
-init(_) ->
+-include("opencensus.hrl").
+-include("oc_logger.hrl").
+
+start_link(Handlers) ->
+    case gen_event:start_link({local, ?MODULE}, []) of
+        {ok, Pid} ->
+            [gen_event:add_handler(Pid, Handler, Opts)
+             || {Handler, Opts} <- Handlers],
+
+            {ok, Pid};
+        Other -> Other
+    end.
+
+%% @private
+ping() ->
+    Measurements = oc_stat:export(),
+    gen_event:sync_notify(?MODULE, {stats, Measurements}),
+
     ok.
-
-handle_call(_Msg, State) -> {ok, ok, State}.
-
-handle_event({spans, Spans}, State) ->
-    [io:format("~p~n", [Span]) || Span <- Spans],
-
-    {ok, State}.
