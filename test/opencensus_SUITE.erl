@@ -26,8 +26,8 @@ end_per_suite(_Config) ->
 
 init_per_testcase(_, Config) ->
     Tab = ets:new(reporter_tab, [public, {keypos, #span.span_id}]),
-    application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporters, [{oc_tab_reporter, []}]),
+    application:set_env(opencensus, trace, [{interval, 1},
+                                            {handlers, [{oc_tab_reporter, []}]}]),
     application:set_env(opencensus, tab_reporter, #{tid => Tab}),
     application:set_env(opencensus, sampler, {oc_sampler_always, []}),
     {ok, _} = application:ensure_all_started(opencensus),
@@ -52,7 +52,7 @@ start_finish(Config) ->
     ?assertEqual(false, oc_trace:put_attribute(<<"attr-1">>, <<"value-1">>, SpanCtx)),
 
     %% finish already finished span
-    ?assertEqual(false, oc_trace:finish_span(SpanCtx)).
+    ?assertEqual({error, invalid_span}, oc_trace:finish_span(SpanCtx)).
 
 child_spans(Config) ->
     Tab = ?config(tid, Config),

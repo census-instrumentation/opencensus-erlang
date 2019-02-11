@@ -13,6 +13,8 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
+%% @private
+
 -module(oc_trace_sup).
 
 -behaviour(supervisor).
@@ -20,6 +22,7 @@
 -export([start_link/1, init/1]).
 
 -include("opencensus.hrl").
+-include("oc_logger.hrl").
 
 start_link(Opts) ->
     supervisor:start_link(?MODULE, Opts).

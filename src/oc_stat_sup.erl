@@ -13,6 +13,8 @@
 %% limitations under the License.
 %%%------------------------------------------------------------------------
 
+%% @private
+
 -module(oc_stat_sup).
 
 -export([start_link/1, init/1]).

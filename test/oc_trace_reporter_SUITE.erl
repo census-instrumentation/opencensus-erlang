@@ -2,7 +2,7 @@
 %%% @doc
 %%% @end
 %%% ---------------------------------------------------------------------------
--module(oc_reporters_SUITE).
+-module(oc_trace_reporter_SUITE).
 
 -compile(export_all).
 
@@ -25,17 +25,20 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_testcase(pid_reporter, Config) ->
-    application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
+    Reporters = [{oc_reporter_pid, self()}],
+    application:set_env(opencensus, trace, [{interval, 1},
+                                            {handlers, Reporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(dynamically_register_reporter, Config) ->
-    application:set_env(opencensus, send_interval_ms, 1),
+    application:set_env(opencensus, trace, [{interval, 1}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(sequential_reporter, Config) ->
-    application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}, {oc_reporter_pid, self()}]),
+    Reporters = [{{oc_reporter_pid, 1}, self()},
+                 {{oc_reporter_pid, 2}, self()}],
+    application:set_env(opencensus, trace, [{interval, 1},
+                                            {handlers, Reporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 
@@ -54,8 +57,8 @@ pid_reporter(_Config) ->
     ?assertEqual(ChildSpanName1, ChildSpanData#span.name),
     ?assertEqual(SpanCtx#span_ctx.span_id, ChildSpanData#span.parent_span_id),
 
-    oc_trace:finish_span(ChildSpanCtx),
-    oc_trace:finish_span(SpanCtx),
+    ok = oc_trace:finish_span(ChildSpanCtx),
+    ok = oc_trace:finish_span(SpanCtx),
 
     %% Order the spans are reported is undefined, so use a selective receive to make
     %% sure we get them all
@@ -73,7 +76,7 @@ pid_reporter(_Config) ->
                   end, [SpanName1, ChildSpanName1]).
 
 dynamically_register_reporter(_Config) ->
-    oc_reporter:register(oc_reporter_pid, self()),
+    oc_trace:add_handler(oc_reporter_pid, self()),
 
     SpanName1 = <<"span-1">>,
     SpanCtx = oc_trace:start_span(SpanName1, undefined),
@@ -119,7 +122,7 @@ sequential_reporter(_Config) ->
                                  receive
                                      {span, #span{name = Name}} ->
                                          Name
-                                 after 5000 ->
+                                 after 1000 ->
                                          undefined
                                  end
                          end, SortedNames), %% receive order is undefined though

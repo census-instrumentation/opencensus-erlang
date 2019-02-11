@@ -17,15 +17,19 @@
 %%%-----------------------------------------------------------------------
 -module(oc_tab_reporter).
 
--behaviour(oc_reporter).
+-behaviour(gen_event).
 
 -export([init/1,
-         report/2]).
+         handle_call/2,
+         handle_event/2]).
 
 init(_) ->
-    application:get_env(opencensus, tab_reporter, #{}).
+    {ok, application:get_env(opencensus, tab_reporter, #{})}.
 
-report(Spans, Opts) ->
+handle_call(_Msg, State) -> {ok, ok, State}.
+
+handle_event({spans, Spans}, Opts) ->
     Tid = maps:get(tid, Opts),
     ets:insert(Tid, Spans),
-    ok.
+
+    {ok, Opts}.

@@ -47,7 +47,7 @@ finish_span(#span_ctx{tracestate=Tracestate}, Span=#span{}) ->
     %% update tracestate to what the context has when finished
     Span1 = Span#span{end_time=EndTime,
                       tracestate=Tracestate},
-    oc_reporter:store_span(Span1);
+    oc_trace_reporter:store_span(Span1);
 finish_span(_, _) ->
     true.
 

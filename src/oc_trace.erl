@@ -203,17 +203,17 @@ update_trace_options(should_sample, #span_ctx{trace_id=TraceId,
 %% Finish a span, setting the end_time.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span(maybe(opencensus:span_ctx())) -> boolean().
+-spec finish_span(maybe(opencensus:span_ctx())) -> ok | {error, invalid_span} | {error, no_report_buffer}.
 finish_span(SpanCtx=#span_ctx{span_id=SpanId,
                               trace_options=TraceOptions}) when ?IS_ENABLED(TraceOptions) ->
     case ets:take(?SPAN_TAB, SpanId) of
         [SpanData] ->
             oc_span:finish_span(SpanCtx, SpanData);
         _ ->
-            false
+            {error, invalid_span}
     end;
 finish_span(_) ->
-    true.
+    {error, invalid_span}.
 
 %%--------------------------------------------------------------------
 %% @doc

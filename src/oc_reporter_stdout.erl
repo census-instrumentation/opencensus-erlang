@@ -21,8 +21,7 @@
          handle_call/2,
          handle_event/2]).
 
-init(_) ->
-    ok.
+init(Opts) -> {ok, Opts}.
 
 handle_call(_Msg, State) -> {ok, ok, State}.
 

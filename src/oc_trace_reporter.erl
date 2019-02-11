@@ -43,11 +43,12 @@ start_link(Handlers) ->
         Other -> Other
     end.
 
--spec store_span(opencensus:span()) -> true | {error, invalid_span} | {error, no_report_buffer}.
+-spec store_span(opencensus:span()) -> ok | {error, invalid_span} | {error, no_report_buffer}.
 store_span(Span=#span{}) ->
     try
         [{_, Buffer}] = ets:lookup(?BUFFER_STATUS, current_buffer),
-        ets:insert(Buffer, Span)
+        true = ets:insert(Buffer, Span),
+        ok
     catch
         error:badarg ->
             {error, no_report_buffer}

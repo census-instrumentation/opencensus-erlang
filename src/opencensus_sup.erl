@@ -12,9 +12,11 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
-%% @doc opencensus top level supervisor.
-%% @end
 %%%------------------------------------------------------------------------
+
+%% @doc opencensus top level supervisor.
+%% @private
+%% @end
 
 -module(opencensus_sup).
 
@@ -24,15 +26,13 @@
 
 -export([init/1]).
 
--define(SERVER, ?MODULE).
-
 start_link() ->
     supervisor:start_link(?MODULE, []).
 
 init([]) ->
     ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
 
-    StatOpts = application:get_env(opencensus, metric, []),
+    StatOpts = application:get_env(opencensus, stat, []),
     StatSup = #{id => stat,
                 start => {oc_stat_sup, start_link, [StatOpts]},
                 type => supervisor},

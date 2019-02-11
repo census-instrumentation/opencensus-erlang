@@ -23,10 +23,10 @@
          handle_call/2,
          handle_event/2]).
 
-init(Pid) -> Pid.
+init(Pid) -> {ok, Pid}.
 
 handle_call(_Msg, State) -> {ok, ok, State}.
 
-handle_event(Spans, Pid) ->
+handle_event({spans, Spans}, Pid) ->
     [Pid ! {span, Span} || Span <- Spans],
     {ok, Pid}.
