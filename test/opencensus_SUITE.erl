@@ -26,9 +26,9 @@ end_per_suite(_Config) ->
 
 init_per_testcase(_, Config) ->
     Tab = ets:new(reporter_tab, [public, {keypos, #span.span_id}]),
+    Reporters = [{oc_tab_reporter, Tab}],
     application:set_env(opencensus, trace, [{interval, 1},
-                                            {handlers, [{oc_tab_reporter, []}]}]),
-    application:set_env(opencensus, tab_reporter, #{tid => Tab}),
+                                            {handlers, Reporters}]),
     application:set_env(opencensus, sampler, {oc_sampler_always, []}),
     {ok, _} = application:ensure_all_started(opencensus),
     [{tid, Tab} | Config].

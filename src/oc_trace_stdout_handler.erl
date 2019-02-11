@@ -11,29 +11,21 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%
-%% @doc stats configuration
-%% @end
 %%%------------------------------------------------------------------------
 
--module(oc_stat_config).
+-module(oc_trace_stdout_handler).
 
--export([views/0,
-         export_interval/0,
-         exporters/0]).
+-behaviour(gen_event).
 
--define(DEFAULT_VIEWS, []).
--define(DEFAULT_EXPORTERS, []).
--define(DEFAULT_EXPORT_INTERVAL, 5000).
+-export([init/1,
+         handle_call/2,
+         handle_event/2]).
 
-views() ->
-    proplists:get_value(views, stat_conf(), ?DEFAULT_VIEWS).
+init(Opts) -> {ok, Opts}.
 
-export_interval() ->
-    proplists:get_value(export_interval, stat_conf(), ?DEFAULT_EXPORT_INTERVAL).
+handle_call(_Msg, State) -> {ok, ok, State}.
 
-exporters() ->
-    proplists:get_value(exporters, stat_conf(), ?DEFAULT_EXPORTERS).
+handle_event({spans, Spans}, State) ->
+    [io:format("~p~n", [Span]) || Span <- Spans],
 
-stat_conf() ->
-    application:get_env(opencensus, stat, []).
+    {ok, State}.

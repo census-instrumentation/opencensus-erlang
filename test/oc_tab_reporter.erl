@@ -23,13 +23,11 @@
          handle_call/2,
          handle_event/2]).
 
-init(_) ->
-    {ok, application:get_env(opencensus, tab_reporter, #{})}.
+init(Tab) -> {ok, Tab}.
 
 handle_call(_Msg, State) -> {ok, ok, State}.
 
-handle_event({spans, Spans}, Opts) ->
-    Tid = maps:get(tid, Opts),
-    ets:insert(Tid, Spans),
+handle_event({spans, Spans}, Tab) ->
+    true = ets:insert(Tab, Spans),
 
-    {ok, Opts}.
+    {ok, Tab}.
