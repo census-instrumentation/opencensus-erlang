@@ -83,7 +83,7 @@ export() ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% @equiv add_handler(Handler, []).
+%% @equiv add_handler(Handler, [])
 %% @end
 %%--------------------------------------------------------------------
 add_handler(Handler) -> add_handler(Handler, []).

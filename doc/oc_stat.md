@@ -7,12 +7,16 @@
 
 OpenCensus Stats package.
 
+__Behaviours:__ [`gen_server`](gen_server.md).
+
 <a name="index"></a>
 
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#export-0">export/0</a></td><td>Exports view_data of all subscribed views.</td></tr><tr><td valign="top"><a href="#record-2">record/2</a></td><td>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_handler-1">add_handler/1</a></td><td>Equivalent to <a href="#add_handler-2"><tt>add_handler(Handler, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#add_handler-2">add_handler/2</a></td><td>
+Add new handler.</td></tr><tr><td valign="top"><a href="#delete_handler-1">delete_handler/1</a></td><td>
+Delete handler.</td></tr><tr><td valign="top"><a href="#export-0">export/0</a></td><td>Exports view_data of all subscribed views.</td></tr><tr><td valign="top"><a href="#record-2">record/2</a></td><td>
 Records multiple measurements at once.</td></tr><tr><td valign="top"><a href="#record-3">record/3</a></td><td>
 Records one or multiple measurements with the same tags at once.</td></tr></table>
 
@@ -20,6 +24,30 @@ Records one or multiple measurements with the same tags at once.</td></tr></tabl
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="add_handler-1"></a>
+
+### add_handler/1 ###
+
+`add_handler(Handler) -> any()`
+
+Equivalent to [`add_handler(Handler, [])`](#add_handler-2).
+
+<a name="add_handler-2"></a>
+
+### add_handler/2 ###
+
+`add_handler(Handler, Args) -> any()`
+
+Add new handler
+
+<a name="delete_handler-1"></a>
+
+### delete_handler/1 ###
+
+`delete_handler(Handler) -> any()`
+
+Delete handler
 
 <a name="export-0"></a>
 

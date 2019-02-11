@@ -139,7 +139,7 @@ current_tags() -&gt; <a href="opencensus.md#type-tags">opencensus:tags()</a>
 ### finish_span/0 ###
 
 <pre><code>
-finish_span() -&gt; boolean()
+finish_span() -&gt; ok | {error, invalid_span} | {error, no_report_buffer}
 </code></pre>
 <br />
 

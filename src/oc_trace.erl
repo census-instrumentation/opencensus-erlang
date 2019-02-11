@@ -334,24 +334,40 @@ link(LinkType, TraceId, SpanId, Attributes) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% @equiv add_handler(Handler, []).
+%% @equiv add_handler(Handler, [])
 %% @end
 %%--------------------------------------------------------------------
+-spec add_handler(Handler) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
 add_handler(Handler) -> add_handler(Handler, []).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Add new handler
+%% Add new handler `Module' and pass `Args' as the configuration to
+%% `Module:init/1' callback.
+%%
+%% You can create multiple instances of the same `Module' handler by
+%% differentiating them with `Id' value.
 %% @end
 %%--------------------------------------------------------------------
+-spec add_handler(Handler, Args::term()) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
 add_handler(Handler, Args) ->
     gen_event:add_handler(oc_trace_reporter, Handler, Args).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Delete handler
+%% Delete handler marked by the `Handler'.
 %% @end
 %%--------------------------------------------------------------------
+-spec delete_handler(Handler) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
 delete_handler(Handler) ->
     gen_event:delete_handler(oc_trace_reporter, Handler, []).
 

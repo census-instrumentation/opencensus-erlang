@@ -1,14 +1,13 @@
 %% encoding: UTF-8
 {application,opencensus}.
-{modules,[oc_producer,oc_producer_registry,oc_reporter,oc_reporter_noop,
-          oc_reporter_sequential,oc_reporter_stdout,oc_reporter_zipkin,
-          oc_sampler,oc_sampler_always,oc_sampler_impl,oc_sampler_never,
+{modules,[oc_internal_timer,oc_producer,oc_producer_registry,oc_sampler,
+          oc_sampler_always,oc_sampler_impl,oc_sampler_never,
           oc_sampler_period_or_count,oc_sampler_probability,oc_self_producer,
-          oc_server,oc_span,oc_span_ctx_binary,oc_span_ctx_header,
-          oc_span_sweeper,oc_span_transform,oc_stat,oc_stat_aggregation,
+          oc_span,oc_span_ctx_binary,oc_span_ctx_header,oc_span_sweeper,
+          oc_span_transform,oc_stat,oc_stat_aggregation,
           oc_stat_aggregation_count,oc_stat_aggregation_distribution,
-          oc_stat_aggregation_latest,oc_stat_aggregation_sum,oc_stat_config,
-          oc_stat_exporter,oc_stat_exporter_stdout,oc_stat_measure,
-          oc_stat_transform,oc_stat_unit,oc_stat_view,oc_std_encoder,
-          oc_tag_ctx_binary,oc_tag_ctx_header,oc_tags,oc_trace,ocp,opencensus,
-          opencensus_app,opencensus_sup]}.
+          oc_stat_aggregation_latest,oc_stat_aggregation_sum,oc_stat_measure,
+          oc_stat_reporter,oc_stat_stdout_handler,oc_stat_transform,
+          oc_stat_unit,oc_stat_view,oc_tag_ctx_binary,oc_tag_ctx_header,
+          oc_tags,oc_trace,oc_trace_reporter,oc_trace_stdout_handler,ocp,
+          opencensus,opencensus_app]}.

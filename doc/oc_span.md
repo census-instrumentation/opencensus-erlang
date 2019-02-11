@@ -90,7 +90,7 @@ Create an Annotation.
 ### finish_span/1 ###
 
 <pre><code>
-finish_span(Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; true
+finish_span(Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; ok | {error, invalid_span} | {error, no_report_buffer}
 </code></pre>
 <br />
 

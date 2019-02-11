@@ -76,9 +76,11 @@ Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
 
 #### <a name="Reporters">Reporters</a> ####
 
-[Google Cloud Trace](https://github.com/tsloughter/oc_google_reporter): Support for v1 in master, v2 and grpc coming soon;
+[Zipkin](https://github.com/opencensus-beam/opencensus_zipkin): Zipkin v2 reporter.
 
-[Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
+[Google Cloud Trace](https://github.com/opencensus-beam/oc_google_reporter): Support for v1 in master, v2 and grpc coming soon;
+
+[Prometheus](https://github.com/opencensus-beam/prometheus): Exports spans as Prometheus metrics.
 
 [DataDog][oc_datadog]: Export spans to DataDog APM
 
@@ -183,15 +185,6 @@ Running tests:
 
 ```sh
 $ rebar3 ct
-```
-
-#### Updating OpenCensus standard protobuf encoder and decoder
-
-Language independent interface types for Census are found in the `opencensus-proto` repo. The opencensus Erlang app provides functionality for converting from the apps internal representation to the standard protobuf interface. Below are the steps to update the Erlang module and header for encoding and decoding the protobufs:
-
-```sh
-$ git clone https://github.com/census-instrumentation/opencensus-proto priv/opencensus-proto
-$ rebar3 protobuf compile
 ```
 
 [oc_datadog]: https://github.com/hauleth/oc_datadog
