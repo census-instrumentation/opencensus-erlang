@@ -43,8 +43,8 @@ handle_cast(_Msg, State) -> {noreply, State}.
 
 handle_info(ping, #state{timer = Ref, interval = Interval, module = Mod}) ->
     _ = erlang:cancel_timer(Ref),
-    ok = Mod:ping(),
     NewRef = erlang:send_after(Interval, self(), ping),
+    ok = Mod:ping(),
 
     {noreply, #state{timer = NewRef,
                      interval = Interval,
