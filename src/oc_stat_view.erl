@@ -72,7 +72,6 @@
                unit                        :: oc_stat_measure:unit(),
                subscribed          = false :: boolean(),
                description         = ""    :: description() | '_',
-               ctags               = #{}   :: oc_tags:tags() | '_',
                tags                = []    :: [oc_tags:key()] | '_',
                aggregation                 :: aggregation() | '_',
                aggregation_options = []    :: aggregation_options() | '_'}).
@@ -86,7 +85,6 @@
 -type description() :: binary() | string().
 -type view_data()   :: #{name        := name(),
                          description := description(),
-                         ctags       := oc_tags:tags(),
                          tags        := [oc_tags:key()],
                          data        := oc_stat_aggregation:data()}.
 -type view()        :: #view{}.
@@ -95,6 +93,12 @@
 %% @doc
 %% Creates a View from a map.
 %% @end
+-spec new(#{name => name(),
+            measure => measure_name() | oc_stat_measure:measure(),
+            description => description(),
+            unit := oc_stat_measure:unit(),
+            tags := [oc_tags:key()],
+            aggregation => aggregation()}) -> view().
 new(Map) when is_map(Map) ->
     new(maps:get(name, Map), maps:get(measure, Map), maps:get(unit, Map, undefined),
         maps:get(description, Map), maps:get(tags, Map, []), maps:get(aggregation, Map)).
@@ -103,18 +107,27 @@ new(Map) when is_map(Map) ->
 %% Creates a View. This view needs to be registered and subscribed to a measure
 %% in order to start aggregating data.
 %% @end
+-spec new(name(),
+          measure_name() | oc_stat_measure:measure(),
+          description(),
+          [oc_tags:key()],
+          aggregation()) -> view().
 new(Name, Measure, Description, Tags, Aggregation) ->
     new(Name, Measure, undefined, Description, Tags, Aggregation).
 
+-spec new(name(),
+          measure_name() | oc_stat_measure:measure(),
+          oc_stat_measure:unit(),
+          description(),
+          [oc_tags:key()],
+          aggregation()) -> view().
 new(Name, Measure, Unit, Description, Tags, Aggregation) ->
-    {CTags, Keys} = normalize_tags(Tags),
     {AggregationModule, AggregationOptions} = normalize_aggregation(Aggregation),
     #view{name=Name,
           measure=Measure,
           unit=Unit,
           description=Description,
-          ctags=CTags,
-          tags=Keys,
+          tags=Tags,
           aggregation=AggregationModule,
           aggregation_options=AggregationOptions}.
 
@@ -243,7 +256,7 @@ is_subscribed(Name) ->
 -spec export(view()) -> view_data().
 export(#view{name=Name, description=Description,
              unit=VUnit, measure=Measure,
-             ctags=CTags, tags=Keys,
+             tags=Keys,
              aggregation=AggregationModule,
              aggregation_options=AggregationOptions}) ->
     %% TODO: maybe just store multiplier as unit measure??
@@ -251,7 +264,6 @@ export(#view{name=Name, description=Description,
     Data = AggregationModule:export(Name, AggregationOptions),
     #{name => Name,
       description => Description,
-      ctags => CTags,
       tags => lists:reverse(Keys),
       data => oc_stat_aggregation:convert(Data, MUnit, VUnit)}.
 
@@ -440,15 +452,3 @@ normalize_aggregation({Module, Options}) ->
     {Module, Options};
 normalize_aggregation(Module) when is_atom(Module) ->
     {Module, []}.
-
-normalize_tags([]) ->
-    {#{}, []};
-normalize_tags(Tags) ->
-    normalize_tags(Tags, {#{}, []}).
-
-normalize_tags([], {Map, List}) ->
-    {Map, lists:reverse(List)};
-normalize_tags([First|Rest], {Map, List}) when is_map(First) ->
-    normalize_tags(Rest, {maps:merge(Map, First), List});
-normalize_tags([First|Rest], {Map, List}) when is_atom(First) ->
-    normalize_tags(Rest, {Map, [First | List]}).
