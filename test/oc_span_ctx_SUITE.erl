@@ -11,8 +11,13 @@
 
 -include("opencensus.hrl").
 
+-define(B3_HEADERS(TraceId, SpanId, Sampled), [{<<"X-B3-TraceId">>, TraceId},
+                                               {<<"X-B3-SpanId">>, SpanId},
+                                               {<<"X-B3-Sampled">>, Sampled}]).
+
 all() ->
-    [encode_decode, decode_with_extra_junk, encode_decode_headers].
+    [encode_decode, decode_with_extra_junk, w3c_encode_decode_headers,
+     b3_encode_decode_headers].
 
 init_per_suite(Config) ->
     Config.
@@ -59,52 +64,117 @@ decode_with_extra_junk(_Config) ->
 
     ?assertMatch(Binary, Encoded).
 
-encode_decode_headers(_Config) ->
+w3c_encode_decode_headers(_Config) ->
     %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
     %% SpanId: 00f067aa0ba902b7
     %% Enabled: true
     Header = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01">>,
-    Decoded = oc_span_ctx_header:decode(Header),
-    Encoded = oc_span_ctx_header:encode(Decoded),
+    Decoded = oc_span_ctx_headers:decode(Header),
+    Encoded = oc_span_ctx_headers:encode(Decoded),
     ?assertEqual(Header, list_to_binary(Encoded)),
-    ?assertEqual(Decoded, oc_span_ctx_header:decode(Encoded)),
+    ?assertEqual(Decoded, oc_span_ctx_headers:decode(Encoded)),
 
     %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
     %% SpanId: 00f067aa0ba902b7
     %% Enabled: false
     DisabledHeader = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00">>,
-    DisabledDecoded = oc_span_ctx_header:decode(DisabledHeader),
-    DisabledEncoded = oc_span_ctx_header:encode(DisabledDecoded),
+    DisabledDecoded = oc_span_ctx_headers:decode(DisabledHeader),
+    DisabledEncoded = oc_span_ctx_headers:encode(DisabledDecoded),
     ?assertEqual(DisabledHeader, list_to_binary(DisabledEncoded)),
-    ?assertEqual(DisabledDecoded, oc_span_ctx_header:decode(DisabledEncoded)),
+    ?assertEqual(DisabledDecoded, oc_span_ctx_headers:decode(DisabledEncoded)),
     ?assertEqual(0, DisabledDecoded#span_ctx.trace_options),
 
     %% Decode invalid headers
+    ?assertEqual(undefined, oc_span_ctx_headers:from_headers([])),
+
     InvalidSpanIdHeader = <<"00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-00">>,
-    undefined = oc_span_ctx_header:decode(InvalidSpanIdHeader),
+    ?assertEqual(undefined, oc_span_ctx_headers:decode(InvalidSpanIdHeader)),
 
     InvalidTraceIdHeader = <<"00-00000000000000000000000000000000-00f067aa0ba902b7-00">>,
-    undefined = oc_span_ctx_header:decode(InvalidTraceIdHeader),
+    ?assertEqual(undefined, oc_span_ctx_headers:decode(InvalidTraceIdHeader)),
 
     InvalidBothIdsHeader = <<"00-00000000000000000000000000000000-0000000000000000-00">>,
-    undefined = oc_span_ctx_header:decode(InvalidBothIdsHeader),
+    ?assertEqual(undefined, oc_span_ctx_headers:decode(InvalidBothIdsHeader)),
 
     NoCtx = undefined,
-    NoCtxEncoded = oc_span_ctx_header:encode(NoCtx),
-    ?assertEqual(NoCtx, oc_span_ctx_header:decode(NoCtxEncoded)),
+    NoCtxEncoded = oc_span_ctx_headers:to_headers(NoCtx),
+    ?assertEqual(NoCtx, oc_span_ctx_headers:from_headers(NoCtxEncoded)),
 
     %% Encode invalid trace contexts
     InvalidTC = #span_ctx{trace_id = 0,
                           span_id = 0,
                           trace_options = false},
-    undefined = oc_span_ctx_header:encode(InvalidTC),
+    ?assertEqual([], oc_span_ctx_headers:to_headers(InvalidTC)),
 
     InvalidTraceIdTC = #span_ctx{trace_id = 85409434994488837557643013731547696719,
                                  span_id = 0,
                                  trace_options = true},
-    undefined = oc_span_ctx_header:encode(InvalidTraceIdTC),
+    ?assertEqual([], oc_span_ctx_headers:to_headers(InvalidTraceIdTC)),
 
     InvalidSpanIdTC = #span_ctx{trace_id = 0,
                                 span_id = 7017280452245743464,
                                 trace_options = false},
-    undefined = oc_span_ctx_header:encode(InvalidSpanIdTC).
+    ?assertEqual([], oc_span_ctx_headers:to_headers(InvalidSpanIdTC)).
+
+b3_encode_decode_headers(_Config) ->
+    %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    %% SpanId: 00f067aa0ba902b7
+    %% Enabled: true
+    Headers = ?B3_HEADERS(<<"4bf92f3577b34da6a3ce929d0e0e4736">>, <<"00f067aa0ba902b7">>, <<"1">>),
+    Decoded = oc_span_ctx_b3_headers:from_headers(Headers),
+    Encoded = oc_span_ctx_b3_headers:to_headers(Decoded),
+    compare_b3_headers(Encoded, Headers),
+    ?assertEqual(Decoded, oc_span_ctx_b3_headers:from_headers(Encoded)),
+
+    %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    %% SpanId: 00f067aa0ba902b7
+    %% Enabled: false
+    DisabledHeaders = ?B3_HEADERS(<<"4bf92f3577b34da6a3ce929d0e0e4736">>, <<"00f067aa0ba902b7">>, <<"0">>),
+    DisabledDecoded = oc_span_ctx_b3_headers:from_headers(DisabledHeaders),
+    DisabledEncoded = oc_span_ctx_b3_headers:to_headers(DisabledDecoded),
+    compare_b3_headers(DisabledEncoded, DisabledHeaders),
+    ?assertEqual(DisabledDecoded, oc_span_ctx_b3_headers:from_headers(DisabledEncoded)),
+    ?assertEqual(0, DisabledDecoded#span_ctx.trace_options),
+
+    %% Decode invalid headers
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers([])),
+
+    InvalidBase16 = ?B3_HEADERS(<<"zbf92f3577b34da6a3ce929d0e0e4736">>, <<"00f067aa0ba902b7">>, <<"0">>),
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers(InvalidBase16)),
+
+    InvalidSpanIdLength = ?B3_HEADERS(<<"4bf92f3577b34da6a3ce929d0e0e4736">>, <<"00f067aa0ba90">>, <<"0">>),
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers(InvalidSpanIdLength)),
+
+    InvalidSpanIdHeader = ?B3_HEADERS(<<"4bf92f3577b34da6a3ce929d0e0e4736">>, <<"0000000000000">>, <<"1">>),
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers(InvalidSpanIdHeader)),
+
+    InvalidTraceIdHeader = ?B3_HEADERS(<<"00000000000000000000000000000000">>, <<"00f067aa0ba90">>, <<"0">>),
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers(InvalidTraceIdHeader)),
+
+    InvalidBothIdsHeader = ?B3_HEADERS(<<"00000000000000000000000000000000">>, <<"0000000000000">>, <<"0">>),
+    ?assertEqual(undefined, oc_span_ctx_b3_headers:from_headers(InvalidBothIdsHeader)),
+
+    NoCtx = undefined,
+    NoCtxEncoded = oc_span_ctx_b3_headers:to_headers(NoCtx),
+    ?assertEqual(NoCtx, oc_span_ctx_b3_headers:from_headers(NoCtxEncoded)),
+
+    %% Encode invalid trace contexts
+    InvalidTC = #span_ctx{trace_id = 0,
+                          span_id = 0,
+                          trace_options = false},
+    ?assertEqual([], oc_span_ctx_b3_headers:to_headers(InvalidTC)),
+
+    InvalidTraceIdTC = #span_ctx{trace_id = 85409434994488837557643013731547696719,
+                                 span_id = 0,
+                                 trace_options = true},
+    ?assertEqual([], oc_span_ctx_b3_headers:to_headers(InvalidTraceIdTC)),
+
+    InvalidSpanIdTC = #span_ctx{trace_id = 0,
+                                span_id = 7017280452245743464,
+                                trace_options = false},
+    ?assertEqual([], oc_span_ctx_b3_headers:to_headers(InvalidSpanIdTC)).
+
+compare_b3_headers(Encoded, Orig) ->
+    lists:all(fun({Key, Value}) ->
+                      string:equal(Value, element(2, lists:keyfind(Key, 1, Orig)))
+              end, Encoded).

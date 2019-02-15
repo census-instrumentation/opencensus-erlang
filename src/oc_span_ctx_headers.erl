@@ -16,10 +16,11 @@
 %% Implements the spec found here
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_span_ctx_header).
+-module(oc_span_ctx_headers).
 
--export([field_name/0,
+-export([to_headers/1,
          encode/1,
+         from_headers/1,
          decode/1]).
 
 -include("opencensus.hrl").
@@ -29,33 +30,53 @@
 -define(ZERO_TRACEID, <<"00000000000000000000000000000000">>).
 -define(ZERO_SPANID, <<"0000000000000000">>).
 
-field_name() ->
-    <<"traceparent">>.
+-define(HEADER_KEY, <<"traceparent">>).
 
--spec encode(opencensus:span_ctx()) -> maybe(iolist()).
-encode(#span_ctx{trace_id=TraceId,
-                 span_id=SpanId}) when TraceId =:= 0
-                                       ;  SpanId =:= 0 ->
-    undefined;
+-spec to_headers(opencensus:span_ctx() | undefined) -> [{binary(), iolist()}].
+to_headers(#span_ctx{trace_id=TraceId,
+                     span_id=SpanId})
+  when TraceId =:= 0 orelse SpanId =:= 0 ->
+    [];
+to_headers(SpanCtx=#span_ctx{}) ->
+    EncodedValue = encode(SpanCtx),
+    [{?HEADER_KEY, EncodedValue}];
+to_headers(undefined) ->
+    [].
+
+-spec encode(opencensus:span_ctx()) -> iolist().
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId,
                  trace_options=TraceOptions}) ->
     Options = case TraceOptions band 1 of 1 -> <<"01">>; _ -> <<"00">> end,
     EncodedTraceId = io_lib:format("~32.16.0b", [TraceId]),
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
-    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options];
-encode(undefined) ->
-    [].
+    [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
 
--spec decode(iodata()) -> maybe(opencensus:span_ctx()).
+-spec from_headers(list() | map()) -> maybe(opencensus:span_ctx()).
+from_headers(Headers) when is_map(Headers) ->
+    decode(maps:get(?HEADER_KEY, Headers, undefined));
+from_headers(Headers) when is_list(Headers) ->
+    case lists:keyfind(?HEADER_KEY, 1, Headers) of
+        {_, Value} ->
+            decode(Value);
+        _ ->
+            undefined
+    end.
+
 decode(TraceContext) when is_list(TraceContext) ->
     decode(list_to_binary(TraceContext));
-decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, _/binary>>) when TraceId =:= ?ZERO_TRACEID
-                                                                                 ;  SpanId =:= ?ZERO_SPANID ->
+decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, _/binary>>)
+  when TraceId =:= ?ZERO_TRACEID orelse SpanId =:= ?ZERO_SPANID ->
     undefined;
-decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, "-", TraceOptions:2/binary, _Rest/binary>>) ->
-    #span_ctx{trace_id=binary_to_integer(TraceId, 16),
-              span_id=binary_to_integer(SpanId, 16),
-              trace_options=case TraceOptions of <<"01">> -> 1; _ -> 0 end};
+decode(<<?VERSION, "-", TraceId:32/binary, "-", SpanId:16/binary, "-", Opts:2/binary, _/binary>>) ->
+    try
+        #span_ctx{trace_id=binary_to_integer(TraceId, 16),
+                  span_id=binary_to_integer(SpanId, 16),
+                  trace_options=case Opts of <<"01">> -> 1; _ -> 0 end}
+    catch
+        %% to integer from base 16 string failed
+        error:badarg ->
+            undefined
+    end;
 decode(_) ->
     undefined.
