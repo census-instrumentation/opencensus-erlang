@@ -13,7 +13,7 @@
 %% limitations under the License.
 %%
 %% @doc Functions to support the http header format of the tracecontext spec
-%% Implements the spec found here
+%% Implements the spec found here https://github.com/w3c/distributed-tracing
 %% @end
 %%%-------------------------------------------------------------------------
 -module(oc_span_ctx_headers).
@@ -31,6 +31,7 @@
 -define(ZERO_SPANID, <<"0000000000000000">>).
 
 -define(HEADER_KEY, <<"traceparent">>).
+-define(STATE_HEADER_KEY, <<"tracestate">>).
 
 -spec to_headers(opencensus:span_ctx() | undefined) -> [{binary(), iolist()}].
 to_headers(#span_ctx{trace_id=TraceId,
@@ -39,7 +40,7 @@ to_headers(#span_ctx{trace_id=TraceId,
     [];
 to_headers(SpanCtx=#span_ctx{}) ->
     EncodedValue = encode(SpanCtx),
-    [{?HEADER_KEY, EncodedValue}];
+    [{?HEADER_KEY, EncodedValue} | encode_tracestate(SpanCtx)];
 to_headers(undefined) ->
     [].
 
@@ -52,15 +53,64 @@ encode(#span_ctx{trace_id=TraceId,
     EncodedSpanId = io_lib:format("~16.16.0b", [SpanId]),
     [?VERSION, "-", EncodedTraceId, "-", EncodedSpanId, "-", Options].
 
+encode_tracestate(#span_ctx{tracestate=undefined}) ->
+    [];
+encode_tracestate(#span_ctx{tracestate=#tracestate{entries=Entries}}) ->
+    StateHeaderValue = lists:join($,, [[Key, $=, Value] || {Key, Value} <- Entries]),
+    [{?STATE_HEADER_KEY, StateHeaderValue}].
+
 -spec from_headers(list() | map()) -> maybe(opencensus:span_ctx()).
 from_headers(Headers) when is_map(Headers) ->
     decode(maps:get(?HEADER_KEY, Headers, undefined));
 from_headers(Headers) when is_list(Headers) ->
     case lists:keyfind(?HEADER_KEY, 1, Headers) of
         {_, Value} ->
-            decode(Value);
+            case decode(Value) of
+                undefined ->
+                    undefined;
+                SpanCtx ->
+                    Tracestate = tracestate_from_headers(Headers),
+                    SpanCtx#span_ctx{tracestate=Tracestate}
+            end;
         _ ->
             undefined
+    end.
+
+tracestate_from_headers(Headers) ->
+    %% could be multiple tracestate headers. Combine them all with comma separators
+    case combine_headers(?STATE_HEADER_KEY, Headers) of
+        [] ->
+            undefined;
+        FieldValue ->
+            tracestate_decode(FieldValue)
+    end.
+
+combine_headers(Key, Headers) ->
+    lists:foldl(fun({K, V}, Acc) ->
+                        case string:equal(K, Key) of
+                            true ->
+                                [V, $, | Acc];
+                            false ->
+                                Acc
+                        end
+                end, [], Headers).
+
+tracestate_decode(Value) ->
+    %% TODO: the 512 byte limit should not include optional white space that can
+    %% appear between list members.
+    case iolist_size(Value) of
+        Size when Size =< 512 ->
+            #tracestate{entries=[split(Pair) || Pair <- string:lexemes(Value, [$,])]};
+        _ ->
+            undefined
+    end.
+
+split(Pair) ->
+    case string:split(Pair, "=") of
+        [Key, Value] ->
+            {iolist_to_binary(Key), iolist_to_binary(Value)};
+        [Key] ->
+            {iolist_to_binary(Key), <<>>}
     end.
 
 decode(TraceContext) when is_list(TraceContext) ->

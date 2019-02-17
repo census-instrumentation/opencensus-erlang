@@ -11,13 +11,15 @@
 
 -include("opencensus.hrl").
 
+-define(W3C_HEADERS(TraceParent, TraceState), [{<<"traceparent">>, TraceParent},
+                                               {<<"tracestate">>, TraceState}]).
 -define(B3_HEADERS(TraceId, SpanId, Sampled), [{<<"X-B3-TraceId">>, TraceId},
                                                {<<"X-B3-SpanId">>, SpanId},
                                                {<<"X-B3-Sampled">>, Sampled}]).
 
 all() ->
     [encode_decode, decode_with_extra_junk, w3c_encode_decode_headers,
-     b3_encode_decode_headers].
+     b3_encode_decode_headers, tracestate].
 
 init_per_suite(Config) ->
     Config.
@@ -83,6 +85,12 @@ w3c_encode_decode_headers(_Config) ->
     ?assertEqual(DisabledHeader, list_to_binary(DisabledEncoded)),
     ?assertEqual(DisabledDecoded, oc_span_ctx_headers:decode(DisabledEncoded)),
     ?assertEqual(0, DisabledDecoded#span_ctx.trace_options),
+
+    Headers = ?W3C_HEADERS(<<"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01">>,
+                           <<"congo=congosFirstPosition,rojo=rojosFirstPosition">>),
+    SpanCtx = oc_span_ctx_headers:from_headers(Headers),
+    EncodedHeaders = oc_span_ctx_headers:to_headers(SpanCtx),
+    ?assertMatch(SpanCtx, oc_span_ctx_headers:from_headers(EncodedHeaders)),
 
     %% Decode invalid headers
     ?assertEqual(undefined, oc_span_ctx_headers:from_headers([])),
@@ -178,3 +186,27 @@ compare_b3_headers(Encoded, Orig) ->
     lists:all(fun({Key, Value}) ->
                       string:equal(Value, element(2, lists:keyfind(Key, 1, Orig)))
               end, Encoded).
+
+tracestate(_Config) ->
+    %% fail on empty key
+    ?assertMatch(undefined, oc_tracestate:new(undefined, [{"", "emptykey"}])),
+
+    %% fail on too long key
+    ?assertMatch(undefined, oc_tracestate:new(undefined, [{lists:flatten(lists:duplicate(257, "k")),
+                                                           "value"}])),
+
+    %% fail on too long value
+    ?assertMatch(undefined, oc_tracestate:new(undefined, [{"key",
+                                                           lists:flatten(lists:duplicate(257, "v"))}])),
+
+    Entries = [{"congo", "congosFirstPosition"}, {"rojo", "rojosFirstPosition"}],
+    TS0 = oc_tracestate:new(undefined, Entries),
+    TS = oc_tracestate:new(TS0, [{"congo", "congosSecondPosition"}]),
+
+    %% order matters
+    ?assertMatch([{"rojo", "rojosFirstPosition"}, {"congo", "congosSecondPosition"}],
+                 TS#tracestate.entries),
+
+    %% return undefined if any entry is invalid
+    ?assertMatch(undefined,
+                 oc_tracestate:new(TS0, [{"congo", "congosSecondPosition"}, {"rojo", <<1234>>}])).

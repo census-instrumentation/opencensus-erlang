@@ -38,8 +38,16 @@
           %% 64 bit int span id
           span_id           :: opencensus:span_id() | undefined,
           %% 8-bit integer, lowest bit is if it is sampled
-          trace_options = 1 :: integer() | undefined
+          trace_options = 1 :: integer() | undefined,
+          %% Tracestate represents tracing-system specific context in a list of key-value pairs.
+          %% Tracestate allows different vendors propagate additional information and
+          %% inter-operate with their legacy Id formats.
+          tracestate :: opencensus:tracestate() | undefined
          }).
+
+-record(tracestate, {
+          entries :: [{unicode:latin1_chardata(), unicode:latin1_chardata()}]
+        }).
 
 -record(span, {
           %% name of the span
@@ -52,6 +60,8 @@
           span_id                                 :: opencensus:span_id() | undefined,
           %% 64 bit int parent span
           parent_span_id                          :: opencensus:span_id() | undefined,
+
+          tracestate                              :: opencensus:tracestate() | undefined,
 
           %% 8-bit integer, lowest bit is if it is sampled
           trace_options = 1                       :: integer() | undefined,

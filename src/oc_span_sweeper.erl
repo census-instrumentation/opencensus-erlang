@@ -134,8 +134,10 @@ expired_match_spec(Time, Return) ->
       [{'<', '$1', Time}],
       [Return]}].
 
-finish_span(S=#span{span_id=SpanId}) ->
-    oc_span:finish_span(S),
+finish_span(S=#span{span_id=SpanId,
+                    tracestate=Tracestate}) ->
+    %% hack to not lose tracestate when finishing without span ctx
+    oc_span:finish_span(#span_ctx{tracestate=Tracestate}, S),
     ets:delete(?SPAN_TAB, SpanId).
 
 select_expired(TTL) ->

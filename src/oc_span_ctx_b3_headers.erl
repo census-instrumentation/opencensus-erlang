@@ -13,7 +13,7 @@
 %% limitations under the License.
 %%
 %% @doc Functions to support the http header format of the tracecontext spec
-%% Implements the spec found here
+%% Implements the spec found here https://github.com/openzipkin/b3-propagation
 %% @end
 %%%-------------------------------------------------------------------------
 -module(oc_span_ctx_b3_headers).

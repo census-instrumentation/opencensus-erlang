@@ -17,7 +17,7 @@
 %%%-------------------------------------------------------------------------
 -module(oc_span).
 
--export([finish_span/1,
+-export([finish_span/2,
 
          put_attribute/3,
          put_attributes/2,
@@ -41,12 +41,14 @@
 %% Finish a span, setting the end_time and sending to the reporter.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span(maybe(opencensus:span())) -> true.
-finish_span(Span=#span{}) ->
+-spec finish_span(opencensus:span_ctx(), maybe(opencensus:span())) -> true.
+finish_span(#span_ctx{tracestate=Tracestate}, Span=#span{}) ->
     EndTime = wts:timestamp(),
-    Span1 = Span#span{end_time=EndTime},
+    %% update tracestate to what the context has when finished
+    Span1 = Span#span{end_time=EndTime,
+                      tracestate=Tracestate},
     oc_reporter:store_span(Span1);
-finish_span(_) ->
+finish_span(_, _) ->
     true.
 
 %%--------------------------------------------------------------------
