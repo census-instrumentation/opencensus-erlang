@@ -17,7 +17,7 @@
 %% [https://github.com/census-instrumentation/opencensus-specs/blob/7b426409/encodings/BinaryEncoding.md]
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_span_ctx_binary).
+-module(oc_propagation_binary).
 
 -export([encode/1,
          decode/1]).

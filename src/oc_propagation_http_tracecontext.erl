@@ -13,10 +13,10 @@
 %% limitations under the License.
 %%
 %% @doc Functions to support the http header format of the tracecontext spec
-%% Implements the spec found here https://github.com/w3c/distributed-tracing
+%% Implements the spec found here https://www.w3.org/TR/trace-context/
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_span_ctx_headers).
+-module(oc_propagation_http_tracecontext).
 
 -export([to_headers/1,
          encode/1,

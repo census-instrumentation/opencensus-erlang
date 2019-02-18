@@ -56,14 +56,12 @@ More details on working with spans can be found [here](span.md) and in the modul
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
-Opencensus comes with two forms of span context encoding for sending over the wire. `oc_span_ctx_header` encodes a span context suitable for transfering as an HTTP header and `oc_span_ctx_binary` will encode and decode a binary form used in GRPC and other binary protocols.
+Builtin support for encoding and decoding span context from HTTP headers comes in two formats:
 
-For example, creating the header for sending with an HTTP client might look like:
+* [W3C Trace Context](https://www.w3.org/TR/trace-context/) 
+* [B3](https://github.com/openzipkin/b3-propagation)
 
-```erlang
-EncodedSpanCtx = oc_span_ctx_header:encode(ocp:current_span_ctx()),
-Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
-```
+Additionally `oc_propagation_binary` will encode and decode a binary form used for GRPC and other binary protocols.
 
 #### <a name="Samplers">Samplers</a> ####
 

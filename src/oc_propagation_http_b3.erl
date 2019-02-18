@@ -16,7 +16,7 @@
 %% Implements the spec found here https://github.com/openzipkin/b3-propagation
 %% @end
 %%%-------------------------------------------------------------------------
--module(oc_span_ctx_b3_headers).
+-module(oc_propagation_http_b3).
 
 -export([to_headers/1,
          from_headers/1]).
