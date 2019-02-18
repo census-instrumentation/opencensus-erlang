@@ -53,10 +53,10 @@ modifications(_Config) ->
     Span6 = oc_span:add_link(Link, Span5),
     ?assertEqual(undefined, oc_span:add_link(Link, undefined)),
 
-    ?assertEqual({error, no_report_buffer}, oc_span:finish_span(Span6)),
+    ?assertEqual({error, no_report_buffer}, oc_span:finish_span(#span_ctx{}, Span6)),
 
     {ok, _} = application:ensure_all_started(opencensus),
-    ?assertEqual(true, oc_span:finish_span(Span6)),
-    ?assertEqual(true, oc_span:finish_span(undefined)),
+    ?assertEqual(true, oc_span:finish_span(#span_ctx{}, Span6)),
+    ?assertEqual(true, oc_span:finish_span(#span_ctx{}, undefined)),
 
     application:stop(opencensus).

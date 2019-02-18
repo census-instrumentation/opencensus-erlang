@@ -24,6 +24,7 @@
 -include("opencensus.hrl").
 
 -export_type([span_ctx/0,
+              tracestate/0,
               trace_id/0,
               span_id/0,
               span/0,
@@ -41,6 +42,7 @@
               tags/0]).
 
 -type span_ctx()           :: #span_ctx{}.
+-type tracestate()         :: #tracestate{}.
 -type trace_id()           :: non_neg_integer().
 -type span_id()            :: non_neg_integer().
 -type span()               :: #span{}.

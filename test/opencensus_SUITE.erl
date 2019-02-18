@@ -14,7 +14,8 @@
 
 all() ->
     [start_finish, child_spans, noops, attributes_test,
-     links, time_events, status, ctx_with_span, remote_parent].
+     links, time_events, status, ctx_with_span, remote_parent,
+     tracestate_updates].
 
 init_per_suite(Config) ->
     application:load(opencensus),
@@ -246,3 +247,25 @@ remote_parent(_Config) ->
 
     oc_trace:finish_span(ChildSpanCtx),
     oc_trace:finish_span(SpanCtx).
+
+tracestate_updates(Config) ->
+    Tab = ?config(tid, Config),
+    SpanName1 = <<"span-1">>,
+    SpanCtx=#span_ctx{tracestate=Tracestate} = oc_trace:start_span(SpanName1, undefined),
+    SpanCtx1 = SpanCtx#span_ctx{tracestate=oc_tracestate:add(Tracestate, [{"oolong", "tea"}])},
+
+    ChildSpanName1 = <<"child-span-1">>,
+    ChildSpanCtx = oc_trace:start_span(ChildSpanName1, SpanCtx1),
+
+    ?FINISH(Tab, ChildSpanCtx),
+    ?FINISH(Tab, SpanCtx1),
+
+    [ChildSpanData] = ets:lookup(Tab, ChildSpanCtx#span_ctx.span_id),
+    ?assertEqual(SpanCtx1#span_ctx.span_id, ChildSpanData#span.parent_span_id),
+    ?assert(ChildSpanData#span.end_time > ChildSpanData#span.start_time),
+    ?assertEqual(SpanCtx1#span_ctx.tracestate, ChildSpanData#span.tracestate),
+
+    [SpanData] = ets:lookup(Tab, SpanCtx1#span_ctx.span_id),
+    ?assertEqual(SpanName1, SpanData#span.name),
+    ?assert(SpanData#span.end_time > SpanData#span.start_time),
+    ?assertEqual(SpanCtx1#span_ctx.tracestate, SpanData#span.tracestate).
