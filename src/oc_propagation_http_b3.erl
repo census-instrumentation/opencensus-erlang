@@ -85,7 +85,7 @@ trace_id(Headers) ->
 span_id(Headers) ->
     case lookup(?B3_SPAN_ID, Headers) of
         SpanId when is_list(SpanId) orelse is_binary(SpanId) ->
-            case string:length(SpanId) =:= 32 orelse string:length(SpanId) =:= 16 of
+            case string:length(SpanId) =:= 16 of
                 true ->
                     SpanId;
                 _ ->
