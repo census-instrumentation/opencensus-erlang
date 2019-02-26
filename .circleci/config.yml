@@ -49,11 +49,3 @@ workflows:
           name: "otp-20"
           tag: "20"
           codecov_flag: "otp20"
-      - build_and_test:
-          name: "otp-19"
-          tag: "19"
-          codecov_flag: "otp19"
-      - build_and_test:
-          name: "otp-18"
-          tag: "18"
-          codecov_flag: "otp18"
