@@ -35,7 +35,7 @@ jobs:
             - rebar3/cover
             - run: rebar3 as test covertool generate
             - codecov/upload:
-                file: _build/test/covertool/rebar3_hex.covertool.xml
+                file: _build/test/covertool/opencensus.covertool.xml
                 flags: <<parameters.codecov_flag>>
 
 workflows:
