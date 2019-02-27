@@ -50,7 +50,7 @@ new(undefined, Entries) ->
         true ->
             #tracestate{entries=Entries};
         {false, Error} ->
-            ?LOG_INFO(format_error(Error)),
+            ?LOG_INFO(format_error(Error), []),
             undefined
     end;
 new(#tracestate{entries=ParentEntries}, Entries) ->
@@ -58,13 +58,13 @@ new(#tracestate{entries=ParentEntries}, Entries) ->
         true ->
             case add(#tracestate{entries=ParentEntries}, Entries) of
                 {error, Reason} ->
-                    ?LOG_INFO(format_error(Reason)),
+                    ?LOG_INFO(format_error(Reason), []),
                     undefined;
                 Tracestate ->
                     Tracestate
             end;
         {false, Error} ->
-            ?LOG_INFO(format_error(Error)),
+            ?LOG_INFO(format_error(Error), []),
             undefined
     end.
 
