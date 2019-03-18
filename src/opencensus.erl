@@ -66,7 +66,7 @@
 %%--------------------------------------------------------------------
 -spec generate_trace_id() -> trace_id().
 generate_trace_id() ->
-    uniform(2 bsl 127). %% 2 shifted left by 127 == 2 ^ 128
+    uniform(2 bsl 127 - 1). %% 2 shifted left by 127 == 2 ^ 128
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -75,7 +75,7 @@ generate_trace_id() ->
 %%--------------------------------------------------------------------
 -spec generate_span_id() -> span_id().
 generate_span_id() ->
-    uniform(2 bsl 63). %% 2 shifted left by 63 == 2 ^ 64
+    uniform(2 bsl 63 - 1). %% 2 shifted left by 63 == 2 ^ 64
 
 %%--------------------------------------------------------------------
 %% @doc
