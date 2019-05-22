@@ -52,7 +52,7 @@ some_fun() ->
                       end).
 ```
 
-More details on working with spans can be found [here](span.md) and in the modules documentation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
+More details on working with spans can be found [here](doc/span.md) and in the modules documentation for [ocp](doc/ocp.md), [oc_trace](doc/oc_trace.md) and [oc_span](doc/oc_span.md).
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
@@ -65,11 +65,11 @@ Additionally `oc_propagation_binary` will encode and decode a binary form used f
 
 #### <a name="Samplers">Samplers</a> ####
 
-[oc_sampler_never](oc_sampler_never.md): Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
+[oc_sampler_never](doc/oc_sampler_never.md): Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
 
-[oc_sampler_always](oc_sampler_always.md): Enable every new trace for sampling.
+[oc_sampler_always](doc/oc_sampler_always.md): Enable every new trace for sampling.
 
-[oc_sampler_probability](oc_sampler_probability.md): Takes a probability, default 0.5, that any new trace will be sampled.
+[oc_sampler_probability](doc/oc_sampler_probability.md): Takes a probability, default 0.5, that any new trace will be sampled.
 
 
 #### <a name="Reporters">Reporters</a> ####
