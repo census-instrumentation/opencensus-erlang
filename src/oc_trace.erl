@@ -128,13 +128,13 @@ with_child_span(Ctx, Name, Options) ->
 
 -spec start_span(Name, SpanCtx) -> SpanCtx when
       Name :: unicode:unicode_binary(),
-      SpanCtx :: opencensus:span_ctx().
+      SpanCtx :: opencensus:span_ctx() | undefined.
 start_span(Name, SpanCtx) ->
     new_span_(Name, SpanCtx, ?SPAN_KIND_UNSPECIFIED, false).
 
 -spec start_span(Name, SpanCtx, Options) -> SpanCtx when
       Name :: unicode:unicode_binary(),
-      SpanCtx :: opencensus:span_ctx(),
+      SpanCtx :: opencensus:span_ctx() | undefined,
       Options :: #{remote_parent => boolean(),
                    sampler => module(),
                    kind => opencensus:span_kind(),
