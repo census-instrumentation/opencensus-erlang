@@ -65,7 +65,7 @@ end_per_suite(_Config) ->
 
 init_per_testcase(full, Config) ->
     Exporters = [{oc_stat_exporter_pid, self()}],
-    application:set_env(opencensus, stat, [{exporters, Exporters}]),
+    application:set_env(opencensus, stat, [{handlers, Exporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(_Name, Config) ->
@@ -241,7 +241,7 @@ full(_Config) ->
     ?assertMatch(?VD,
                  lists:sort(oc_stat:export())),
 
-    ?assertMatch(true, oc_stat_exporter:registered(oc_stat_exporter_pid)),
+    % ?assertMatch(true, oc_stat_exporter:registered(oc_stat_exporter_pid)),
 
     receive
         {view_data, Thing} ->

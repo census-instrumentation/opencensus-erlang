@@ -171,7 +171,7 @@ current_tags() ->
 %% Finishes the span in the current pdict context.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span() -> boolean().
+-spec finish_span() -> ok | {error, invalid_span} | {error, no_report_buffer}.
 finish_span() ->
     CurrentCtx = current_span_ctx(),
     ParentCtx = oc_trace:parent_span_ctx(CurrentCtx),

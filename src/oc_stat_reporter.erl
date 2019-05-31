@@ -11,29 +11,34 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%
-%% @doc stats configuration
-%% @end
 %%%------------------------------------------------------------------------
 
--module(oc_stat_config).
+%% @doc
+%% Exporter exports the collected records as view data.
+%% @end
+-module(oc_stat_reporter).
 
--export([views/0,
-         export_interval/0,
-         exporters/0]).
+-behaviour(oc_internal_timer).
 
--define(DEFAULT_VIEWS, []).
--define(DEFAULT_EXPORTERS, []).
--define(DEFAULT_EXPORT_INTERVAL, 5000).
+-export([start_link/1,
+         ping/0]).
 
-views() ->
-    proplists:get_value(views, stat_conf(), ?DEFAULT_VIEWS).
+-include("opencensus.hrl").
+-include("oc_logger.hrl").
 
-export_interval() ->
-    proplists:get_value(export_interval, stat_conf(), ?DEFAULT_EXPORT_INTERVAL).
+start_link(Handlers) ->
+    case gen_event:start_link({local, ?MODULE}, []) of
+        {ok, Pid} ->
+            [gen_event:add_handler(Pid, Handler, Opts)
+             || {Handler, Opts} <- Handlers],
 
-exporters() ->
-    proplists:get_value(exporters, stat_conf(), ?DEFAULT_EXPORTERS).
+            {ok, Pid};
+        Other -> Other
+    end.
 
-stat_conf() ->
-    application:get_env(opencensus, stat, []).
+%% @private
+ping() ->
+    Measurements = oc_stat:export(),
+    gen_event:sync_notify(?MODULE, {stats, Measurements}),
+
+    ok.

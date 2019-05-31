@@ -1,0 +1,8 @@
+[*]
+indent_style = space
+
+[*.erl]
+indent_size = 4
+
+[*.yml]
+indent_size = 2

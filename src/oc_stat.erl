@@ -17,9 +17,15 @@
 %%%-----------------------------------------------------------------------
 -module(oc_stat).
 
+-behaviour(gen_server).
+
 -export([record/2,
          record/3,
          export/0]).
+
+-export([add_handler/1,
+         add_handler/2,
+         delete_handler/1]).
 
 -export([start_link/0,
          init/1,
@@ -74,6 +80,29 @@ record(Ctx, Measures) ->
 -spec export() -> [oc_stat_view:view_data()].
 export() ->
     [oc_stat_view:export(View) || View <- oc_stat_view:all_subscribed_()].
+
+%%--------------------------------------------------------------------
+%% @doc
+%% @equiv add_handler(Handler, [])
+%% @end
+%%--------------------------------------------------------------------
+add_handler(Handler) -> add_handler(Handler, []).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add new handler
+%% @end
+%%--------------------------------------------------------------------
+add_handler(Handler, Args) ->
+    gen_event:add_handler(oc_stat_reporter, Handler, Args).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Delete handler
+%% @end
+%%--------------------------------------------------------------------
+delete_handler(Handler) ->
+    gen_event:delete_handler(oc_stat_reporter, Handler, []).
 
 %% gen_server implementation
 

@@ -34,11 +34,14 @@ maybe(T) = T | undefined
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_link-2">add_link/2</a></td><td>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_handler-1">add_handler/1</a></td><td>Equivalent to <a href="#add_handler-2"><tt>add_handler(Handler, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#add_handler-2">add_handler/2</a></td><td>
+Add new handler <code>Module</code> and pass <code>Args</code> as the configuration to
+<code>Module:init/1</code> callback.</td></tr><tr><td valign="top"><a href="#add_link-2">add_link/2</a></td><td>
 Add a Link to the list of Links in the span.</td></tr><tr><td valign="top"><a href="#add_time_event-2">add_time_event/2</a></td><td>
 Add an Annotation or MessageEvent to the list of TimeEvents in a span.</td></tr><tr><td valign="top"><a href="#add_time_event-3">add_time_event/3</a></td><td></td></tr><tr><td valign="top"><a href="#annotation-2">annotation/2</a></td><td>
 Create an Annotation.</td></tr><tr><td valign="top"><a href="#current_span_ctx-1">current_span_ctx/1</a></td><td>
-Return the current span context in a <code>Ctx</code> or <code>undefined</code>.</td></tr><tr><td valign="top"><a href="#finish_span-1">finish_span/1</a></td><td>
+Return the current span context in a <code>Ctx</code> or <code>undefined</code>.</td></tr><tr><td valign="top"><a href="#delete_handler-1">delete_handler/1</a></td><td>
+Delete handler marked by the <code>Handler</code>.</td></tr><tr><td valign="top"><a href="#finish_span-1">finish_span/1</a></td><td>
 Finish a span, setting the end_time.</td></tr><tr><td valign="top"><a href="#from_ctx-1">from_ctx/1</a></td><td>
 Return the span context, if it exists, from Ctx.</td></tr><tr><td valign="top"><a href="#is_enabled-1">is_enabled/1</a></td><td>
 Returns true if trace is enabled.</td></tr><tr><td valign="top"><a href="#link-4">link/4</a></td><td>
@@ -55,6 +58,34 @@ Set the current span context in a context to <code>SpanCtx</code>.</td></tr></ta
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="add_handler-1"></a>
+
+### add_handler/1 ###
+
+<pre><code>
+add_handler(Handler) -&gt; ok | term()
+</code></pre>
+
+<ul class="definitions"><li><code>Handler = Module | {Module, Id}</code></li><li><code>Module = module()</code></li><li><code>Id = term()</code></li></ul>
+
+Equivalent to [`add_handler(Handler, [])`](#add_handler-2).
+
+<a name="add_handler-2"></a>
+
+### add_handler/2 ###
+
+<pre><code>
+add_handler(Handler, Args::term()) -&gt; ok | term()
+</code></pre>
+
+<ul class="definitions"><li><code>Handler = Module | {Module, Id}</code></li><li><code>Module = module()</code></li><li><code>Id = term()</code></li></ul>
+
+Add new handler `Module` and pass `Args` as the configuration to
+`Module:init/1` callback.
+
+You can create multiple instances of the same `Module` handler by
+differentiating them with `Id` value.
 
 <a name="add_link-2"></a>
 
@@ -111,12 +142,24 @@ current_span_ctx(Ctx::<a href="ctx.md#type-t">ctx:t()</a>) -&gt; <a href="#type-
 
 Return the current span context in a `Ctx` or `undefined`.
 
+<a name="delete_handler-1"></a>
+
+### delete_handler/1 ###
+
+<pre><code>
+delete_handler(Handler) -&gt; ok | term()
+</code></pre>
+
+<ul class="definitions"><li><code>Handler = Module | {Module, Id}</code></li><li><code>Module = module()</code></li><li><code>Id = term()</code></li></ul>
+
+Delete handler marked by the `Handler`.
+
 <a name="finish_span-1"></a>
 
 ### finish_span/1 ###
 
 <pre><code>
-finish_span(Span_ctx::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>)) -&gt; boolean()
+finish_span(Span_ctx::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>)) -&gt; ok | {error, invalid_span} | {error, no_report_buffer}
 </code></pre>
 <br />
 

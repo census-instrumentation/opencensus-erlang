@@ -11,11 +11,9 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%
-%% @doc A test reporter that keeps finished spans in an ETS table.
-%% @end
-%%%-----------------------------------------------------------------------
--module(oc_tab_reporter).
+%%%------------------------------------------------------------------------
+
+-module(oc_trace_stdout_handler).
 
 -behaviour(gen_event).
 
@@ -23,11 +21,11 @@
          handle_call/2,
          handle_event/2]).
 
-init(Tab) -> {ok, Tab}.
+init(Opts) -> {ok, Opts}.
 
 handle_call(_Msg, State) -> {ok, ok, State}.
 
-handle_event({spans, Spans}, Tab) ->
-    true = ets:insert(Tab, Spans),
+handle_event({spans, Spans}, State) ->
+    [io:format("~p~n", [Span]) || Span <- Spans],
 
-    {ok, Tab}.
+    {ok, State}.

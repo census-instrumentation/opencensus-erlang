@@ -49,7 +49,11 @@
 
          message_event/4,
 
-         set_status/3]).
+         set_status/3,
+
+         add_handler/1,
+         add_handler/2,
+         delete_handler/1]).
 
 -dialyzer({nowarn_function, update_trace_options/2}).
 
@@ -199,17 +203,17 @@ update_trace_options(should_sample, #span_ctx{trace_id=TraceId,
 %% Finish a span, setting the end_time.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span(maybe(opencensus:span_ctx())) -> boolean().
+-spec finish_span(maybe(opencensus:span_ctx())) -> ok | {error, invalid_span} | {error, no_report_buffer}.
 finish_span(SpanCtx=#span_ctx{span_id=SpanId,
                               trace_options=TraceOptions}) when ?IS_ENABLED(TraceOptions) ->
     case ets:take(?SPAN_TAB, SpanId) of
         [SpanData] ->
             oc_span:finish_span(SpanCtx, SpanData);
         _ ->
-            false
+            {error, invalid_span}
     end;
 finish_span(_) ->
-    true.
+    {error, invalid_span}.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -327,6 +331,45 @@ link(LinkType, TraceId, SpanId, Attributes) ->
           trace_id=TraceId,
           span_id=SpanId,
           attributes=Attributes}.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% @equiv add_handler(Handler, [])
+%% @end
+%%--------------------------------------------------------------------
+-spec add_handler(Handler) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
+add_handler(Handler) -> add_handler(Handler, []).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Add new handler `Module' and pass `Args' as the configuration to
+%% `Module:init/1' callback.
+%%
+%% You can create multiple instances of the same `Module' handler by
+%% differentiating them with `Id' value.
+%% @end
+%%--------------------------------------------------------------------
+-spec add_handler(Handler, Args::term()) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
+add_handler(Handler, Args) ->
+    gen_event:add_handler(oc_trace_reporter, Handler, Args).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Delete handler marked by the `Handler'.
+%% @end
+%%--------------------------------------------------------------------
+-spec delete_handler(Handler) -> ok | term() when
+      Handler :: Module | {Module, Id},
+      Module :: module(),
+      Id :: term().
+delete_handler(Handler) ->
+    gen_event:delete_handler(oc_trace_reporter, Handler, []).
 
 %% Internal functions
 

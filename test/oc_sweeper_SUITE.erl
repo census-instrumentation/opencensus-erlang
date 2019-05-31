@@ -33,8 +33,9 @@ init_per_testcase(storage_size, Config) ->
                                                span_ttl => 500,
                                                storage_size => 100}),
 
-    application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
+    Reporters = [{oc_reporter_pid, self()}],
+    application:set_env(opencensus, trace, [{interval, 1},
+                                            {handlers, Reporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config;
 init_per_testcase(Type, Config) ->
@@ -42,8 +43,9 @@ init_per_testcase(Type, Config) ->
                                                strategy => Type,
                                                span_ttl => 500}),
 
-    application:set_env(opencensus, send_interval_ms, 1),
-    application:set_env(opencensus, reporters, [{oc_reporter_pid, self()}]),
+    Reporters = [{oc_reporter_pid, self()}],
+    application:set_env(opencensus, trace, [{interval, 1},
+                                            {handlers, Reporters}]),
     {ok, _} = application:ensure_all_started(opencensus),
     Config.
 

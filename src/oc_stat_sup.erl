@@ -11,35 +11,27 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%
 %%%------------------------------------------------------------------------
 
-%% @doc opencensus top level supervisor.
 %% @private
-%% @end
 
--module(opencensus_sup).
+-module(oc_stat_sup).
 
--behaviour(supervisor).
+-export([start_link/1, init/1]).
 
--export([start_link/0]).
+start_link(Opts) ->
+    supervisor:start_link(?MODULE, Opts).
 
--export([init/1]).
+init(Opts) ->
+    Interval = proplists:get_value(interval, Opts, 5000),
+    Handlers = proplists:get_value(handlers, Opts, []),
 
-start_link() ->
-    supervisor:start_link(?MODULE, []).
+    Reporter = #{id => reporter,
+                 start => {oc_stat_reporter, start_link, [Handlers]}},
+    ViewServer = #{id => view_server,
+                   start => {oc_stat, start_link, []}},
+    Timer = #{id => timer,
+              start => {oc_internal_timer, start_link, [Interval,
+                                                        oc_stat_reporter]}},
 
-init([]) ->
-    ok = oc_sampler:init(application:get_env(opencensus, sampler, {oc_sampler_always, []})),
-
-    StatOpts = application:get_env(opencensus, stat, []),
-    StatSup = #{id => stat,
-                start => {oc_stat_sup, start_link, [StatOpts]},
-                type => supervisor},
-
-    TraceOpts = application:get_env(opencensus, trace, []),
-    TraceSup = #{id => traces,
-                 start => {oc_trace_sup, start_link, [TraceOpts]},
-                 type => supervisor},
-
-    {ok, {#{strategy => one_for_one}, [TraceSup, StatSup]}}.
+    {ok, {#{strategy => one_for_one}, [Reporter, Timer, ViewServer]}}.
