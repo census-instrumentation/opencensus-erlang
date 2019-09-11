@@ -108,7 +108,9 @@ handle_info(report_spans, State=#state{reporters=Reporters,
     erlang:cancel_timer(Ref),
     Ref1 = erlang:send_after(SendInterval, self(), report_spans),
     send_spans(Reporters),
-    {noreply, State#state{timer_ref=Ref1}}.
+    {noreply, State#state{timer_ref=Ref1}};
+handle_info({ssl_closed, _}, State) ->
+    {noreply, State}.
 
 code_change(_, State, _) ->
     {ok, State}.
