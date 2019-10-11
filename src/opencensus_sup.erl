@@ -39,19 +39,19 @@ init([]) ->
                  type => worker,
                  modules => [oc_reporter]},
 
-    Exporter = #{id => oc_stat_exporter,
-                 start => {oc_stat_exporter, start_link, []},
-                 restart => permanent,
-                 shutdown => 1000,
-                 type => worker,
-                 modules => [oc_stat_exporter]},
-
     ViewServer = #{id => oc_stat,
                    start => {oc_stat, start_link, []},
                    restart => permanent,
                    shutdown => 1000,
                    type => worker,
                    modules => [oc_stat]},
+
+    Exporter = #{id => oc_stat_exporter,
+                 start => {oc_stat_exporter, start_link, []},
+                 restart => permanent,
+                 shutdown => 1000,
+                 type => worker,
+                 modules => [oc_stat_exporter]},
 
     TraceServer = #{id => oc_server,
                     start => {oc_server, start_link, []},
@@ -69,4 +69,4 @@ init([]) ->
 
     {ok, {#{strategy => one_for_one,
             intensity => 1,
-            period => 5}, [Reporter, Exporter, ViewServer, TraceServer, Sweeper]}}.
+            period => 5}, [Reporter, ViewServer, Exporter, TraceServer, Sweeper]}}.
