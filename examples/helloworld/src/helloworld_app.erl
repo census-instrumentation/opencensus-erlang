@@ -15,6 +15,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
+    create_measures(),
     subscribe_views(),
     helloworld_sup:start_link().
 
@@ -25,6 +26,9 @@ stop(_State) ->
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+create_measures() ->
+  oc_stat_measure:new('my.org/measure/video_size', "Size of a processed video", bytes).
 
 subscribe_views() ->
     oc_stat_view:subscribe(#{name => "video_size",
