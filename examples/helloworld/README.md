@@ -10,7 +10,7 @@ The OpenCensus Erlang API artifact is available here: https://hexdocs.pm/opencen
 
 #### Prerequisites
 
-[Erlang/OTP 20](https://erlang.org) and [rebar3](https://rebar3.org) are required. 
+[Erlang/OTP 20](https://erlang.org) and [rebar3](https://rebar3.org) are required.
 
 #### Using
 
@@ -41,7 +41,7 @@ Add `opencensus` as a dependency in `rebar.config`. For development purposes it 
 ```erlang
 [
  {opencensus, [{sampler, {oc_sampler_always, []}},
-               {reporter, {oc_reporter_stdout, []}},
+               {reporters, [{oc_reporter_stdout, []}]},
                {stat, [{exporters, [{oc_stat_exporter_stdout, []}]}]}
 ].
 ```
@@ -70,9 +70,12 @@ Add `opencensus` as a dependency in `rebar.config`. For development purposes it 
 
 Building the application with `rebar3 compile` will fetch the OpenCensus Erlang library and its dependencies.
 
-When our application starts it needs to create and subscribe to the statistics that we'll record. So a call to `subscribe_views/0` is added to the application start function, `helloworld_app:start/2`:
+When our application starts it needs to create and subscribe to the statistics that we'll record. So a call to `create_measures/0` and `subscribe_views/0` is added to the application start function, `helloworld_app:start/2`:
 
 ```erlang
+create_measures() ->
+  oc_stat_measure:new('my.org/measure/video_size', "Size of a processed video", bytes).
+
 subscribe_views() ->
     oc_stat_view:subscribe(#{name => "video_size",
                              description => "size of processed videos",
