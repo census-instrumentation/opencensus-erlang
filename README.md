@@ -141,7 +141,7 @@ ocp:record('opencensus.io/http/server/server_latency', ServerLatency),
 
 #### <a name="Views">Views</a> ####
 
-Views are how Neasures are aggregated. You can think of them as queries over the set of recorded data points (measurements).
+Views are how Measures are aggregated. You can think of them as queries over the set of recorded data points (measurements).
 
 Views have two parts: the tags to group by and the aggregation type used.
 
