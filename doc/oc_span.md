@@ -30,7 +30,7 @@ maybe(T) = T | undefined
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_link-2">add_link/2</a></td><td>
 Add a Link to the list of Links in the span.</td></tr><tr><td valign="top"><a href="#add_time_event-2">add_time_event/2</a></td><td>
 Add an Annotation or MessageEvent to the list of TimeEvents in a span.</td></tr><tr><td valign="top"><a href="#add_time_event-3">add_time_event/3</a></td><td></td></tr><tr><td valign="top"><a href="#annotation-2">annotation/2</a></td><td>
-Create an Annotation.</td></tr><tr><td valign="top"><a href="#finish_span-1">finish_span/1</a></td><td>
+Create an Annotation.</td></tr><tr><td valign="top"><a href="#finish_span-2">finish_span/2</a></td><td>
 Finish a span, setting the end_time and sending to the reporter.</td></tr><tr><td valign="top"><a href="#link-4">link/4</a></td><td>
 Create a Link which can be added to a Span.</td></tr><tr><td valign="top"><a href="#message_event-4">message_event/4</a></td><td>
 Create a MessageEvent.</td></tr><tr><td valign="top"><a href="#put_attribute-3">put_attribute/3</a></td><td>
@@ -85,12 +85,12 @@ annotation(Description, Attributes) -&gt; Annotation
 
 Create an Annotation.
 
-<a name="finish_span-1"></a>
+<a name="finish_span-2"></a>
 
-### finish_span/1 ###
+### finish_span/2 ###
 
 <pre><code>
-finish_span(Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; true
+finish_span(Span_ctx::<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>, Span::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span">opencensus:span()</a>)) -&gt; true
 </code></pre>
 <br />
 

@@ -180,11 +180,12 @@ $ rebar3 protobuf compile
 <table width="100%" border="0" summary="list of modules">
 <tr><td><a href="oc_producer.md" class="module">oc_producer</a></td></tr>
 <tr><td><a href="oc_producer_registry.md" class="module">oc_producer_registry</a></td></tr>
+<tr><td><a href="oc_propagation_binary.md" class="module">oc_propagation_binary</a></td></tr>
+<tr><td><a href="oc_propagation_http_b3.md" class="module">oc_propagation_http_b3</a></td></tr>
+<tr><td><a href="oc_propagation_http_tracecontext.md" class="module">oc_propagation_http_tracecontext</a></td></tr>
 <tr><td><a href="oc_reporter.md" class="module">oc_reporter</a></td></tr>
-<tr><td><a href="oc_reporter_noop.md" class="module">oc_reporter_noop</a></td></tr>
-<tr><td><a href="oc_reporter_sequential.md" class="module">oc_reporter_sequential</a></td></tr>
+<tr><td><a href="oc_reporter_pid.md" class="module">oc_reporter_pid</a></td></tr>
 <tr><td><a href="oc_reporter_stdout.md" class="module">oc_reporter_stdout</a></td></tr>
-<tr><td><a href="oc_reporter_zipkin.md" class="module">oc_reporter_zipkin</a></td></tr>
 <tr><td><a href="oc_sampler.md" class="module">oc_sampler</a></td></tr>
 <tr><td><a href="oc_sampler_always.md" class="module">oc_sampler_always</a></td></tr>
 <tr><td><a href="oc_sampler_impl.md" class="module">oc_sampler_impl</a></td></tr>
@@ -194,8 +195,6 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_self_producer.md" class="module">oc_self_producer</a></td></tr>
 <tr><td><a href="oc_server.md" class="module">oc_server</a></td></tr>
 <tr><td><a href="oc_span.md" class="module">oc_span</a></td></tr>
-<tr><td><a href="oc_span_ctx_binary.md" class="module">oc_span_ctx_binary</a></td></tr>
-<tr><td><a href="oc_span_ctx_header.md" class="module">oc_span_ctx_header</a></td></tr>
 <tr><td><a href="oc_span_sweeper.md" class="module">oc_span_sweeper</a></td></tr>
 <tr><td><a href="oc_span_transform.md" class="module">oc_span_transform</a></td></tr>
 <tr><td><a href="oc_stat.md" class="module">oc_stat</a></td></tr>
@@ -211,11 +210,11 @@ $ rebar3 protobuf compile
 <tr><td><a href="oc_stat_transform.md" class="module">oc_stat_transform</a></td></tr>
 <tr><td><a href="oc_stat_unit.md" class="module">oc_stat_unit</a></td></tr>
 <tr><td><a href="oc_stat_view.md" class="module">oc_stat_view</a></td></tr>
-<tr><td><a href="oc_std_encoder.md" class="module">oc_std_encoder</a></td></tr>
 <tr><td><a href="oc_tag_ctx_binary.md" class="module">oc_tag_ctx_binary</a></td></tr>
 <tr><td><a href="oc_tag_ctx_header.md" class="module">oc_tag_ctx_header</a></td></tr>
 <tr><td><a href="oc_tags.md" class="module">oc_tags</a></td></tr>
 <tr><td><a href="oc_trace.md" class="module">oc_trace</a></td></tr>
+<tr><td><a href="oc_tracestate.md" class="module">oc_tracestate</a></td></tr>
 <tr><td><a href="ocp.md" class="module">ocp</a></td></tr>
 <tr><td><a href="opencensus.md" class="module">opencensus</a></td></tr>
 <tr><td><a href="opencensus_app.md" class="module">opencensus_app</a></td></tr>

@@ -2,7 +2,7 @@
 
 # OpenCensus Erlang library #
 
-__Version:__ 0.5.0
+__Version:__ 0.9.3
 
 ## Erlang stats collection and distributed tracing framework
 

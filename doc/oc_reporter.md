@@ -17,7 +17,8 @@ __This module defines the `oc_reporter` behaviour.__<br /> Required callback fun
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#store_span-1">store_span/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#register-1">register/1</a></td><td>Equivalent to <a href="#register-2"><tt>register(Reporter, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#register-2">register/2</a></td><td>
+Register new traces reporter <code>Reporter</code> with <code>Config</code>.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#store_span-1">store_span/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -53,6 +54,25 @@ __This module defines the `oc_reporter` behaviour.__<br /> Required callback fun
 ### init/1 ###
 
 `init(Args) -> any()`
+
+<a name="register-1"></a>
+
+### register/1 ###
+
+`register(Reporter) -> any()`
+
+Equivalent to [`register(Reporter, [])`](#register-2).
+
+<a name="register-2"></a>
+
+### register/2 ###
+
+<pre><code>
+register(Reporter::module(), Options::term()) -&gt; ok
+</code></pre>
+<br />
+
+Register new traces reporter `Reporter` with `Config`.
 
 <a name="start_link-0"></a>
 

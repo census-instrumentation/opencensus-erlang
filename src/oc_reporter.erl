@@ -63,7 +63,7 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @doc
-%% @equiv register(Reporter, []).
+%% @equiv register(Reporter, [])
 %% @end
 register(Reporter) -> register(Reporter, []).
 
