@@ -2,7 +2,7 @@
 
 # OpenCensus Erlang library #
 
-__Version:__ 0.5.0
+__Version:__ 0.9.3
 
 ## Erlang stats collection and distributed tracing framework
 
@@ -52,33 +52,33 @@ some_fun() ->
                       end).
 ```
 
-More details on working with spans can be found [here](span.md) and in the modules documentation for [ocp](ocp.md), [oc_trace](oc_trace.md) and [oc_span](oc_span.md).
+More details on working with spans can be found [here](doc/span.md) and in the modules documentation for [ocp](doc/ocp.md), [oc_trace](doc/oc_trace.md) and [oc_span](doc/oc_span.md).
 
 #### <a name="Propagating_Span_Context">Propagating Span Context</a> ####
 
-Opencensus comes with two forms of span context encoding for sending over the wire. `oc_span_ctx_header` encodes a span context suitable for transfering as an HTTP header and `oc_span_ctx_binary` will encode and decode a binary form used in GRPC and other binary protocols.
+Builtin support for encoding and decoding span context from HTTP headers comes in two formats:
 
-For example, creating the header for sending with an HTTP client might look like:
+* [W3C Trace Context](https://www.w3.org/TR/trace-context/) 
+* [B3](https://github.com/openzipkin/b3-propagation)
 
-```erlang
-EncodedSpanCtx = oc_span_ctx_header:encode(ocp:current_span_ctx()),
-Headers = [{oc_span_ctx_header:field_name(), EncodedSpanCtx}],
-```
+Additionally `oc_propagation_binary` will encode and decode a binary form used for GRPC and other binary protocols.
 
 #### <a name="Samplers">Samplers</a> ####
 
-[oc_sampler_never](oc_sampler_never.md): Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
+[oc_sampler_never](doc/oc_sampler_never.md): Never enable a new trace, but keeps a trace enabled if its propagated context is enabled.
 
-[oc_sampler_always](oc_sampler_always.md): Enable every new trace for sampling.
+[oc_sampler_always](doc/oc_sampler_always.md): Enable every new trace for sampling.
 
-[oc_sampler_probability](oc_sampler_probability.md): Takes a probability, default 0.5, that any new trace will be sampled.
+[oc_sampler_probability](doc/oc_sampler_probability.md): Takes a probability, default 0.5, that any new trace will be sampled.
 
 
 #### <a name="Reporters">Reporters</a> ####
 
-[Google Cloud Trace](https://github.com/tsloughter/oc_google_reporter): Support for v1 in master, v2 and grpc coming soon;
+[Zipkin](https://github.com/opencensus-beam/opencensus_zipkin): Zipkin v2 reporter.
 
-[Prometheus](https://github.com/deadtrickster/opencensus-erlang-prometheus): Exports spans as Prometheus metrics.
+[Google Cloud Trace](https://github.com/opencensus-beam/oc_google_reporter): Support for v1 in master, v2 and grpc coming soon;
+
+[Prometheus](https://github.com/opencensus-beam/prometheus): Exports spans as Prometheus metrics.
 
 [DataDog][oc_datadog]: Export spans to DataDog APM
 
@@ -183,15 +183,6 @@ Running tests:
 
 ```sh
 $ rebar3 ct
-```
-
-#### Updating OpenCensus standard protobuf encoder and decoder
-
-Language independent interface types for Census are found in the `opencensus-proto` repo. The opencensus Erlang app provides functionality for converting from the apps internal representation to the standard protobuf interface. Below are the steps to update the Erlang module and header for encoding and decoding the protobufs:
-
-```sh
-$ git clone https://github.com/census-instrumentation/opencensus-proto priv/opencensus-proto
-$ rebar3 protobuf compile
 ```
 
 [oc_datadog]: https://github.com/hauleth/oc_datadog

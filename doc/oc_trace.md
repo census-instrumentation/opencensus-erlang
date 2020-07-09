@@ -116,7 +116,7 @@ Return the current span context in a `Ctx` or `undefined`.
 ### finish_span/1 ###
 
 <pre><code>
-finish_span(Span_ctx::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>)) -&gt; boolean()
+finish_span(SpanCtx::<a href="#type-maybe">maybe</a>(<a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a>)) -&gt; boolean()
 </code></pre>
 <br />
 
@@ -220,7 +220,7 @@ Set Status. Returns true if the data was successfully updated.
 start_span(Name, SpanCtx) -&gt; SpanCtx
 </code></pre>
 
-<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a></code></li></ul>
+<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a> | undefined</code></li></ul>
 
 Create a new span, detached from any context.
 
@@ -232,7 +232,7 @@ Create a new span, detached from any context.
 start_span(Name, SpanCtx, Options) -&gt; SpanCtx
 </code></pre>
 
-<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a></code></li><li><code>Options = #{remote_parent =&gt; boolean(), sampler =&gt; module(), kind =&gt; <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, attributes =&gt; <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}</code></li></ul>
+<ul class="definitions"><li><code>Name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a></code></li><li><code>SpanCtx = <a href="opencensus.md#type-span_ctx">opencensus:span_ctx()</a> | undefined</code></li><li><code>Options = #{remote_parent =&gt; boolean(), sampler =&gt; module(), kind =&gt; <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, attributes =&gt; <a href="opencensus.md#type-attributes">opencensus:attributes()</a>}</code></li></ul>
 
 <a name="with_child_span-2"></a>
 

@@ -99,7 +99,7 @@ message_event_type() = TYPE_UNSPECIFIED | SENT | RECEIVED
 
 
 <pre><code>
-span() = #span{name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a>, trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, parent_span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, trace_options = integer() | undefined, kind = <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, start_time = <a href="wts.md#type-timestamp">wts:timestamp()</a>, end_time = <a href="wts.md#type-timestamp">wts:timestamp()</a> | undefined, attributes = <a href="opencensus.md#type-attributes">opencensus:attributes()</a>, stack_trace = <a href="opencensus.md#type-stack_trace">opencensus:stack_trace()</a> | undefined, links = <a href="opencensus.md#type-links">opencensus:links()</a>, time_events = <a href="opencensus.md#type-time_events">opencensus:time_events()</a>, status = <a href="opencensus.md#type-status">opencensus:status()</a> | undefined, same_process_as_parent_span = boolean() | undefined, child_span_count = integer() | undefined}
+span() = #span{name = <a href="unicode.md#type-unicode_binary">unicode:unicode_binary()</a>, trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, parent_span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, tracestate = <a href="opencensus.md#type-tracestate">opencensus:tracestate()</a> | undefined, trace_options = integer() | undefined, kind = <a href="opencensus.md#type-span_kind">opencensus:span_kind()</a>, start_time = <a href="wts.md#type-timestamp">wts:timestamp()</a>, end_time = <a href="wts.md#type-timestamp">wts:timestamp()</a> | undefined, attributes = <a href="opencensus.md#type-attributes">opencensus:attributes()</a>, stack_trace = <a href="opencensus.md#type-stack_trace">opencensus:stack_trace()</a> | undefined, links = <a href="opencensus.md#type-links">opencensus:links()</a>, time_events = <a href="opencensus.md#type-time_events">opencensus:time_events()</a>, status = <a href="opencensus.md#type-status">opencensus:status()</a> | undefined, same_process_as_parent_span = boolean() | undefined, child_span_count = integer() | undefined}
 </code></pre>
 
 
@@ -109,7 +109,7 @@ span() = #span{name = <a href="unicode.md#type-unicode_binary">unicode:unicode_b
 
 
 <pre><code>
-span_ctx() = #span_ctx{trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, trace_options = integer() | undefined}
+span_ctx() = #span_ctx{trace_id = <a href="opencensus.md#type-trace_id">opencensus:trace_id()</a> | undefined, span_id = <a href="opencensus.md#type-span_id">opencensus:span_id()</a> | undefined, trace_options = integer() | undefined, tracestate = <a href="opencensus.md#type-tracestate">opencensus:tracestate()</a> | undefined}
 </code></pre>
 
 
@@ -170,6 +170,16 @@ time_events() = [{<a href="wts.md#type-timestamp">wts:timestamp()</a>, <a href="
 
 <pre><code>
 trace_id() = non_neg_integer()
+</code></pre>
+
+
+
+
+### <a name="type-tracestate">tracestate()</a> ###
+
+
+<pre><code>
+tracestate() = #tracestate{entries = [{<a href="unicode.md#type-latin1_chardata">unicode:latin1_chardata()</a>, <a href="unicode.md#type-latin1_chardata">unicode:latin1_chardata()</a>}]}
 </code></pre>
 
 <a name="index"></a>
