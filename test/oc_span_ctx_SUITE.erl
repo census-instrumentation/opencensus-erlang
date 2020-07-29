@@ -134,6 +134,15 @@ b3_encode_decode_headers(_Config) ->
     compare_b3_headers(Encoded, Headers),
     ?assertEqual(Decoded, oc_propagation_http_b3:from_headers(Encoded)),
 
+    %% TraceId: 4bf92f3577b34da6
+    %% SpanId: 00f067aa0ba902b7
+    %% Enabled: true
+    ShortTraceIDHeaders = ?B3_HEADERS(<<"4bf92f3577b34da6">>, <<"00f067aa0ba902b7">>, <<"1">>),
+    ShortTraceIDDecoded = oc_propagation_http_b3:from_headers(ShortTraceIDHeaders),
+    ShortTraceIDEncoded = oc_propagation_http_b3:to_headers(ShortTraceIDDecoded),
+    compare_b3_headers(ShortTraceIDEncoded, ShortTraceIDHeaders),
+    ?assertEqual(ShortTraceIDDecoded, oc_propagation_http_b3:from_headers(ShortTraceIDEncoded)),
+
     %% TraceId: 4bf92f3577b34da6a3ce929d0e0e4736
     %% SpanId: 00f067aa0ba902b7
     %% Enabled: false

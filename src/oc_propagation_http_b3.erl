@@ -39,7 +39,7 @@ to_headers(#span_ctx{trace_id=TraceId,
                      trace_options=TraceOptions}) ->
     Options = case TraceOptions band 1 of 1 -> "1"; _ -> "0" end,
     %% iolist_to_binary only needed for versions before otp-21
-    EncodedTraceId = iolist_to_binary(io_lib:format("~32.16.0b", [TraceId])),
+    EncodedTraceId = iolist_to_binary(io_lib:format("~.16b", [TraceId])),
     EncodedSpanId = iolist_to_binary(io_lib:format("~16.16.0b", [SpanId])),
     [{?B3_TRACE_ID, EncodedTraceId},
      {?B3_SPAN_ID, EncodedSpanId},
