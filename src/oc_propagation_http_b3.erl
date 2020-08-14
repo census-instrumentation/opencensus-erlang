@@ -39,13 +39,20 @@ to_headers(#span_ctx{trace_id=TraceId,
                      trace_options=TraceOptions}) ->
     Options = case TraceOptions band 1 of 1 -> "1"; _ -> "0" end,
     %% iolist_to_binary only needed for versions before otp-21
-    EncodedTraceId = iolist_to_binary(io_lib:format("~32.16.0b", [TraceId])),
+    EncodedTraceId = encode_trace_id(TraceId),
     EncodedSpanId = iolist_to_binary(io_lib:format("~16.16.0b", [SpanId])),
     [{?B3_TRACE_ID, EncodedTraceId},
      {?B3_SPAN_ID, EncodedSpanId},
      {?B3_SAMPLED, Options}];
 to_headers(undefined) ->
     [].
+
+encode_trace_id(TraceId) ->
+    encode_trace_id(TraceId, binary:encode_unsigned(TraceId)).
+encode_trace_id(TraceId, TraceIdBin) when bit_size(TraceIdBin) == 64 ->
+    iolist_to_binary(io_lib:format("~16.16.0b", [TraceId]));
+encode_trace_id(TraceId, _TraceIdBin) ->
+    iolist_to_binary(io_lib:format("~32.16.0b", [TraceId])).
 
 -spec from_headers(list() | map()) -> maybe(opencensus:span_ctx()).
 from_headers(Headers) when is_map(Headers) ->
