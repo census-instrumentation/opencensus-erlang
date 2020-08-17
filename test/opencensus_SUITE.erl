@@ -212,6 +212,21 @@ status(Config) ->
     ?assertMatch(#status{code=Code,
                          message=Message}, SpanData#span.status).
 
+kind(Config) ->
+    Tab = ?config(tid, Config),
+    SpanName1 = <<"kind-span-1">>,
+    SpanCtx = oc_trace:start_span(SpanName1, undefined),
+    SpanKind = ?SPAN_KIND_SERVER,
+
+    oc_trace:set_kind(SpanKind, SpanCtx),
+
+    ?FINISH(Tab, SpanCtx),
+
+    [SpanData] = ets:lookup(Tab, SpanCtx#span_ctx.span_id),
+    ?assertEqual(SpanName1, SpanData#span.name),
+    ?assertEqual(SpanKind, SpanData#span.kind),
+    ?assert(SpanData#span.end_time > SpanData#span.start_time).
+
 ctx_with_span(Config) ->
     Tab = ?config(tid, Config),
 
