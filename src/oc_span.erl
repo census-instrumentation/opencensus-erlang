@@ -32,6 +32,8 @@
 
          message_event/4,
 
+         set_kind/2,
+
          set_status/3]).
 
 -include("opencensus.hrl").
@@ -138,6 +140,16 @@ set_status(Code, Message, Span=#span{}) ->
 set_status(_, _, undefined) ->
     undefined.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% Set Kind.
+%% @end
+%%--------------------------------------------------------------------
+-spec set_kind(Kind, Span) -> Span when Kind :: opencensus:span_kind(), Span :: maybe(opencensus:span()).
+set_kind(Kind, Span=#span{}) ->
+    Span#span{kind=Kind};
+set_kind(_, undefined) ->
+    undefined.
 
 %%--------------------------------------------------------------------
 %% @doc

@@ -19,7 +19,10 @@
 
 -export([generate_trace_id/0,
          generate_span_id/0,
-         http_status_to_trace_status/1]).
+         http_status_to_trace_status/1,
+         span_kind_client/0,
+         span_kind_server/0,
+         span_kind_unspecified/0]).
 
 -include("opencensus.hrl").
 
@@ -107,6 +110,31 @@ http_status_to_trace_status(503) ->
     14;
 http_status_to_trace_status(S) ->
     S.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns atom for span kind client to set on trace.
+%% @end
+%%--------------------------------------------------------------------
+-spec span_kind_client() -> span_kind().
+span_kind_client() -> ?SPAN_KIND_CLIENT.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns atom for span kind server to set on trace.
+%% @end
+%%--------------------------------------------------------------------
+-spec span_kind_server() -> span_kind().
+span_kind_server() -> ?SPAN_KIND_SERVER.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns atom for span kind unspecified to set on trace.
+%% @end
+%%--------------------------------------------------------------------
+-spec span_kind_unspecified() -> span_kind().
+span_kind_unspecified() -> ?SPAN_KIND_UNSPECIFIED.
+
 
 %%
 

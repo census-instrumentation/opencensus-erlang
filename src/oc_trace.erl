@@ -49,7 +49,9 @@
 
          message_event/4,
 
-         set_status/3]).
+         set_status/3,
+         
+         set_kind/2]).
 
 -dialyzer({nowarn_function, update_trace_options/2}).
 
@@ -302,6 +304,16 @@ set_status(Code, Message, #span_ctx{span_id=SpanId,
 set_status(_Code, _Message, _Span) ->
     true.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% Set Kind. Returns true if the data was successfully updated.
+%% @end
+%%--------------------------------------------------------------------
+-spec set_kind(opencensus:span_kind(), maybe(opencensus:span_ctx()))-> boolean().
+set_kind(Kind, SpanCtx) ->
+    lookup_and_replace(SpanCtx, fun(SpanData) ->
+                                        oc_span:set_kind(Kind, SpanData)
+                                end).
 
 %%--------------------------------------------------------------------
 %% @doc
