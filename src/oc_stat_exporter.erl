@@ -38,7 +38,7 @@
       ViewData :: oc_stat_view:view_data(),
       Config  :: any().
 
--record(state, {exporters :: #{module() => any},
+-record(state, {exporters :: list(),
                 export_interval_ms :: integer(),
                 timer_ref :: reference()}).
 
@@ -104,10 +104,10 @@ export(Exporters) ->
     [try
          Exporter:export(Measurements, Config)
      catch
-        ?WITH_STACKTRACE(Class, Exception, Stacktrace)
-             ?LOG_INFO("stat exporter ~p threw ~p:~p, stacktrace=~p",
-                       [Exporter, Class, Exception, Stacktrace])
-     end
+         ?WITH_STACKTRACE(Class, Exception, Stacktrace)
+         ?LOG_INFO("stat exporter ~p threw ~p:~p, stacktrace=~p",
+                   [Exporter, Class, Exception, Stacktrace])
+         end
      || {Exporter, Config} <- Exporters],
     ok.
 
@@ -117,18 +117,18 @@ init(_Args) ->
     Exporters = oc_stat_config:exporters(),
     %% TODO: should we init exporters here, before exporting?
     Ref = erlang:send_after(ExportInterval, self(), export_stats),
-    {ok, #state{exporters=to_map(Exporters),
+    {ok, #state{exporters=init_exporters(Exporters),
                 export_interval_ms=ExportInterval,
                 timer_ref=Ref}}.
 
 handle_call({batch_register, NewExporters}, _From, State=#state{exporters=Exporters}) ->
-    {reply, ok, State#state{exporters=maps:merge(Exporters, maps:from_list(NewExporters))}};
+    {reply, ok, State#state{exporters=init_exporters(NewExporters) ++ Exporters}};
 handle_call({register, Exporter, Config}, _From,  State=#state{exporters=Exporters}) ->
-    {reply, ok, State#state{exporters=maps:put(Exporter, Config, Exporters)}};
+    {reply, ok, State#state{exporters=[{Exporter, maybe_call_exporter_init(Exporter, Config)} | Exporters]}};
 handle_call({deregister, Exporter}, _From,  State=#state{exporters=Exporters}) ->
-    {reply, ok, State#state{exporters=maps:remove(Exporter, Exporters)}};
+    {reply, ok, State#state{exporters=proplists:delete(Exporter, Exporters)}};
 handle_call({registered, Exporter}, _From, State=#state{exporters=Exporters}) ->
-    {reply, maps:is_key(Exporter, Exporters), State};
+    {reply, proplists:is_defined(Exporter, Exporters), State};
 handle_call(_, _From, State) ->
     {noreply, State}.
 
@@ -141,7 +141,7 @@ handle_info(export_stats, State=#state{exporters=Exporters,
     erlang:cancel_timer(Ref),
     Ref1 = erlang:send_after(ExportInterval, self(), export_stats),
     spawn(fun () ->
-                  export(maps:to_list(Exporters))
+                  export(Exporters)
           end),
     {noreply, State#state{timer_ref=Ref1}}.
 
@@ -152,9 +152,23 @@ terminate(_, #state{timer_ref=Ref}) ->
     erlang:cancel_timer(Ref),
     ok.
 
-to_map(Map) when is_map(Map) ->
-    Map;
-to_map(List) when is_list(List) ->
-    maps:from_list(List);
-to_map(Thing) ->
+init_exporters(Map) when is_map(Map) ->
+    init_exporters(maps:to_list(Map));
+init_exporters(List) when is_list(List) ->
+    UList = proplists:unfold(List),
+    [{Exporter, maybe_call_exporter_init(Exporter, EConfig)} || {Exporter, EConfig} <- UList];
+init_exporters(Thing) ->
     erlang:error({invalid_exporters, Thing}).
+
+maybe_call_exporter_init(Exporter, Config) ->
+    case erlang:function_exported(Exporter, init, 1) of
+        true ->
+            try
+                Exporter:init(Config)
+            catch
+                ?WITH_STACKTRACE(Class, Exception, Stacktrace)
+                ?LOG_INFO("stat exporter ~p init/1 threw ~p:~p, stacktrace=~p",
+                          [Exporter, Class, Exception, Stacktrace])
+            end;
+        _ -> Config
+    end.
