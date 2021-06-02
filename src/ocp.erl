@@ -88,6 +88,10 @@
             end
         end).
 
+-type traced_fun(T) :: fun(() -> T).
+
+-export_type([traced_fun/1]).
+
 %%--------------------------------------------------------------------
 %% @doc
 %% Replaces the tags in the current context.
@@ -142,7 +146,7 @@ with_child_span(Name, Attributes) ->
 %% and resetting the current span context after the function finishes.
 %% @end
 %%--------------------------------------------------------------------
--spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> maybe(opencensus:span_ctx()).
+-spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), traced_fun(T)) -> T.
 with_child_span(Name, Attributes, Fun) ->
     CurrentSpanCtx = current_span_ctx(),
     NewSpanCtx = oc_trace:start_span(Name, CurrentSpanCtx, #{attributes => Attributes}),
