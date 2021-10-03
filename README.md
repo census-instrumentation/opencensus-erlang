@@ -8,7 +8,7 @@ __Version:__ 0.5.0
 
 [![CircleCI](https://circleci.com/gh/census-instrumentation/opencensus-erlang.svg?style=svg)](https://circleci.com/gh/census-instrumentation/opencensus-erlang)
 [![codecov](https://codecov.io/gh/census-instrumentation/opencensus-erlang/branch/master/graph/badge.svg)](https://codecov.io/gh/census-instrumentation/opencensus-erlang)
-[![Hex.pm](https://img.shields.io/hexpm/v//opencensus.svg?maxAge=2592000)](https://hex.pm/packages/opencensus)
+[![Hex.pm](https://img.shields.io/hexpm/v/opencensus.svg?maxAge=2592000)](https://hex.pm/packages/opencensus)
 [![Hex.pm](https://img.shields.io/hexpm/dt/opencensus.svg?maxAge=2592000)](https://hex.pm/packages/opencensus)
 
 
