@@ -115,7 +115,7 @@ To disable sweeping set `interval` to `infinity`.
 
 OTP-21 includes a new logging framework. When a context is created with a span (for example `ocp:with_child_span/1` or `oc_trace:with_child_span/2`) opencensus will update the current process's logger metadata to include the `trace_id`, `span_id` and `trace_options` with the latest ids under the key `span_ctx`, `trace_options` will be `1` if the trace is enabled. To use these with the default formatter you can create a custom template that includes them if they exist like so:
 
-```
+```erlang
 {logger_formatter,
   #{template => [time, " ", pid, " ",
                  {[span_ctx, trace_id], ["trace_id=", [span_ctx, trace_id], " "], []},
