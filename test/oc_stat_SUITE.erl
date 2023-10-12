@@ -9,7 +9,6 @@
 
 -define(VD, [#{name := "last_video_size",
                description := "last processed video size",
-               ctags := #{ctag := value},
                tags := [],
                data := #{type := latest,
                          rows := [#{tags := [],
@@ -17,7 +16,6 @@
              #{name := "video_size",
                description :=
                    "number of videos processed processed over time",
-               ctags := #{ctag := value},
                tags := [],
                data := #{type := distribution,
                          rows :=
@@ -29,23 +27,21 @@
                                            count := 6,
                                            mean := 1024.5,
                                            sum := 6147}}]}},
-             #{name := "video_count",
-               description :=
-                   "number of videos processed processed over time",
-               ctags := #{ctag := value},
-               tags := [type],
-               data := #{type := count,
-                         rows := [#{tags := ["mpeg"],
-                                    value := 6}]}},
              #{name := "video_sum",
                description := "video_size_sum",
-               ctags := #{sum_tag := value},
                tags := [category, type],
                data := #{type := sum,
                          rows := [#{tags := ["category1", "mpeg"],
                                     value := #{count := 6,
                                                mean := 1024.5,
-                                               sum := 6147}}]}}]).
+                                               sum := 6147}}]}},
+             #{name := "video_count",
+               description :=
+                   "number of videos processed processed over time",
+               tags := [type],
+               data := #{type := count,
+                         rows := [#{tags := ["mpeg"],
+                                    value := 6}]}}]).
 
 all() ->
     [
@@ -199,7 +195,7 @@ full(_Config) ->
                 #{
                   name => "video_size",
                   description => "number of videos processed processed over time",
-                  tags => [#{ctag => value}],
+                  tags => [],
                   measure => 'my.org/measures/video_size',
                   aggregation => {oc_stat_aggregation_distribution, [{buckets, [0, 1 bsl 16, 1 bsl 32]}]}
                  }),
@@ -208,23 +204,21 @@ full(_Config) ->
                 "video_count",
                 'my.org/measures/video_size',
                 "number of videos processed processed over time",
-                [#{ctag => value},
-                 type],
+                [type],
                 oc_stat_aggregation_count),
 
     {ok, _} = oc_stat_view:subscribe(
                 "video_sum",
                 'my.org/measures/video_size',
                 "video_size_sum",
-                [#{sum_tag => value},
-                 type, category],
+                [type, category],
                 oc_stat_aggregation_sum),
 
     {ok, _} = oc_stat_view:subscribe(
                 "last_video_size",
                 'my.org/measures/video_size',
                 "last processed video size",
-                [#{ctag => value}],
+                [],
                 oc_stat_aggregation_latest),
 
     Tags = #{type => "mpeg",
